@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Features from './components/Features';
@@ -9,8 +9,8 @@ import ChatSystem from './components/ChatSystem';
 import VoiceAssistant from './components/VoiceAssistant';
 import UserProfile from './components/UserProfile';
 import SocialImpactHub from './components/SocialImpactHub';
-import ElderlyCitizenSupport from './components/ElderlyCitizenSupport';
 import GamificationSystem from './components/GamificationSystem';
+import SOSButton from './components/SOSButton';
 import './styles/fonts.css';
 
 function App() {
@@ -52,7 +52,6 @@ function App() {
         {activeSection === 'volunteer' && <VolunteerSection />}
         {activeSection === 'profile' && <UserProfile user={user} setUser={setUser} />}
         {activeSection === 'impact' && <SocialImpactHub user={user} />}
-        {activeSection === 'elderly' && <ElderlyCitizenSupport />}
         
         <ChatSystem
           isOpen={isChatOpen}
@@ -63,6 +62,7 @@ function App() {
           setUser={setUser}
         />
         
+        <SOSButton user={user} />
         <VoiceAssistant />
       </main>
     </div>

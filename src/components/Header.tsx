@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, MessageCircle, BookOpen, Users, Heart, Mic, User, TreePine, UserCheck } from 'lucide-react';
+import { Shield, MessageCircle, BookOpen, Users, Heart, Mic, User, TreePine } from 'lucide-react';
 
 interface HeaderProps {
   activeSection: string;
@@ -15,7 +15,6 @@ const Header: React.FC<HeaderProps> = ({ activeSection, setActiveSection, setIsC
     { id: 'accessibility', label: 'AI Lab', bangla: 'এআই ল্যাব', icon: Heart },
     { id: 'volunteer', label: 'Volunteer', bangla: 'স্বেচ্ছাসেবক', icon: Users },
     { id: 'impact', label: 'Social Impact', bangla: 'সামাজিক প্রভাব', icon: TreePine },
-    { id: 'elderly', label: 'Elder Support', bangla: 'বয়স্ক সহায়তা', icon: UserCheck },
   ];
 
   return (
