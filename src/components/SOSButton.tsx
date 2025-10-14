@@ -55,22 +55,26 @@ const SOSButton: React.FC<SOSButtonProps> = () => {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 bg-red-600 hover:bg-red-700 text-white p-4 rounded-full shadow-2xl z-50 transition-all duration-300 hover:scale-110 animate-pulse"
+        className="fixed bottom-6 right-6 bg-red-600 hover:bg-red-700 text-white p-4 rounded-full shadow-2xl z-50 transition-all duration-300 hover:scale-110 animate-pulse group relative overflow-hidden"
         title="SOS - Make a report and get help"
       >
-        <AlertTriangle className="w-8 h-8" />
+        <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-75"></div>
+        <AlertTriangle className="w-8 h-8 relative z-10 group-hover:rotate-12 transition-transform duration-300" />
       </button>
     );
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in-up">
+      <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden transform transition-all duration-500 animate-bounce-in">
         {/* Header */}
-        <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-6">
-          <div className="flex justify-between items-center">
+        <div className="bg-gradient-to-r from-red-600 via-orange-600 to-red-600 text-white p-6 relative overflow-hidden animate-gradient">
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute inset-0 bg-white animate-shimmer"></div>
+          </div>
+          <div className="flex justify-between items-center relative z-10">
             <div className="flex items-center space-x-3">
-              <div className="bg-white/20 p-3 rounded-full">
+              <div className="bg-white/20 p-3 rounded-full animate-scale-pulse">
                 <AlertTriangle className="w-8 h-8" />
               </div>
               <div>
@@ -99,13 +103,13 @@ const SOSButton: React.FC<SOSButtonProps> = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex items-center justify-center space-x-2 px-4 py-4 border-b-2 font-medium transition-colors ${
+                className={`flex-1 flex items-center justify-center space-x-2 px-4 py-4 border-b-2 font-medium transition-all duration-300 transform hover:scale-105 ${
                   activeTab === tab.id
-                    ? 'border-red-500 text-red-600 bg-white'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'border-red-500 text-red-600 bg-white scale-105'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                <IconComponent className="w-5 h-5" />
+                <IconComponent className={`w-5 h-5 transition-all duration-300 ${activeTab === tab.id ? 'animate-bounce' : ''}`} />
                 <span>{tab.label}</span>
               </button>
             );
@@ -134,15 +138,16 @@ const SOSButton: React.FC<SOSButtonProps> = () => {
                     <button
                       key={index}
                       onClick={() => handleEmergencyCall(contact.number)}
-                      className="bg-white border-2 border-gray-200 hover:border-red-500 rounded-xl p-6 text-left shadow-sm hover:shadow-lg transition-all duration-200 group"
+                      style={{ animationDelay: `${index * 100}ms` }}
+                      className="bg-white border-2 border-gray-200 hover:border-red-500 rounded-xl p-6 text-left shadow-sm hover:shadow-2xl transition-all duration-300 group transform hover:-translate-y-2 hover:scale-105 animate-fade-in-up"
                     >
                       <div className="flex items-start space-x-4">
-                        <div className={`${contact.color} p-3 rounded-full text-white group-hover:scale-110 transition-transform`}>
+                        <div className={`${contact.color} p-3 rounded-full text-white group-hover:scale-125 group-hover:rotate-6 transition-all duration-300`}>
                           <IconComponent className="w-6 h-6" />
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-bold text-gray-900 mb-1 font-bangla">{contact.name}</h3>
-                          <div className="text-3xl font-bold text-red-600 mb-1">{contact.number}</div>
+                          <h3 className="font-bold text-gray-900 mb-1 font-bangla group-hover:text-red-600 transition-colors">{contact.name}</h3>
+                          <div className="text-3xl font-bold text-red-600 mb-1 group-hover:scale-110 transition-transform inline-block">{contact.number}</div>
                           <div className="text-sm text-gray-500 font-bangla">{contact.type}</div>
                         </div>
                       </div>
