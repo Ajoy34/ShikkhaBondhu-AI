@@ -4,7 +4,7 @@ import {
   MessageCircle, Ambulance,
   Home, Stethoscope, UserCheck
 } from 'lucide-react';
-import ReportSystem from './ReportSystem';
+import ElderEmergencyReport from './ElderEmergencyReport';
 
 interface SOSButtonProps {
   user?: any;
@@ -224,13 +224,7 @@ const SOSButton: React.FC<SOSButtonProps> = () => {
           {/* Report Tab */}
           {activeTab === 'report' && (
             <div>
-              <div className="mb-4">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2 font-bangla">সমস্যা রিপোর্ট করুন</h3>
-                <p className="text-gray-600 font-bangla">
-                  বয়স্ক নাগরিকদের সমস্যা বা জরুরি অবস্থা রিপোর্ট করুন
-                </p>
-              </div>
-              <ReportSystem />
+              <ElderEmergencyReport />
             </div>
           )}
         </div>
