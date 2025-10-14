@@ -10,9 +10,9 @@ interface SOSButtonProps {
   user?: any;
 }
 
-const SOSButton: React.FC<SOSButtonProps> = () => {
+const SOSButton: React.FC<SOSButtonProps> = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('emergency');
+  const [activeTab, setActiveTab] = useState('nearby'); // Changed default to 'nearby'
 
   const emergencyContacts = [
     { name: 'জাতীয় জরুরি সেবা', number: '৯৯৯', type: 'জরুরি', icon: AlertTriangle, color: 'bg-red-500' },
@@ -305,19 +305,19 @@ const SOSButton: React.FC<SOSButtonProps> = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-gray-200 bg-gray-50">
+        <div className="flex border-b border-gray-200 bg-gray-50 overflow-x-auto">
           {[
+            { id: 'nearby', label: 'Find Help Nearby', icon: MapPin },
             { id: 'emergency', label: 'Emergency Contacts', icon: Phone },
             { id: 'services', label: 'Elder Services', icon: Heart },
-            { id: 'report', label: 'Make Report', icon: AlertTriangle },
-            { id: 'nearby', label: 'Find Help Nearby', icon: MapPin }
+            { id: 'report', label: 'Make Report', icon: AlertTriangle }
           ].map((tab) => {
             const IconComponent = tab.icon;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex items-center justify-center space-x-2 px-4 py-4 border-b-2 font-medium transition-all duration-300 transform hover:scale-105 ${
+                className={`flex-1 flex items-center justify-center space-x-2 px-4 py-4 border-b-2 font-medium transition-all duration-300 transform hover:scale-105 whitespace-nowrap min-w-fit ${
                   activeTab === tab.id
                     ? 'border-red-500 text-red-600 bg-white scale-105'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100'
