@@ -53,7 +53,7 @@ const SOSButton: React.FC<SOSButtonProps> = () => {
 
   if (!isOpen) {
     return (
-      <div className="fixed left-8 bottom-8 z-50 animate-bounce-in">
+      <div className="fixed right-8 bottom-8 z-50 animate-bounce-in">
         <button
           onClick={() => setIsOpen(true)}
           className="relative bg-gradient-to-br from-red-600 via-red-700 to-red-800 hover:from-red-700 hover:via-red-800 hover:to-red-900 text-white shadow-2xl transition-all duration-300 hover:scale-110 group overflow-hidden flex flex-col items-center justify-center gap-2 px-6 py-4 rounded-2xl min-w-[140px]"
