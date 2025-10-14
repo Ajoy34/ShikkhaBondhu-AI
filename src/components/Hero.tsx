@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, Shield, Heart, Users, BookOpen, Zap, Sparkles } from 'lucide-react';
+import { MessageCircle, Shield, Heart, Users, BookOpen, Zap, Sparkles, GraduationCap, Coins, ShieldCheck, TrendingUp, Award, Lock } from 'lucide-react';
 
 interface HeroProps {
   setIsChatOpen: (open: boolean) => void;
@@ -156,6 +156,155 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen }) => {
               <div className="text-xs text-gray-500 font-bangla">{stat.bangla}</div>
             </div>
           ))}
+        </div>
+
+        {/* Learn, Earn, Safety Section for Students */}
+        <div className="mt-20 max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+              For All People of Bangladesh
+              <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent"> - Especially Students</span>
+            </h2>
+            <p className="font-bangla text-xl text-indigo-600 font-semibold">
+              বাংলাদেশের সকল মানুষের জন্য - বিশেষ করে শিক্ষার্থীদের জন্য
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Learn Section */}
+            <div className="group relative bg-gradient-to-br from-blue-50 to-indigo-50 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 hover:scale-105 border-2 border-blue-200 hover:border-blue-400">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-200 rounded-full -mr-16 -mt-16 opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
+              
+              <div className="relative z-10">
+                <div className="bg-gradient-to-br from-blue-500 to-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:rotate-12 group-hover:scale-110 transition-all duration-300 shadow-lg">
+                  <GraduationCap className="w-8 h-8 text-white" />
+                </div>
+                
+                <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                  Learn & Grow
+                </h3>
+                <p className="font-bangla text-lg font-semibold text-blue-600 mb-4">
+                  শিখুন এবং বেড়ে উঠুন
+                </p>
+                
+                <ul className="space-y-3 text-gray-700">
+                  <li className="flex items-start">
+                    <BookOpen className="w-5 h-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span><strong>Free Education:</strong> Access quality learning materials for all subjects</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Award className="w-5 h-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span><strong>Skill Development:</strong> Learn programming, design, and digital skills</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Sparkles className="w-5 h-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span><strong>AI Tutoring:</strong> Get personalized study help 24/7</span>
+                  </li>
+                </ul>
+
+                <button 
+                  onClick={() => setIsChatOpen(true)}
+                  className="mt-6 w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-xl"
+                >
+                  Start Learning Now
+                </button>
+              </div>
+            </div>
+
+            {/* Earn Section */}
+            <div className="group relative bg-gradient-to-br from-green-50 to-emerald-50 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 hover:scale-105 border-2 border-green-200 hover:border-green-400">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-green-200 rounded-full -mr-16 -mt-16 opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
+              
+              <div className="relative z-10">
+                <div className="bg-gradient-to-br from-green-500 to-emerald-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:rotate-12 group-hover:scale-110 transition-all duration-300 shadow-lg">
+                  <Coins className="w-8 h-8 text-white" />
+                </div>
+                
+                <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors">
+                  Earn & Succeed
+                </h3>
+                <p className="font-bangla text-lg font-semibold text-green-600 mb-4">
+                  আয় করুন এবং সফল হন
+                </p>
+                
+                <ul className="space-y-3 text-gray-700">
+                  <li className="flex items-start">
+                    <TrendingUp className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span><strong>Freelancing Guide:</strong> Learn how to earn online from home</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Award className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span><strong>Career Guidance:</strong> Get advice on jobs and career paths</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Users className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span><strong>Opportunities:</strong> Connect with employers and internships</span>
+                  </li>
+                </ul>
+
+                <button 
+                  onClick={() => setIsChatOpen(true)}
+                  className="mt-6 w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-xl"
+                >
+                  Explore Opportunities
+                </button>
+              </div>
+            </div>
+
+            {/* Safety Section */}
+            <div className="group relative bg-gradient-to-br from-red-50 to-rose-50 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 hover:scale-105 border-2 border-red-200 hover:border-red-400">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-red-200 rounded-full -mr-16 -mt-16 opacity-20 group-hover:scale-150 transition-transform duration-500"></div>
+              
+              <div className="relative z-10">
+                <div className="bg-gradient-to-br from-red-500 to-rose-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:rotate-12 group-hover:scale-110 transition-all duration-300 shadow-lg">
+                  <ShieldCheck className="w-8 h-8 text-white" />
+                </div>
+                
+                <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-red-600 transition-colors">
+                  Stay Safe & Secure
+                </h3>
+                <p className="font-bangla text-lg font-semibold text-red-600 mb-4">
+                  নিরাপদ এবং সুরক্ষিত থাকুন
+                </p>
+                
+                <ul className="space-y-3 text-gray-700">
+                  <li className="flex items-start">
+                    <Lock className="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span><strong>Confidential Support:</strong> Report issues anonymously and safely</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Shield className="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span><strong>Emergency Help:</strong> Quick access to police, NGOs, hospitals</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Heart className="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span><strong>Mental Health:</strong> Counseling and emotional support available</span>
+                  </li>
+                </ul>
+
+                <button 
+                  onClick={() => setIsChatOpen(true)}
+                  className="mt-6 w-full bg-gradient-to-r from-red-500 to-rose-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-red-600 hover:to-rose-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-xl"
+                >
+                  Get Help Now
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Banner */}
+          <div className="mt-12 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-3xl p-8 text-white text-center shadow-2xl transform hover:scale-105 transition-all duration-300">
+            <h3 className="text-2xl md:text-3xl font-bold mb-3">
+              🇧🇩 Built for Bangladesh, By Bangladeshis
+            </h3>
+            <p className="font-bangla text-lg mb-4">
+              বাংলাদেশীদের জন্য, বাংলাদেশীদের দ্বারা তৈরি
+            </p>
+            <p className="text-white/90 max-w-3xl mx-auto">
+              Whether you're a student seeking knowledge, looking for income opportunities, 
+              or need safety support - ShikkhaBondhu is here for every Bangladeshi citizen, 24/7.
+            </p>
+          </div>
         </div>
       </div>
     </section>
