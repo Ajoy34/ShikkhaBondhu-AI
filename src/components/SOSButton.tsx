@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   AlertTriangle, Phone, Heart, Shield, X, MapPin, 
   MessageCircle, Ambulance,
-  Home, Stethoscope, UserCheck
+  Home, Stethoscope, UserCheck, Map, Navigation
 } from 'lucide-react';
 import ElderEmergencyReport from './ElderEmergencyReport';
 
@@ -64,6 +64,195 @@ const SOSButton: React.FC<SOSButtonProps> = () => {
     );
   }
 
+  // Help locations data
+  const helpLocations = [
+    {
+      id: 1,
+      name: 'Dhaka Metropolitan Police Headquarters',
+      type: 'police',
+      address: '36 Shaheed Faruk Road, Dhaka 1000',
+      district: 'Dhaka',
+      phone: '02-9559353',
+      coordinates: { lat: 23.7465, lng: 90.3768 },
+      active: true,
+      volunteers: 12
+    },
+    {
+      id: 2,
+      name: 'BRAC - Elder Support Program',
+      type: 'ngo',
+      address: '75 Mohakhali, Dhaka 1212',
+      district: 'Dhaka',
+      phone: '02-9881265',
+      coordinates: { lat: 23.7805, lng: 90.4046 },
+      active: true,
+      volunteers: 25
+    },
+    {
+      id: 3,
+      name: 'Dhaka Medical College Hospital',
+      type: 'hospital',
+      address: 'Bakshibazar, Dhaka 1000',
+      district: 'Dhaka',
+      phone: '02-55165088',
+      coordinates: { lat: 23.7268, lng: 90.3988 },
+      active: true,
+      volunteers: 8
+    },
+    {
+      id: 4,
+      name: 'Elder Care Support Center',
+      type: 'support-center',
+      address: 'Banani, Dhaka 1213',
+      district: 'Dhaka',
+      phone: '01711-123456',
+      coordinates: { lat: 23.7937, lng: 90.4066 },
+      active: true,
+      volunteers: 15
+    },
+    {
+      id: 5,
+      name: 'Mirpur Police Station',
+      type: 'police',
+      address: 'Mirpur-10, Dhaka 1216',
+      district: 'Dhaka',
+      phone: '02-9004400',
+      coordinates: { lat: 23.8065, lng: 90.3688 },
+      active: true,
+      volunteers: 7
+    },
+    {
+      id: 6,
+      name: 'ASK - Ain o Salish Kendra',
+      type: 'ngo',
+      address: 'Purana Paltan, Dhaka 1000',
+      district: 'Dhaka',
+      phone: '02-9330542',
+      coordinates: { lat: 23.7352, lng: 90.4144 },
+      active: true,
+      volunteers: 18
+    },
+    {
+      id: 7,
+      name: 'Uttara Central Hospital',
+      type: 'hospital',
+      address: 'Uttara Sector 3, Dhaka 1230',
+      district: 'Dhaka',
+      phone: '02-8952451',
+      coordinates: { lat: 23.8759, lng: 90.3795 },
+      active: true,
+      volunteers: 10
+    },
+    {
+      id: 8,
+      name: 'HelpAge International Bangladesh',
+      type: 'ngo',
+      address: 'Dhanmondi, Dhaka 1209',
+      district: 'Dhaka',
+      phone: '02-8119984',
+      coordinates: { lat: 23.7461, lng: 90.3742 },
+      active: true,
+      volunteers: 22
+    },
+    {
+      id: 9,
+      name: 'Gulshan Police Station',
+      type: 'police',
+      address: 'Gulshan Avenue, Dhaka 1212',
+      district: 'Dhaka',
+      phone: '02-9881212',
+      coordinates: { lat: 23.7808, lng: 90.4170 },
+      active: true,
+      volunteers: 9
+    },
+    {
+      id: 10,
+      name: 'Dhanmondi Police Station',
+      type: 'police',
+      address: 'Road 27, Dhanmondi, Dhaka 1209',
+      district: 'Dhaka',
+      phone: '02-9671150',
+      coordinates: { lat: 23.7465, lng: 90.3765 },
+      active: true,
+      volunteers: 8
+    },
+    {
+      id: 11,
+      name: 'Motijheel Police Station',
+      type: 'police',
+      address: 'Motijheel C/A, Dhaka 1000',
+      district: 'Dhaka',
+      phone: '02-9565566',
+      coordinates: { lat: 23.7330, lng: 90.4175 },
+      active: true,
+      volunteers: 11
+    },
+    {
+      id: 12,
+      name: 'Banani Police Station',
+      type: 'police',
+      address: 'Banani Road 11, Dhaka 1213',
+      district: 'Dhaka',
+      phone: '02-9892333',
+      coordinates: { lat: 23.7943, lng: 90.4067 },
+      active: true,
+      volunteers: 6
+    },
+    {
+      id: 13,
+      name: 'Uttara Police Station',
+      type: 'police',
+      address: 'Sector 7, Uttara, Dhaka 1230',
+      district: 'Dhaka',
+      phone: '02-8918875',
+      coordinates: { lat: 23.8759, lng: 90.3795 },
+      active: true,
+      volunteers: 10
+    },
+    {
+      id: 14,
+      name: 'Mohammadpur Police Station',
+      type: 'police',
+      address: 'Mohammadpur, Dhaka 1207',
+      district: 'Dhaka',
+      phone: '02-9129090',
+      coordinates: { lat: 23.7651, lng: 90.3566 },
+      active: true,
+      volunteers: 8
+    },
+    {
+      id: 15,
+      name: 'Tejgaon Police Station',
+      type: 'police',
+      address: 'Tejgaon I/A, Dhaka 1208',
+      district: 'Dhaka',
+      phone: '02-8878787',
+      coordinates: { lat: 23.7598, lng: 90.3918 },
+      active: true,
+      volunteers: 7
+    }
+  ];
+
+  const getLocationIcon = (type: string) => {
+    switch (type) {
+      case 'police': return Shield;
+      case 'ngo': return Heart;
+      case 'hospital': return Ambulance;
+      case 'support-center': return Home;
+      default: return MapPin;
+    }
+  };
+
+  const getLocationColor = (type: string) => {
+    switch (type) {
+      case 'police': return 'blue';
+      case 'ngo': return 'green';
+      case 'hospital': return 'red';
+      case 'support-center': return 'purple';
+      default: return 'gray';
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in-up">
       <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden transform transition-all duration-500 animate-bounce-in">
@@ -96,7 +285,8 @@ const SOSButton: React.FC<SOSButtonProps> = () => {
           {[
             { id: 'emergency', label: 'Emergency Contacts', icon: Phone },
             { id: 'services', label: 'Elder Services', icon: Heart },
-            { id: 'report', label: 'Make Report', icon: AlertTriangle }
+            { id: 'report', label: 'Make Report', icon: AlertTriangle },
+            { id: 'nearby', label: 'Find Help Nearby', icon: MapPin }
           ].map((tab) => {
             const IconComponent = tab.icon;
             return (
@@ -230,6 +420,123 @@ const SOSButton: React.FC<SOSButtonProps> = () => {
           {activeTab === 'report' && (
             <div>
               <ElderEmergencyReport />
+            </div>
+          )}
+
+          {/* Find Help Nearby Tab */}
+          {activeTab === 'nearby' && (
+            <div className="space-y-6">
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-xl">
+                <h3 className="text-xl font-bold text-gray-800 mb-2 flex items-center">
+                  <Map className="w-6 h-6 mr-2 text-blue-600" />
+                  Help Locations Near You - Dhaka
+                </h3>
+                <p className="text-gray-600 mb-4">Police stations, NGOs, hospitals, and support centers ready to help</p>
+                
+                {/* Interactive Map Placeholder */}
+                <div className="relative h-80 bg-gray-200 rounded-lg overflow-hidden shadow-lg">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d233668.38703692693!2d90.25487837759632!3d23.78097572377912!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b8b087026b81%3A0x8fa563bbdd5904c2!2sDhaka!5e0!3m2!1sen!2sbd!4v1640000000000!5m2!1sen!2sbd"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    className="absolute inset-0"
+                  ></iframe>
+                  
+                  {/* Map Legend */}
+                  <div className="absolute top-4 right-4 bg-white p-3 rounded-lg shadow-lg z-10">
+                    <h4 className="font-bold text-sm mb-2">Location Types</h4>
+                    <div className="space-y-1 text-xs">
+                      <div className="flex items-center"><div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>Police</div>
+                      <div className="flex items-center"><div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>NGO</div>
+                      <div className="flex items-center"><div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>Hospital</div>
+                      <div className="flex items-center"><div className="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>Support Center</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Help Locations Directory */}
+              <div>
+                <h3 className="text-lg font-bold text-gray-800 mb-4">Available Help Locations ({helpLocations.length})</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {helpLocations.map((location, index) => {
+                    const IconComponent = getLocationIcon(location.type);
+                    const color = getLocationColor(location.type);
+                    
+                    return (
+                      <div 
+                        key={location.id}
+                        className="bg-white border-2 border-gray-200 rounded-xl p-4 hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 animate-fade-in-up"
+                        style={{ animationDelay: `${index * 100}ms` }}
+                      >
+                        <div className="flex items-start space-x-3">
+                          <div className={`p-3 bg-${color}-100 rounded-lg`}>
+                            <IconComponent className={`w-6 h-6 text-${color}-600`} />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-1">
+                              <h4 className="font-bold text-gray-800">{location.name}</h4>
+                              {location.active && (
+                                <span className="flex items-center text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">
+                                  <span className="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></span>
+                                  Active
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-gray-600 capitalize mb-2 font-medium">
+                              {location.type.replace('-', ' ')}
+                            </p>
+                            <p className="text-sm text-gray-600 mb-2 flex items-center">
+                              <MapPin className="w-4 h-4 mr-1" />
+                              {location.address}
+                            </p>
+                            <div className="flex items-center justify-between">
+                              <a 
+                                href={`tel:${location.phone}`}
+                                className="flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium"
+                              >
+                                <Phone className="w-4 h-4 mr-1" />
+                                {location.phone}
+                              </a>
+                              {location.volunteers > 0 && (
+                                <span className="text-xs text-gray-500 flex items-center">
+                                  <UserCheck className="w-4 h-4 mr-1" />
+                                  {location.volunteers} volunteers
+                                </span>
+                              )}
+                            </div>
+                            <button
+                              onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${location.coordinates.lat},${location.coordinates.lng}`, '_blank')}
+                              className={`mt-3 w-full bg-${color}-500 hover:bg-${color}-600 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 flex items-center justify-center`}
+                            >
+                              <Navigation className="w-4 h-4 mr-2" />
+                              Get Directions
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Quick Access Info */}
+              <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-lg">
+                <div className="flex items-start">
+                  <AlertTriangle className="w-5 h-5 text-yellow-600 mr-3 mt-0.5" />
+                  <div>
+                    <h4 className="font-bold text-yellow-800 mb-1">Emergency Quick Access</h4>
+                    <p className="text-sm text-yellow-700">
+                      In case of immediate emergency, call <strong>999</strong> (National Emergency Service) or <strong>10921</strong> (Elder Helpline).
+                      These locations are available for non-emergency support and assistance.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
