@@ -53,14 +53,38 @@ const SOSButton: React.FC<SOSButtonProps> = () => {
 
   if (!isOpen) {
     return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 bg-red-600 hover:bg-red-700 text-white p-4 rounded-full shadow-2xl z-50 transition-all duration-300 hover:scale-110 animate-pulse group relative overflow-hidden"
-        title="SOS - Make a report and get help"
-      >
-        <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-75"></div>
-        <AlertTriangle className="w-8 h-8 relative z-10 group-hover:rotate-12 transition-transform duration-300" />
-      </button>
+      <div className="fixed left-8 bottom-8 z-50 animate-bounce-in">
+        <button
+          onClick={() => setIsOpen(true)}
+          className="relative bg-gradient-to-br from-red-600 via-red-700 to-red-800 hover:from-red-700 hover:via-red-800 hover:to-red-900 text-white shadow-2xl transition-all duration-300 hover:scale-110 group overflow-hidden flex flex-col items-center justify-center gap-2 px-6 py-4 rounded-2xl min-w-[140px]"
+          title="SOS - Make a report and get help"
+        >
+          {/* Animated ping effect */}
+          <div className="absolute inset-0 bg-red-500 rounded-2xl animate-ping opacity-30"></div>
+          
+          {/* Pulsing border */}
+          <div className="absolute inset-0 rounded-2xl border-4 border-yellow-400 animate-pulse"></div>
+          
+          {/* Icon */}
+          <AlertTriangle className="w-10 h-10 relative z-10 group-hover:rotate-12 transition-transform duration-300 animate-wiggle" />
+          
+          {/* Text */}
+          <div className="relative z-10 text-center">
+            <div className="text-2xl font-black tracking-wider">SOS</div>
+            <div className="text-xs font-semibold uppercase tracking-wide bg-yellow-400 text-red-900 px-2 py-0.5 rounded-full mt-1">
+              Emergency
+            </div>
+          </div>
+          
+          {/* Glow effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 via-red-400/20 to-yellow-400/20 rounded-2xl animate-shimmer"></div>
+        </button>
+        
+        {/* Help text */}
+        <div className="mt-2 text-center bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-lg shadow-lg">
+          <p className="text-xs font-bold text-red-600">Click for Help</p>
+        </div>
+      </div>
     );
   }
 
