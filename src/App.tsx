@@ -48,6 +48,7 @@ function App() {
         )}
         
         {activeSection === 'guide' && <UserGuide />}
+        {activeSection === 'gamification' && <GamificationSystem user={user} />}
         {activeSection === 'accessibility' && <AILab />}
         {activeSection === 'volunteer' && <VolunteerSection />}
         {activeSection === 'profile' && <UserProfile user={user} setUser={setUser} />}

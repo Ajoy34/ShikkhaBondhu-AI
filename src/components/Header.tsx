@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, MessageCircle, BookOpen, Users, Heart, Mic, User, TreePine } from 'lucide-react';
+import { Shield, MessageCircle, BookOpen, Users, Heart, Mic, User, TreePine, Trophy } from 'lucide-react';
 
 interface HeaderProps {
   activeSection: string;
@@ -12,6 +12,7 @@ const Header: React.FC<HeaderProps> = ({ activeSection, setActiveSection, setIsC
   const navItems = [
     { id: 'home', label: 'Home', bangla: 'হোম', icon: Shield },
     { id: 'guide', label: 'User Guide', bangla: 'গাইড', icon: BookOpen },
+    { id: 'gamification', label: 'Gamification', bangla: 'গেমিফিকেশন', icon: Trophy },
     { id: 'accessibility', label: 'AI Lab', bangla: 'এআই ল্যাব', icon: Heart },
     { id: 'volunteer', label: 'Volunteer', bangla: 'স্বেচ্ছাসেবক', icon: Users },
     { id: 'impact', label: 'Social Impact', bangla: 'সামাজিক প্রভাব', icon: TreePine },
