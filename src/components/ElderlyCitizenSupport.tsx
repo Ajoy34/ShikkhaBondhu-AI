@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import {
-  Heart, Phone, Users, BookOpen, Shield,
+  Heart, Phone, Users, Shield,
   Calendar, MapPin, Clock, Star, Award,
   Headphones, Video, MessageCircle, UserCheck,
-  Stethoscope, Home, Briefcase, Coffee, AlertTriangle
+  Stethoscope, Home, Briefcase, AlertTriangle
 } from 'lucide-react';
 import ReportSystem from './ReportSystem';
 
@@ -13,69 +13,69 @@ const ElderlyCitizenSupport: React.FC = () => {
   const services = [
     {
       id: 1,
-      title: 'ডিজিটাল সাক্ষরতা প্রশিক্ষণ',
-      description: 'বয়স্ক নাগরিকদের জন্য সহজ ভাষায় মোবাইল ও কম্পিউটার ব্যবহার শেখানো',
-      icon: BookOpen,
+      title: 'Elder Disease Support',
+      description: 'Information about common elderly diseases and how to get help from NGOs and government programs',
+      icon: Stethoscope,
       color: 'bg-blue-500',
       participants: 245,
       rating: 4.8,
-      duration: '২ সপ্তাহ',
-      schedule: 'সপ্তাহে ৩ দিন'
+      duration: 'Ongoing',
+      schedule: '24/7 Access'
     },
     {
       id: 2,
-      title: 'স্বাস্থ্য পরামর্শ সেবা',
-      description: 'অভিজ্ঞ ডাক্তারদের সাথে ভিডিও কল বা ফোনে স্বাস্থ্য পরামর্শ',
-      icon: Stethoscope,
+      title: 'Government Healthcare Programs',
+      description: 'Access to free or subsidized healthcare services for elderly citizens from government hospitals and clinics',
+      icon: Shield,
       color: 'bg-green-500',
       participants: 189,
       rating: 4.9,
-      duration: '৩০ মিনিট',
-      schedule: 'যেকোনো সময়'
+      duration: 'Permanent',
+      schedule: 'Anytime'
     },
     {
       id: 3,
-      title: 'সামাজিক যোগাযোগ গ্রুপ',
-      description: 'একাকীত্ব দূর করতে সমমনা বয়স্ক ব্যক্তিদের সাথে যুক্ত হওয়ার সুযোগ',
-      icon: Users,
+      title: 'NGO Support Services',
+      description: 'Connect with NGOs providing elderly care, medical aid, financial assistance, and social support',
+      icon: Heart,
       color: 'bg-purple-500',
       participants: 156,
       rating: 4.7,
-      duration: 'চলমান',
-      schedule: 'দৈনিক'
+      duration: 'Ongoing',
+      schedule: 'Daily'
     },
     {
       id: 4,
-      title: 'আইনি সহায়তা',
-      description: 'সম্পত্তি, পেনশন ও অন্যান্য আইনি বিষয়ে বিনামূল্যে পরামর্শ',
-      icon: Shield,
+      title: 'Pension & Legal Aid',
+      description: 'Information about old age allowance, pension schemes, and free legal consultation services',
+      icon: Briefcase,
       color: 'bg-red-500',
       participants: 98,
       rating: 4.6,
-      duration: '১ ঘন্টা',
-      schedule: 'সপ্তাহে ২ দিন'
+      duration: '1 Hour',
+      schedule: 'Twice a week'
     },
     {
       id: 5,
-      title: 'ঘরোয়া সেবা সহায়তা',
-      description: 'দৈনন্দিন কাজকর্মে সহায়তা ও পরিচর্যা সেবা',
+      title: 'Home Care Services',
+      description: 'Daily care assistance and nursing services provided by government and NGO programs',
       icon: Home,
       color: 'bg-orange-500',
       participants: 67,
       rating: 4.5,
-      duration: 'প্রয়োজন অনুযায়ী',
-      schedule: '২৪/৭'
+      duration: 'As needed',
+      schedule: '24/7'
     },
     {
       id: 6,
-      title: 'বিনোদন ও সংস্কৃতি',
-      description: 'গান, কবিতা, গল্প ও ঐতিহ্যবাহী বিনোদনের আয়োজন',
-      icon: Coffee,
+      title: 'Emergency Medical Response',
+      description: 'Quick access to ambulance services, emergency doctors, and hospitals for elderly emergencies',
+      icon: Phone,
       color: 'bg-yellow-500',
       participants: 134,
       rating: 4.8,
-      duration: '২ ঘন্টা',
-      schedule: 'সপ্তাহে ১ দিন'
+      duration: 'Immediate',
+      schedule: '24/7'
     }
   ];
 
