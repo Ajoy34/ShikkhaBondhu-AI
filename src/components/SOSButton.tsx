@@ -56,7 +56,7 @@ const SOSButton: React.FC<SOSButtonProps> = () => {
       <button
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 right-6 bg-red-600 hover:bg-red-700 text-white p-4 rounded-full shadow-2xl z-50 transition-all duration-300 hover:scale-110 animate-pulse"
-        title="SOS Emergency - বয়স্ক সহায়তা"
+        title="SOS - Make a report and get help"
       >
         <AlertTriangle className="w-8 h-8" />
       </button>
@@ -75,7 +75,7 @@ const SOSButton: React.FC<SOSButtonProps> = () => {
               </div>
               <div>
                 <h2 className="text-2xl font-bold">SOS Emergency</h2>
-                <p className="text-red-100 font-bangla">জরুরি সহায়তা ও বয়স্ক সেবা</p>
+                <p className="text-red-100">Make a report and get help</p>
               </div>
             </div>
             <button
@@ -90,9 +90,9 @@ const SOSButton: React.FC<SOSButtonProps> = () => {
         {/* Tabs */}
         <div className="flex border-b border-gray-200 bg-gray-50">
           {[
-            { id: 'emergency', label: 'জরুরি যোগাযোগ', icon: Phone },
-            { id: 'services', label: 'বয়স্ক সেবা', icon: Heart },
-            { id: 'report', label: 'রিপোর্ট করুন', icon: AlertTriangle }
+            { id: 'emergency', label: 'Emergency Contacts', icon: Phone },
+            { id: 'services', label: 'Elder Services', icon: Heart },
+            { id: 'report', label: 'Make Report', icon: AlertTriangle }
           ].map((tab) => {
             const IconComponent = tab.icon;
             return (
@@ -106,7 +106,7 @@ const SOSButton: React.FC<SOSButtonProps> = () => {
                 }`}
               >
                 <IconComponent className="w-5 h-5" />
-                <span className="font-bangla">{tab.label}</span>
+                <span>{tab.label}</span>
               </button>
             );
           })}
