@@ -182,7 +182,7 @@ const SocialImpactHub: React.FC<SocialImpactHubProps> = ({ user }) => {
             { id: 'campaigns', label: 'প্রচারণা', icon: Target },
             { id: 'issues', label: 'কমিউনিটি সমস্যা', icon: Flag },
             { id: 'collaborations', label: 'সহযোগিতা', icon: Users },
-            { id: 'elder-support', label: 'বয়স্ক সহায়তা', icon: Heart },
+            { id: 'elder-support', label: 'Report and Get Help', icon: Heart },
             { id: 'create', label: 'নতুন তৈরি করুন', icon: Plus }
           ].map((tab) => {
             const IconComponent = tab.icon;
