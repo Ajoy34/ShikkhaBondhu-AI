@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, Shield, Heart, Users, BookOpen, Zap, Sparkles, GraduationCap, Coins, ShieldCheck, TrendingUp, Award, Lock } from 'lucide-react';
+import { MessageCircle, Shield, Heart, Users, BookOpen, Zap, Sparkles, GraduationCap, Coins, ShieldCheck, TrendingUp, Award, Lock, MapPin, Navigation, Phone, Ambulance, Home } from 'lucide-react';
 
 interface HeroProps {
   setIsChatOpen: (open: boolean) => void;
@@ -221,24 +221,24 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen }) => {
                 </div>
                 
                 <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors">
-                  Earn & Succeed
+                  Contribute & Prosper
                 </h3>
                 <p className="font-bangla text-lg font-semibold text-green-600 mb-4">
-                  আয় করুন এবং সফল হন
+                  দেশ ও পরিবারের জন্য অবদান রাখুন
                 </p>
                 
                 <ul className="space-y-3 text-gray-700">
                   <li className="flex items-start">
                     <TrendingUp className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span><strong>Freelancing Guide:</strong> Learn how to earn online from home</span>
+                    <span><strong>Economic Growth:</strong> Build skills that strengthen our national economy</span>
                   </li>
                   <li className="flex items-start">
                     <Award className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span><strong>Career Guidance:</strong> Get advice on jobs and career paths</span>
+                    <span><strong>Family Welfare:</strong> Learn sustainable ways to support your loved ones</span>
                   </li>
                   <li className="flex items-start">
                     <Users className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span><strong>Opportunities:</strong> Connect with employers and internships</span>
+                    <span><strong>Career Development:</strong> Connect with opportunities that serve society</span>
                   </li>
                 </ul>
 
@@ -246,7 +246,7 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen }) => {
                   onClick={() => setIsChatOpen(true)}
                   className="mt-6 w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-xl"
                 >
-                  Explore Opportunities
+                  Build Your Future
                 </button>
               </div>
             </div>
@@ -288,6 +288,134 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen }) => {
                 >
                   Get Help Now
                 </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Emergency Help Locations Map Section */}
+          <div className="mt-16 bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-red-200 transform hover:scale-[1.02] transition-all duration-500">
+            <div className="bg-gradient-to-r from-red-500 via-orange-500 to-red-600 p-6 text-white">
+              <div className="flex items-center justify-center space-x-3 mb-2">
+                <MapPin className="w-8 h-8 animate-bounce" />
+                <h2 className="text-3xl font-bold">Emergency Help Near You</h2>
+                <MapPin className="w-8 h-8 animate-bounce" />
+              </div>
+              <p className="text-center text-white/90 font-bangla text-lg">
+                জরুরী সহায়তা কেন্দ্র - আপনার আশেপাশে
+              </p>
+              <p className="text-center text-sm text-white/80 mt-2">
+                Find police stations, hospitals, NGOs, and support centers across Dhaka
+              </p>
+            </div>
+
+            <div className="p-6">
+              {/* Map */}
+              <div className="relative h-96 bg-gray-200 rounded-xl overflow-hidden shadow-lg mb-6">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d233668.38703692693!2d90.25487837759632!3d23.78097572377912!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b8b087026b81%3A0x8fa563bbdd5904c2!2sDhaka!5e0!3m2!1sen!2sbd!4v1640000000000!5m2!1sen!2sbd"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="absolute inset-0"
+                ></iframe>
+                
+                {/* Map Legend */}
+                <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm p-4 rounded-xl shadow-xl z-10 border-2 border-gray-200">
+                  <h4 className="font-bold text-sm mb-3 text-gray-800">Help Location Types</h4>
+                  <div className="space-y-2 text-xs">
+                    <div className="flex items-center">
+                      <Shield className="w-4 h-4 text-blue-600 mr-2" />
+                      <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                      <span className="font-medium">Police Stations (9)</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Heart className="w-4 h-4 text-green-600 mr-2" />
+                      <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                      <span className="font-medium">NGO Support (3)</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Ambulance className="w-4 h-4 text-red-600 mr-2" />
+                      <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                      <span className="font-medium">Hospitals (2)</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Home className="w-4 h-4 text-purple-600 mr-2" />
+                      <div className="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
+                      <span className="font-medium">Support Centers (1)</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Stats */}
+                <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm px-4 py-3 rounded-xl shadow-xl z-10 border-2 border-green-200">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="font-bold text-green-700 text-sm">15 Active Locations</span>
+                  </div>
+                  <p className="text-xs text-gray-600 mt-1">89 Volunteers Available</p>
+                </div>
+              </div>
+
+              {/* Quick Info Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border-2 border-blue-200 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                  <div className="flex items-center space-x-3 mb-2">
+                    <div className="bg-blue-500 p-2 rounded-lg">
+                      <Shield className="w-5 h-5 text-white" />
+                    </div>
+                    <h4 className="font-bold text-blue-900">Police Support</h4>
+                  </div>
+                  <p className="text-sm text-blue-700">9 police stations ready to help 24/7</p>
+                  <div className="mt-3 flex items-center text-xs text-blue-600">
+                    <Phone className="w-3 h-3 mr-1" />
+                    <span className="font-semibold">Call 999 for emergency</span>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-red-50 to-red-100 p-4 rounded-xl border-2 border-red-200 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                  <div className="flex items-center space-x-3 mb-2">
+                    <div className="bg-red-500 p-2 rounded-lg">
+                      <Ambulance className="w-5 h-5 text-white" />
+                    </div>
+                    <h4 className="font-bold text-red-900">Medical Help</h4>
+                  </div>
+                  <p className="text-sm text-red-700">2 major hospitals with emergency care</p>
+                  <div className="mt-3 flex items-center text-xs text-red-600">
+                    <Phone className="w-3 h-3 mr-1" />
+                    <span className="font-semibold">Available 24/7</span>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl border-2 border-green-200 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                  <div className="flex items-center space-x-3 mb-2">
+                    <div className="bg-green-500 p-2 rounded-lg">
+                      <Heart className="w-5 h-5 text-white" />
+                    </div>
+                    <h4 className="font-bold text-green-900">NGO Support</h4>
+                  </div>
+                  <p className="text-sm text-green-700">3 NGOs providing elder & social care</p>
+                  <div className="mt-3 flex items-center text-xs text-green-600">
+                    <Phone className="w-3 h-3 mr-1" />
+                    <span className="font-semibold">Free counseling available</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* CTA Button */}
+              <div className="mt-6 text-center">
+                <button
+                  className="bg-gradient-to-r from-red-500 via-orange-500 to-red-600 hover:from-red-600 hover:via-orange-600 hover:to-red-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 mx-auto"
+                >
+                  <MapPin className="w-5 h-5" />
+                  <span>View All 15 Help Locations</span>
+                  <Navigation className="w-5 h-5" />
+                </button>
+                <p className="text-xs text-gray-500 mt-3 font-bangla">
+                  সম্পূর্ণ তালিকা দেখতে SOS বাটনে ক্লিক করুন
+                </p>
               </div>
             </div>
           </div>
