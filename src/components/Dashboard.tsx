@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, Users, Share2, MessageCircle, ThumbsUp, Trophy, Star, Menu, X } from 'lucide-react';
+import { TrendingUp, Users, Share2, MessageCircle, ThumbsUp, Trophy, Star, Menu, X, Shield, Search, Code, Video } from 'lucide-react';
 
 interface DashboardProps {
   user: any;
@@ -79,32 +79,6 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
     }
   ];
 
-  const recentActivities = [
-    { action: "স্বাস্থ্য বট এর সাথে চ্যাট করেছেন", time: "২ ঘন্টা আগে", points: 5, icon: "💬" },
-    { action: "প্রোগ্রামিং কোর্স সম্পন্ন করেছেন", time: "১ দিন আগে", points: 50, icon: "🎓" },
-    { action: "কমিউনিটিতে প্রশ্ন করেছেন", time: "২ দিন আগে", points: 10, icon: "❓" },
-    { action: "নিরাপত্তা রিপোর্ট জমা দিয়েছেন", time: "৩ দিন আগে", points: 25, icon: "🚨" },
-    { action: "মেন্টরশিপ প্রোগ্রামে যোগ দিয়েছেন", time: "১ সপ্তাহ আগে", points: 30, icon: "🤝" }
-  ];
-
-  const achievements = [
-    { icon: "💬", title: "প্রথম চ্যাট", desc: "প্রথমবার চ্যাট করেছেন" },
-    { icon: "🤝", title: "সাহায্যকারী", desc: "১০টি প্রশ্নের উত্তর পেয়েছেন" },
-    { icon: "📚", title: "শিক্ষার্থী", desc: "৫টি দক্ষতা কোর্স সম্পন্ন" },
-    { icon: "👥", title: "কমিউনিটি সদস্য", desc: "কমিউনিটিতে যোগ দিয়েছেন" },
-    { icon: "🎓", title: "মেন্টর", desc: "অন্যদের সাহায্য করেছেন" },
-    { icon: "👑", title: "নেতা", desc: "লিডারবোর্ডে টপ ১০" }
-  ];
-
-  const monthlyProgress = [
-    { month: "জানুয়ারি", points: 200 },
-    { month: "ফেব্রুয়ারি", points: 350 },
-    { month: "মার্চ", points: 480 },
-    { month: "এপ্রিল", points: 620 },
-    { month: "মে", points: 750 },
-    { month: "জুন", points: 1250 }
-  ];
-
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Hamburger Menu Button */}
@@ -126,158 +100,121 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
       <div className="container mx-auto px-4 py-6">
         <div className="grid lg:grid-cols-12 gap-6">
           
-          {/* LEFT SIDEBAR - User Profile */}
-          <div className={`lg:col-span-3 space-y-4 fixed lg:relative top-0 left-0 h-full lg:h-auto w-80 lg:w-auto bg-gray-100 lg:bg-transparent z-40 overflow-y-auto lg:overflow-visible transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
-            {/* Profile Card */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-              <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white text-center">
-                <div className="w-24 h-24 bg-white rounded-full mx-auto mb-3 flex items-center justify-center text-4xl">
-                  👤
+          {/* LEFT SIDEBAR - Feature Cards */}
+          <div className={`lg:col-span-3 space-y-4 fixed lg:relative top-0 left-0 h-full lg:h-auto w-80 lg:w-auto bg-gray-100 lg:bg-transparent z-40 overflow-y-auto lg:overflow-visible transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} p-4 lg:p-0`}>
+            
+            {/* AI Chat & Learn */}
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-4 hover:border-blue-400 hover:shadow-xl transition-all duration-300 cursor-pointer">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-md">
+                  <MessageCircle className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-xl font-bold font-bangla">{user.name}</h3>
-                <div className="flex items-center justify-center mt-2 space-x-1">
-                  <Star className="w-4 h-4 fill-yellow-300 text-yellow-300" />
-                  <span className="font-bold">{user.contributionRating}/5</span>
-                </div>
-              </div>
-              
-              <div className="p-4">
-                <p className="text-sm text-gray-600 font-bangla mb-4">
-                  সদস্য হয়েছেন: {user.joinedDate}
-                </p>
-                
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                  <div className="bg-indigo-50 rounded-xl p-3 text-center">
-                    <div className="text-2xl font-bold text-indigo-600">{user.level}</div>
-                    <div className="text-xs text-gray-600 font-bangla">লেভেল</div>
-                  </div>
-                  <div className="bg-green-50 rounded-xl p-3 text-center">
-                    <div className="text-2xl font-bold text-green-600">{user.points}</div>
-                    <div className="text-xs text-gray-600 font-bangla">পয়েন্ট</div>
-                  </div>
-                </div>
-                
-                <div className="bg-purple-50 rounded-xl p-3 text-center mb-4">
-                  <div className="text-2xl font-bold text-purple-600">{user.impactScore}%</div>
-                  <div className="text-xs text-gray-600 font-bangla">প্রভাব স্কোর</div>
-                </div>
-
-                {/* Activity Stats */}
-                <div className="border-t pt-4 space-y-2">
-                  <h4 className="font-bold text-gray-800 font-bangla mb-3">কার্যকলাপের পরিসংখ্যান</h4>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600 font-bangla">মোট চ্যাট</span>
-                    <span className="font-bold text-blue-600">47</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600 font-bangla">সাহায্য নিয়েছেন</span>
-                    <span className="font-bold text-green-600">23</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600 font-bangla">রিপোর্ট করেছেন</span>
-                    <span className="font-bold text-red-600">2</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600 font-bangla">কোর্স সম্পন্ন</span>
-                    <span className="font-bold text-purple-600">8</span>
-                  </div>
-                </div>
-
-                {/* Monthly Progress Chart */}
-                <div className="border-t pt-4 mt-4">
-                  <h4 className="font-bold text-gray-800 font-bangla mb-3">মাসিক অগ্রগতি</h4>
-                  <div className="space-y-2">
-                    {monthlyProgress.map((month, idx) => (
-                      <div key={idx}>
-                        <div className="flex justify-between text-xs mb-1">
-                          <span className="font-bangla">{month.month}</span>
-                          <span className="font-bold">{month.points}</span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full"
-                            style={{ width: `${(month.points / 1250) * 100}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Recent Activities */}
-                <div className="border-t pt-4 mt-4">
-                  <h4 className="font-bold text-gray-800 font-bangla mb-3">সাম্প্রতিক কার্যকলাপ</h4>
-                  <div className="space-y-3">
-                    {recentActivities.map((activity, idx) => (
-                      <div key={idx} className="flex items-start space-x-2">
-                        <span className="text-2xl">{activity.icon}</span>
-                        <div className="flex-1">
-                          <p className="text-xs font-bangla text-gray-700">{activity.action}</p>
-                          <p className="text-xs text-gray-500 font-bangla">{activity.time}</p>
-                        </div>
-                        <span className="text-xs font-bold text-green-600">+{activity.points}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Achievements */}
-                <div className="border-t pt-4 mt-4">
-                  <h4 className="font-bold text-gray-800 font-bangla mb-3">অর্জনসমূহ</h4>
-                  <div className="grid grid-cols-3 gap-2">
-                    {achievements.map((ach, idx) => (
-                      <div key={idx} className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-2 text-center group hover:scale-105 transition-transform cursor-pointer">
-                        <div className="text-2xl mb-1">{ach.icon}</div>
-                        <div className="text-xs font-bold text-gray-700 font-bangla">{ach.title}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Next Level Progress */}
-                <div className="border-t pt-4 mt-4">
-                  <h4 className="font-bold text-gray-800 font-bangla mb-3">পরবর্তী লেভেল</h4>
-                  <div className="text-center mb-2">
-                    <span className="text-sm text-gray-600 font-bangla">Level {user.level}</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
-                    <div className="bg-gradient-to-r from-green-400 to-emerald-500 h-3 rounded-full" style={{ width: '50%' }}></div>
-                  </div>
-                  <p className="text-xs text-center text-gray-600 font-bangla">
-                    পরবর্তী লেভেলের জন্য আরো 250 পয়েন্ট প্রয়োজন
-                  </p>
-                  <p className="text-xs text-center text-gray-500 font-bangla">50 / 300 পয়েন্ট</p>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="border-t pt-4 mt-4">
-                  <h4 className="font-bold text-gray-800 font-bangla mb-3">দ্রুত কাজ</h4>
-                  <div className="space-y-2">
-                    <button 
-                      onClick={() => setActiveSection('profile')}
-                      className="w-full bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg text-sm font-bangla hover:bg-indigo-100 transition-colors"
-                    >
-                      প্রোফাইল আপডেট করুন
-                    </button>
-                    <button 
-                      onClick={() => setIsChatOpen(true)}
-                      className="w-full bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm font-bangla hover:bg-green-100 transition-colors"
-                    >
-                      নতুন কোর্স শুরু করুন
-                    </button>
-                    <button className="w-full bg-purple-50 text-purple-700 px-4 py-2 rounded-lg text-sm font-bangla hover:bg-purple-100 transition-colors">
-                      কমিউনিটিতে যোগ দিন
-                    </button>
-                    <button className="w-full bg-orange-50 text-orange-700 px-4 py-2 rounded-lg text-sm font-bangla hover:bg-orange-100 transition-colors">
-                      মেন্টর হয়ে যান
-                    </button>
-                  </div>
+                <div className="flex-1">
+                  <h4 className="font-bold text-gray-800 text-sm">AI Chat Assistant & Learn</h4>
+                  <p className="text-xs font-bangla text-blue-800">এআই চ্যাট সহায়ক এবং শিখুন</p>
                 </div>
               </div>
+              <p className="text-gray-600 text-xs mb-2">Get instant answers, guidance & quality education 24/7</p>
+              <p className="text-gray-500 text-xs font-bangla mb-3">২৪/৭ তাৎক্ষণিক উত্তর, পরামর্শ এবং শিক্ষা পান</p>
+              <button 
+                onClick={() => {
+                  setSelectedChatbot('general');
+                  setTimeout(() => setIsChatOpen(true), 300);
+                }}
+                className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-2 rounded-xl text-sm font-semibold hover:shadow-lg transition-all"
+              >
+                Try Now
+              </button>
             </div>
-          </div>
 
-          {/* MAIN FEED - Center Content */}
+            {/* Report & SOS */}
+            <div className="bg-gradient-to-br from-red-50 to-orange-50 border-2 border-red-200 rounded-2xl p-4 hover:border-red-400 hover:shadow-xl transition-all duration-300 cursor-pointer">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center shadow-md">
+                  <Shield className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-bold text-gray-800 text-sm">Report, SOS & Emergency Help</h4>
+                  <p className="text-xs font-bangla text-red-800">রিপোর্ট, এসওএস এবং জরুরি সাহায্য</p>
+                </div>
+              </div>
+              <p className="text-gray-600 text-xs mb-2">Report issues, get emergency support & instant help</p>
+              <p className="text-gray-500 text-xs font-bangla mb-3">সমস্যা জানান, জরুরি সহায়তা এবং তাৎক্ষণিক সাহায্য পান</p>
+              <button 
+                onClick={() => setActiveSection('report')}
+                className="w-full bg-gradient-to-r from-red-500 to-orange-500 text-white py-2 rounded-xl text-sm font-semibold hover:shadow-lg transition-all"
+              >
+                Try Now
+              </button>
+            </div>
+
+            {/* Fact Check */}
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-4 hover:border-green-400 hover:shadow-xl transition-all duration-300 cursor-pointer">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-md">
+                  <Search className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-bold text-gray-800 text-sm">Fact Check & Gossip Detector</h4>
+                  <p className="text-xs font-bangla text-green-800">তথ্য যাচাই এবং গুজব শনাক্তকরণ</p>
+                </div>
+              </div>
+              <p className="text-gray-600 text-xs mb-2">Verify news, detect fake information with AI</p>
+              <p className="text-gray-500 text-xs font-bangla mb-3">AI দিয়ে খবর যাচাই করুন, ভুয়া তথ্য শনাক্ত করুন</p>
+              <button 
+                onClick={() => setActiveSection('home')}
+                className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-2 rounded-xl text-sm font-semibold hover:shadow-lg transition-all"
+              >
+                Try Now
+              </button>
+            </div>
+
+            {/* AI Lab */}
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-2xl p-4 hover:border-purple-400 hover:shadow-xl transition-all duration-300 cursor-pointer relative overflow-hidden">
+              <div className="absolute top-2 right-2 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-2 py-1 rounded-full">
+                🚀 Upcoming
+              </div>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-md">
+                  <Code className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-bold text-gray-800 text-sm">AI Lab (Coming Soon)</h4>
+                  <p className="text-xs font-bangla text-purple-800">এআই ল্যাব (শীঘ্রই আসছে)</p>
+                </div>
+              </div>
+              <p className="text-gray-600 text-xs mb-2">Build games, tools & code - Be independent, not dependent</p>
+              <p className="text-gray-500 text-xs font-bangla mb-3">গেম, টুলস তৈরি করুন - নিজে শিখুন, অন্যের উপর নির্ভর করবেন না</p>
+              <button 
+                disabled
+                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-2 rounded-xl text-sm font-semibold opacity-60 cursor-not-allowed"
+              >
+                Try Now
+              </button>
+            </div>
+
+            {/* Create & Earn */}
+            <div className="bg-gradient-to-br from-pink-50 via-rose-50 to-orange-50 border-2 border-pink-200 rounded-2xl p-4 hover:border-pink-400 hover:shadow-xl transition-all duration-300 cursor-pointer">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-orange-500 rounded-xl flex items-center justify-center shadow-md">
+                  <Video className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-bold text-gray-800 text-sm">Create & Earn</h4>
+                  <p className="text-xs font-bangla text-pink-800">তৈরি করুন এবং আয় করুন</p>
+                </div>
+              </div>
+              <p className="text-gray-600 text-xs mb-2">Create courses, books & videos - Earn like Udemy & Kindle</p>
+              <p className="text-gray-500 text-xs font-bangla mb-3">কোর্স, বই এবং ভিডিও তৈরি করুন এবং আয় করুন</p>
+              <button 
+                onClick={() => setActiveSection('home')}
+                className="w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-2 rounded-xl text-sm font-semibold hover:shadow-lg transition-all"
+              >
+                Try Now
+              </button>
+            </div>
+
+          </div>          {/* MAIN FEED - Center Content */}
           <div className="lg:col-span-6 space-y-6">
             
             {/* Welcome Banner with Quick Actions */}
