@@ -479,26 +479,44 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
               </div>
             </div>
 
-            {/* Suggested Connections */}
+            {/* Emergency Helplines */}
             <div className="bg-white rounded-2xl shadow-lg p-4">
-              <h4 className="font-bold text-gray-900 mb-4 font-bangla">সংযুক্ত হন</h4>
+              <h4 className="font-bold text-gray-900 mb-4 font-bangla">জরুরি হেল্পলাইন</h4>
               <div className="space-y-3">
                 {[
-                  { name: "Dr. Nazrul Islam", role: "AI Mentor", mutual: 12 },
-                  { name: "Sara Begum", role: "Community Leader", mutual: 8 },
-                  { name: "Rahim Khan", role: "Web Developer", mutual: 15 }
-                ].map((person, idx) => (
-                  <div key={idx} className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-indigo-400 to-purple-400 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                      {person.name.split(' ').map(n => n[0]).join('')}
+                  { 
+                    name: "Bangladesh Police Helpline", 
+                    nameBn: "বাংলাদেশ পুলিশ হেল্পলাইন",
+                    contact: "999",
+                    icon: "🚓",
+                    color: "from-red-400 to-red-600"
+                  },
+                  { 
+                    name: "UNDP Student Helpline", 
+                    nameBn: "ইউএনডিপি শিক্ষার্থী হেল্পলাইন",
+                    contact: "16263",
+                    icon: "🎓",
+                    color: "from-blue-400 to-blue-600"
+                  },
+                  { 
+                    name: "UNESCO Help Center", 
+                    nameBn: "ইউনেস্কো সহায়তা কেন্দ্র",
+                    contact: "16430",
+                    icon: "🌍",
+                    color: "from-green-400 to-green-600"
+                  }
+                ].map((helpline, idx) => (
+                  <div key={idx} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                    <div className={`w-12 h-12 bg-gradient-to-br ${helpline.color} rounded-full flex items-center justify-center text-2xl shadow-md`}>
+                      {helpline.icon}
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-semibold text-gray-900">{person.name}</p>
-                      <p className="text-xs text-gray-500">{person.role}</p>
-                      <p className="text-xs text-indigo-600">{person.mutual} mutual connections</p>
+                      <p className="text-sm font-bold text-gray-900">{helpline.name}</p>
+                      <p className="text-xs font-bangla text-gray-600">{helpline.nameBn}</p>
+                      <p className="text-xs text-indigo-600 font-semibold mt-1">📞 {helpline.contact}</p>
                     </div>
-                    <button className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-lg text-xs font-semibold hover:bg-indigo-200 transition-colors">
-                      Connect
+                    <button className="bg-green-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-green-600 transition-colors">
+                      Call
                     </button>
                   </div>
                 ))}
