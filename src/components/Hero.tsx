@@ -81,6 +81,16 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
       gradient: "from-pink-500 to-rose-500",
       bgGradient: "from-pink-50 to-rose-50",
       action: () => handleFeatureClick("Create & Earn", "home")
+    },
+    {
+      icon: <BookOpen className="w-8 h-8" />,
+      title: "Library",
+      titleBn: "লাইব্রেরি",
+      description: "Access 5K+ courses, 10K+ books & AI-generated content",
+      descriptionBn: "৫হাজার+ কোর্স, ১০হাজার+ বই এবং এআই কন্টেন্ট অ্যাক্সেস করুন",
+      gradient: "from-amber-500 to-orange-500",
+      bgGradient: "from-amber-50 to-orange-50",
+      action: () => handleFeatureClick("Library", "library")
     }
   ];
 
