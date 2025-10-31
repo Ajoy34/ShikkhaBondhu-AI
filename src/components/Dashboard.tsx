@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, Users, Share2, MessageCircle, ThumbsUp, Trophy, Star, Shield, Search, Code, Video, ChevronLeft, ChevronRight } from 'lucide-react';
+import { TrendingUp, Users, Share2, MessageCircle, ThumbsUp, Trophy, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface DashboardProps {
   user: any;
@@ -81,111 +81,6 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Horizontal Navigation Bar */}
-      <div className="bg-white shadow-md sticky top-0 z-50">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center gap-3 overflow-x-auto py-3 scrollbar-hide">
-            
-            {/* AI Chat & Learn */}
-            <button
-              onClick={() => {
-                setSelectedChatbot('general');
-                setTimeout(() => setIsChatOpen(true), 300);
-              }}
-              className="flex-shrink-0 group"
-            >
-              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl p-3 hover:border-blue-400 hover:shadow-lg transition-all duration-300 min-w-[200px]">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                    <MessageCircle className="w-4 h-4 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <h4 className="font-bold text-gray-800 text-xs leading-tight">AI Chat Assistant & Learn</h4>
-                    <p className="text-[10px] font-bangla text-blue-800">এআই চ্যাট সহায়ক এবং শিখুন</p>
-                  </div>
-                </div>
-              </div>
-            </button>
-
-            {/* Report & SOS */}
-            <button
-              onClick={() => setActiveSection('report')}
-              className="flex-shrink-0 group"
-            >
-              <div className="bg-gradient-to-br from-red-50 to-orange-50 border-2 border-red-200 rounded-xl p-3 hover:border-red-400 hover:shadow-lg transition-all duration-300 min-w-[200px]">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center">
-                    <Shield className="w-4 h-4 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <h4 className="font-bold text-gray-800 text-xs leading-tight">Report, SOS & Emergency Help</h4>
-                    <p className="text-[10px] font-bangla text-red-800">রিপোর্ট, এসওএস এবং জরুরি সাহায্য</p>
-                  </div>
-                </div>
-              </div>
-            </button>
-
-            {/* Fact Check */}
-            <button
-              onClick={() => setActiveSection('home')}
-              className="flex-shrink-0 group"
-            >
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-3 hover:border-green-400 hover:shadow-lg transition-all duration-300 min-w-[200px]">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
-                    <Search className="w-4 h-4 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <h4 className="font-bold text-gray-800 text-xs leading-tight">Fact Check & Gossip Detector</h4>
-                    <p className="text-[10px] font-bangla text-green-800">তথ্য যাচাই এবং গুজব শনাক্তকরণ</p>
-                  </div>
-                </div>
-              </div>
-            </button>
-
-            {/* AI Lab */}
-            <button
-              disabled
-              className="flex-shrink-0 group relative"
-            >
-              <div className="absolute -top-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10">
-                🚀 Upcoming
-              </div>
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-3 hover:border-purple-400 hover:shadow-lg transition-all duration-300 min-w-[200px] opacity-70">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                    <Code className="w-4 h-4 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <h4 className="font-bold text-gray-800 text-xs leading-tight">AI Lab (Coming Soon)</h4>
-                    <p className="text-[10px] font-bangla text-purple-800">এআই ল্যাব (শীঘ্রই আসছে)</p>
-                  </div>
-                </div>
-              </div>
-            </button>
-
-            {/* Create & Earn */}
-            <button
-              onClick={() => setActiveSection('home')}
-              className="flex-shrink-0 group"
-            >
-              <div className="bg-gradient-to-br from-pink-50 via-rose-50 to-orange-50 border-2 border-pink-200 rounded-xl p-3 hover:border-pink-400 hover:shadow-lg transition-all duration-300 min-w-[200px]">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-orange-500 rounded-lg flex items-center justify-center">
-                    <Video className="w-4 h-4 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <h4 className="font-bold text-gray-800 text-xs leading-tight">Create & Earn</h4>
-                    <p className="text-[10px] font-bangla text-pink-800">তৈরি করুন এবং আয় করুন</p>
-                  </div>
-                </div>
-              </div>
-            </button>
-
-          </div>
-        </div>
-      </div>
-
       <div className="container mx-auto px-4 py-6">
         <div className="grid lg:grid-cols-12 gap-6">
           
