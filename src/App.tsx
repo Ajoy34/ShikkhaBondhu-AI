@@ -8,7 +8,6 @@ import UserProfile from './components/UserProfile';
 import SOSButton from './components/SOSButton';
 import ReportSystem from './components/ReportSystem';
 import './styles/fonts.css';
-import ReviewBar from './components/ReviewBar';
 
 function App() {
   const [activeSection, setActiveSection] = useState('home');
@@ -37,8 +36,6 @@ function App() {
       />
       
       <main className="relative">
-        {/* Preview/Review banner (enable with VITE_REVIEW_MODE=1 or add ?review=1 to URL) */}
-        <ReviewBar />
         {/* Before Login: Show Hero */}
         {activeSection === 'home' && !isLoggedIn && (
           <Hero 
