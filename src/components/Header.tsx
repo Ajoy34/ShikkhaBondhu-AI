@@ -1,109 +1,102 @@
 import React from 'react';
-import { Shield, MessageCircle, BookOpen, Users, Heart, Mic, User, TreePine } from 'lucide-react';
+import { Shield, MessageCircle, User, AlertCircle } from 'lucide-react';
 
 interface HeaderProps {
   activeSection: string;
   setActiveSection: (section: string) => void;
   setIsChatOpen: (open: boolean) => void;
   user: any;
+  isLoggedIn: boolean;
+  setIsLoggedIn: (logged: boolean) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ activeSection, setActiveSection, setIsChatOpen, user }) => {
-  const navItems = [
-    { id: 'home', label: 'Home', bangla: 'হোম', icon: Shield },
-    { id: 'guide', label: 'User Guide', bangla: 'গাইড', icon: BookOpen },
-    { id: 'accessibility', label: 'AI Lab', bangla: 'এআই ল্যাব', icon: Heart },
-    { id: 'volunteer', label: 'Volunteer', bangla: 'স্বেচ্ছাসেবক', icon: Users },
-    { id: 'impact', label: 'Social Impact', bangla: 'সামাজিক প্রভাব', icon: TreePine },
-    { id: 'elder-support', label: 'Report & Help', bangla: 'রিপোর্ট ও সাহায্য', icon: Heart },
-  ];
-
+const Header: React.FC<HeaderProps> = ({ 
+  activeSection, 
+  setActiveSection, 
+  setIsChatOpen, 
+  user, 
+  isLoggedIn, 
+  setIsLoggedIn 
+}) => {
   return (
-    <header className="bg-white/95 backdrop-blur-sm shadow-lg sticky top-0 z-50 border-b border-indigo-100">
-      <div className="container mx-auto px-4 py-4">
+    <header className="bg-white/98 backdrop-blur-md shadow-md sticky top-0 z-50 border-b border-gray-200">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <div className="flex items-center space-x-3">
-            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-2 rounded-xl">
-              <Shield className="w-6 h-6 text-white" />
+          <button
+            onClick={() => setActiveSection('home')}
+            className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+          >
+            <div className="bg-gradient-to-br from-indigo-600 to-purple-600 p-2.5 rounded-xl shadow-lg">
+              <Shield className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900 font-inter">ShikkhaBondhu</h1>
-              <p className="text-xs text-indigo-600 font-bangla">শিক্ষা বন্ধু</p>
+              <h1 className="text-2xl font-bold text-gray-900 font-inter">ShikkhaBondhu</h1>
+              <p className="text-xs text-indigo-600 font-bangla -mt-0.5">শিক্ষা বন্ধু</p>
             </div>
-          </div>
+          </button>
 
-          {/* Navigation */}
-          <nav className="hidden md:flex items-center space-x-1">
-            {navItems.map((item) => {
-              const IconComponent = item.icon;
-              return (
+          {/* Right Side Actions */}
+          <div className="flex items-center space-x-3">
+            {isLoggedIn ? (
+              <>
+                {/* Chat Button */}
                 <button
-                  key={item.id}
-                  onClick={() => setActiveSection(item.id)}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
-                    activeSection === item.id
-                      ? 'bg-indigo-100 text-indigo-700 shadow-sm'
-                      : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50'
+                  onClick={() => setIsChatOpen(true)}
+                  className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2.5 rounded-xl hover:bg-indigo-700 transition-all duration-200 shadow-md hover:shadow-lg"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  <span className="hidden sm:block text-sm font-medium">Chat</span>
+                </button>
+
+                {/* Report Button */}
+                <button
+                  onClick={() => setActiveSection('report')}
+                  className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg ${
+                    activeSection === 'report'
+                      ? 'bg-red-600 text-white'
+                      : 'bg-red-50 text-red-700 hover:bg-red-100'
                   }`}
                 >
-                  <IconComponent className="w-4 h-4" />
-                  <span className="font-medium text-sm">{item.label}</span>
-                  <span className="text-xs font-bangla text-gray-500">({item.bangla})</span>
+                  <AlertCircle className="w-5 h-5" />
+                  <span className="hidden sm:block text-sm font-medium font-bangla">রিপোর্ট</span>
                 </button>
-              );
-            })}
-          </nav>
 
-          {/* Action Buttons */}
-          <div className="flex items-center space-x-2">
-            {/* User Profile Button */}
-            <button
-              onClick={() => setActiveSection('profile')}
-              className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors shadow-md"
-            >
-              <User className="w-4 h-4" />
-              <div className="hidden sm:block text-left">
-                <div className="text-xs font-medium">{user.name}</div>
-                <div className="text-xs opacity-80">Level {user.level}</div>
-              </div>
-            </button>
-            
-            <button
-              onClick={() => setIsChatOpen(true)}
-              className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors shadow-md"
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span className="hidden sm:block text-sm font-medium">Chat</span>
-            </button>
-            
-            <button className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors shadow-md">
-              <Mic className="w-4 h-4" />
-              <span className="hidden sm:block text-sm font-medium">Voice</span>
-            </button>
+                {/* Profile Button */}
+                <button
+                  onClick={() => setActiveSection('profile')}
+                  className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg ${
+                    activeSection === 'profile'
+                      ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white'
+                      : 'bg-green-50 text-green-700 hover:bg-green-100'
+                  }`}
+                >
+                  <User className="w-5 h-5" />
+                  <div className="hidden md:block text-left">
+                    <div className="text-xs font-medium leading-tight">{user.name}</div>
+                    <div className="text-xs opacity-90">⭐ {user.contributionRating}/5</div>
+                  </div>
+                </button>
+              </>
+            ) : (
+              <>
+                {/* Sign In / Sign Up Buttons */}
+                <button
+                  onClick={() => setIsLoggedIn(true)}
+                  className="px-5 py-2.5 text-indigo-600 font-semibold hover:bg-indigo-50 rounded-xl transition-all duration-200"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => setIsLoggedIn(true)}
+                  className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg"
+                >
+                  Sign Up
+                </button>
+              </>
+            )}
           </div>
         </div>
-
-        {/* Mobile Navigation */}
-        <nav className="md:hidden mt-4 flex space-x-1 overflow-x-auto">
-          {navItems.map((item) => {
-            const IconComponent = item.icon;
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActiveSection(item.id)}
-                className={`flex items-center space-x-1 px-3 py-2 rounded-lg whitespace-nowrap transition-all ${
-                  activeSection === item.id
-                    ? 'bg-indigo-100 text-indigo-700'
-                    : 'text-gray-600 hover:text-indigo-600'
-                }`}
-              >
-                <IconComponent className="w-4 h-4" />
-                <span className="text-xs font-bangla">{item.bangla}</span>
-              </button>
-            );
-          })}
-        </nav>
       </div>
     </header>
   );

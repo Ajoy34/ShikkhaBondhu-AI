@@ -39,6 +39,16 @@ npm run build
 
 Output will be in the `dist` folder.
 
+## 🧪 Preview & Feedback (Before Publish)
+
+Want to review changes and collect feedback before going live?
+
+- Start local dev and open with `?review=1` (shows a yellow Preview banner)
+- Click "Give Feedback" to save notes locally and "Export" to download JSON
+- Works in local dev and Vercel Preview deployments
+
+See the full guide: [PREVIEW.md](./PREVIEW.md)
+
 ## 🌐 Deploy (FREE 24/7 Hosting)
 
 See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for complete step-by-step guides for:
