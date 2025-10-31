@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, Users, Share2, MessageCircle, ThumbsUp, Trophy, Star, Menu, X, Shield, Search, Code, Video, ChevronLeft, ChevronRight } from 'lucide-react';
+import { TrendingUp, Users, Share2, MessageCircle, ThumbsUp, Trophy, Star, Shield, Search, Code, Video, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface DashboardProps {
   user: any;
@@ -9,7 +9,6 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedChatbot, setActiveSection }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [currentCourseIndex, setCurrentCourseIndex] = useState(0);
   const topCourses = [
     {
@@ -82,159 +81,122 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Hamburger Menu Button */}
-      <button
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="fixed top-4 left-4 z-50 bg-white p-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 lg:hidden"
-      >
-        {isSidebarOpen ? <X className="w-6 h-6 text-gray-700" /> : <Menu className="w-6 h-6 text-gray-700" />}
-      </button>
+      {/* Horizontal Navigation Bar */}
+      <div className="bg-white shadow-md sticky top-0 z-50">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center gap-3 overflow-x-auto py-3 scrollbar-hide">
+            
+            {/* AI Chat & Learn */}
+            <button
+              onClick={() => {
+                setSelectedChatbot('general');
+                setTimeout(() => setIsChatOpen(true), 300);
+              }}
+              className="flex-shrink-0 group"
+            >
+              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl p-3 hover:border-blue-400 hover:shadow-lg transition-all duration-300 min-w-[200px]">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
+                    <MessageCircle className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <h4 className="font-bold text-gray-800 text-xs leading-tight">AI Chat Assistant & Learn</h4>
+                    <p className="text-[10px] font-bangla text-blue-800">এআই চ্যাট সহায়ক এবং শিখুন</p>
+                  </div>
+                </div>
+              </div>
+            </button>
 
-      {/* Sidebar Overlay for Mobile */}
-      {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
+            {/* Report & SOS */}
+            <button
+              onClick={() => setActiveSection('report')}
+              className="flex-shrink-0 group"
+            >
+              <div className="bg-gradient-to-br from-red-50 to-orange-50 border-2 border-red-200 rounded-xl p-3 hover:border-red-400 hover:shadow-lg transition-all duration-300 min-w-[200px]">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center">
+                    <Shield className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <h4 className="font-bold text-gray-800 text-xs leading-tight">Report, SOS & Emergency Help</h4>
+                    <p className="text-[10px] font-bangla text-red-800">রিপোর্ট, এসওএস এবং জরুরি সাহায্য</p>
+                  </div>
+                </div>
+              </div>
+            </button>
+
+            {/* Fact Check */}
+            <button
+              onClick={() => setActiveSection('home')}
+              className="flex-shrink-0 group"
+            >
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-3 hover:border-green-400 hover:shadow-lg transition-all duration-300 min-w-[200px]">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                    <Search className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <h4 className="font-bold text-gray-800 text-xs leading-tight">Fact Check & Gossip Detector</h4>
+                    <p className="text-[10px] font-bangla text-green-800">তথ্য যাচাই এবং গুজব শনাক্তকরণ</p>
+                  </div>
+                </div>
+              </div>
+            </button>
+
+            {/* AI Lab */}
+            <button
+              disabled
+              className="flex-shrink-0 group relative"
+            >
+              <div className="absolute -top-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-[10px] font-bold px-2 py-0.5 rounded-full z-10">
+                🚀 Upcoming
+              </div>
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-3 hover:border-purple-400 hover:shadow-lg transition-all duration-300 min-w-[200px] opacity-70">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                    <Code className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <h4 className="font-bold text-gray-800 text-xs leading-tight">AI Lab (Coming Soon)</h4>
+                    <p className="text-[10px] font-bangla text-purple-800">এআই ল্যাব (শীঘ্রই আসছে)</p>
+                  </div>
+                </div>
+              </div>
+            </button>
+
+            {/* Create & Earn */}
+            <button
+              onClick={() => setActiveSection('home')}
+              className="flex-shrink-0 group"
+            >
+              <div className="bg-gradient-to-br from-pink-50 via-rose-50 to-orange-50 border-2 border-pink-200 rounded-xl p-3 hover:border-pink-400 hover:shadow-lg transition-all duration-300 min-w-[200px]">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-orange-500 rounded-lg flex items-center justify-center">
+                    <Video className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <h4 className="font-bold text-gray-800 text-xs leading-tight">Create & Earn</h4>
+                    <p className="text-[10px] font-bangla text-pink-800">তৈরি করুন এবং আয় করুন</p>
+                  </div>
+                </div>
+              </div>
+            </button>
+
+          </div>
+        </div>
+      </div>
 
       <div className="container mx-auto px-4 py-6">
         <div className="grid lg:grid-cols-12 gap-6">
           
-          {/* LEFT SIDEBAR - Feature Cards */}
-          <div className={`lg:col-span-3 space-y-4 fixed lg:relative top-0 left-0 h-full lg:h-auto w-80 lg:w-auto bg-gray-100 lg:bg-transparent z-40 overflow-y-auto lg:overflow-visible transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} p-4 lg:p-0`}>
-            
-            {/* AI Chat & Learn */}
-            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-4 hover:border-blue-400 hover:shadow-xl transition-all duration-300 cursor-pointer">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-md">
-                  <MessageCircle className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-bold text-gray-800 text-sm">AI Chat Assistant & Learn</h4>
-                  <p className="text-xs font-bangla text-blue-800">এআই চ্যাট সহায়ক এবং শিখুন</p>
-                </div>
-              </div>
-              <p className="text-gray-600 text-xs mb-2">Get instant answers, guidance & quality education 24/7</p>
-              <p className="text-gray-500 text-xs font-bangla mb-3">২৪/৭ তাৎক্ষণিক উত্তর, পরামর্শ এবং শিক্ষা পান</p>
-              <button 
-                onClick={() => {
-                  setSelectedChatbot('general');
-                  setTimeout(() => setIsChatOpen(true), 300);
-                }}
-                className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-2 rounded-xl text-sm font-semibold hover:shadow-lg transition-all"
-              >
-                Try Now
-              </button>
-            </div>
-
-            {/* Report & SOS */}
-            <div className="bg-gradient-to-br from-red-50 to-orange-50 border-2 border-red-200 rounded-2xl p-4 hover:border-red-400 hover:shadow-xl transition-all duration-300 cursor-pointer">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center shadow-md">
-                  <Shield className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-bold text-gray-800 text-sm">Report, SOS & Emergency Help</h4>
-                  <p className="text-xs font-bangla text-red-800">রিপোর্ট, এসওএস এবং জরুরি সাহায্য</p>
-                </div>
-              </div>
-              <p className="text-gray-600 text-xs mb-2">Report issues, get emergency support & instant help</p>
-              <p className="text-gray-500 text-xs font-bangla mb-3">সমস্যা জানান, জরুরি সহায়তা এবং তাৎক্ষণিক সাহায্য পান</p>
-              <button 
-                onClick={() => setActiveSection('report')}
-                className="w-full bg-gradient-to-r from-red-500 to-orange-500 text-white py-2 rounded-xl text-sm font-semibold hover:shadow-lg transition-all"
-              >
-                Try Now
-              </button>
-            </div>
-
-            {/* Fact Check */}
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-4 hover:border-green-400 hover:shadow-xl transition-all duration-300 cursor-pointer">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-md">
-                  <Search className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-bold text-gray-800 text-sm">Fact Check & Gossip Detector</h4>
-                  <p className="text-xs font-bangla text-green-800">তথ্য যাচাই এবং গুজব শনাক্তকরণ</p>
-                </div>
-              </div>
-              <p className="text-gray-600 text-xs mb-2">Verify news, detect fake information with AI</p>
-              <p className="text-gray-500 text-xs font-bangla mb-3">AI দিয়ে খবর যাচাই করুন, ভুয়া তথ্য শনাক্ত করুন</p>
-              <button 
-                onClick={() => setActiveSection('home')}
-                className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-2 rounded-xl text-sm font-semibold hover:shadow-lg transition-all"
-              >
-                Try Now
-              </button>
-            </div>
-
-            {/* AI Lab */}
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-2xl p-4 hover:border-purple-400 hover:shadow-xl transition-all duration-300 cursor-pointer relative overflow-hidden">
-              <div className="absolute top-2 right-2 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-2 py-1 rounded-full">
-                🚀 Upcoming
-              </div>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-md">
-                  <Code className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-bold text-gray-800 text-sm">AI Lab (Coming Soon)</h4>
-                  <p className="text-xs font-bangla text-purple-800">এআই ল্যাব (শীঘ্রই আসছে)</p>
-                </div>
-              </div>
-              <p className="text-gray-600 text-xs mb-2">Build games, tools & code - Be independent, not dependent</p>
-              <p className="text-gray-500 text-xs font-bangla mb-3">গেম, টুলস তৈরি করুন - নিজে শিখুন, অন্যের উপর নির্ভর করবেন না</p>
-              <button 
-                disabled
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-2 rounded-xl text-sm font-semibold opacity-60 cursor-not-allowed"
-              >
-                Try Now
-              </button>
-            </div>
-
-            {/* Create & Earn */}
-            <div className="bg-gradient-to-br from-pink-50 via-rose-50 to-orange-50 border-2 border-pink-200 rounded-2xl p-4 hover:border-pink-400 hover:shadow-xl transition-all duration-300 cursor-pointer">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-orange-500 rounded-xl flex items-center justify-center shadow-md">
-                  <Video className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-bold text-gray-800 text-sm">Create & Earn</h4>
-                  <p className="text-xs font-bangla text-pink-800">তৈরি করুন এবং আয় করুন</p>
-                </div>
-              </div>
-              <p className="text-gray-600 text-xs mb-2">Create courses, books & videos - Earn like Udemy & Kindle</p>
-              <p className="text-gray-500 text-xs font-bangla mb-3">কোর্স, বই এবং ভিডিও তৈরি করুন এবং আয় করুন</p>
-              <button 
-                onClick={() => setActiveSection('home')}
-                className="w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-2 rounded-xl text-sm font-semibold hover:shadow-lg transition-all"
-              >
-                Try Now
-              </button>
-            </div>
-
-          </div>          {/* MAIN FEED - Center Content */}
-          <div className="lg:col-span-6 space-y-6">
+          {/* MAIN FEED - Center Content */}
+          <div className="lg:col-span-8 space-y-6">
             
             {/* Welcome Banner with Quick Actions */}
             <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl p-6 text-white shadow-xl">
               <h2 className="text-2xl font-bold mb-2">Ready to Make a Difference?</h2>
               <p className="text-indigo-100 mb-4 font-bangla">আজ কি করতে চান?</p>
               <div className="flex flex-wrap gap-3">
-                <button
-                  onClick={() => setIsChatOpen(true)}
-                  className="bg-white text-indigo-600 px-6 py-2 rounded-xl font-semibold hover:bg-gray-100 transition-all transform hover:scale-105 shadow-lg"
-                >
-                  🎓 Start Learning
-                </button>
-                <button 
-                  onClick={() => setActiveSection('report')}
-                  className="bg-white/20 backdrop-blur-sm text-white px-6 py-2 rounded-xl font-semibold hover:bg-white/30 transition-all transform hover:scale-105"
-                >
-                  📢 Create Campaign
-                </button>
                 <button className="bg-white/20 backdrop-blur-sm text-white px-6 py-2 rounded-xl font-semibold hover:bg-white/30 transition-all transform hover:scale-105">
                   🔍 Verify News
                 </button>
@@ -442,7 +404,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
           </div>
 
           {/* RIGHT SIDEBAR - Suggestions & Trending */}
-          <div className="lg:col-span-3 space-y-4">
+          <div className="lg:col-span-4 space-y-4">
             
             {/* Leaderboard */}
             <div className="bg-white rounded-2xl shadow-lg p-4">

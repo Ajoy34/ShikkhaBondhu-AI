@@ -153,6 +153,7 @@
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -168,3 +169,12 @@
   background: linear-gradient(to bottom, #4f46e5, #9333ea);
 }
 
+/* Hide scrollbar for horizontal nav */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
