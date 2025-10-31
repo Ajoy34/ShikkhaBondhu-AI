@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { MessageCircle, Shield, AlertTriangle, Bot, Sparkles, BookOpen, Users, Heart, TrendingUp, Zap, Lock } from 'lucide-react';
+import { MessageCircle, Shield, AlertTriangle, Bot, Sparkles, BookOpen, Code, TrendingUp, Zap, Lock, Video } from 'lucide-react';
 
 interface HeroProps {
   setIsChatOpen: (open: boolean) => void;
@@ -64,24 +64,25 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
       action: () => handleFeatureClick("Learn & Grow")
     },
     {
-      icon: <Users className="w-8 h-8" />,
-      title: "Community Support",
-      titleBn: "কমিউনিটি সহায়তা",
-      description: "Connect with volunteers and helpers",
-      descriptionBn: "স্বেচ্ছাসেবক এবং সাহায্যকারীদের সাথে যুক্ত হন",
+      icon: <Code className="w-8 h-8" />,
+      title: "AI Lab (Coming Soon)",
+      titleBn: "এআই ল্যাব (শীঘ্রই আসছে)",
+      description: "Build games, tools & code - Be independent, not dependent",
+      descriptionBn: "গেম, টুলস তৈরি করুন - নিজে শিখুন, অন্যের উপর নির্ভর করবেন না",
       gradient: "from-purple-500 to-indigo-500",
       bgGradient: "from-purple-50 to-indigo-50",
-      action: () => handleFeatureClick("Community Support")
+      badge: "🚀 Upcoming",
+      action: () => handleFeatureClick("AI Lab")
     },
     {
-      icon: <Heart className="w-8 h-8" />,
-      title: "Elder Care",
-      titleBn: "বয়স্ক সেবা",
-      description: "Special support for elderly citizens",
-      descriptionBn: "বয়স্ক নাগরিকদের জন্য বিশেষ সহায়তা",
+      icon: <Video className="w-8 h-8" />,
+      title: "Create & Earn",
+      titleBn: "তৈরি করুন এবং আয় করুন",
+      description: "Create courses, books & videos - Earn like Udemy & Kindle",
+      descriptionBn: "কোর্স, বই এবং ভিডিও তৈরি করুন এবং আয় করুন",
       gradient: "from-pink-500 to-rose-500",
       bgGradient: "from-pink-50 to-rose-50",
-      action: () => handleFeatureClick("Elder Care")
+      action: () => handleFeatureClick("Create & Earn")
     }
   ];
 
@@ -167,6 +168,13 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300`}></div>
                 
+                {/* Badge for upcoming features */}
+                {feature.badge && (
+                  <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">
+                    {feature.badge}
+                  </div>
+                )}
+                
                 <div className="relative">
                   <div className={`w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-xl flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                     {feature.icon}
@@ -226,9 +234,33 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
                 এই ফিচার ব্যবহার করতে সাইন আপ করুন
               </p>
               
-              <p className="text-gray-600 mb-6">
-                Sign up now to access all features including AI chat, emergency support, reporting, and community help!
-              </p>
+              {selectedFeature === "AI Lab" ? (
+                <div className="text-left bg-purple-50 rounded-xl p-4 mb-4">
+                  <p className="text-sm text-gray-700 mb-2 font-semibold">🚀 AI Lab Features:</p>
+                  <ul className="text-xs text-gray-600 space-y-1">
+                    <li>✓ Build games & tools without dependency</li>
+                    <li>✓ Step-by-step coding guidance</li>
+                    <li>✓ Interactive learning chat system</li>
+                    <li>✓ Video tutorials & implementation guides</li>
+                    <li className="font-bangla text-indigo-600">নিজে তৈরি করুন, অন্যের উপর নির্ভর করবেন না!</li>
+                  </ul>
+                </div>
+              ) : selectedFeature === "Create & Earn" ? (
+                <div className="text-left bg-pink-50 rounded-xl p-4 mb-4">
+                  <p className="text-sm text-gray-700 mb-2 font-semibold">💰 Create & Earn Features:</p>
+                  <ul className="text-xs text-gray-600 space-y-1">
+                    <li>✓ Create video courses (like Udemy)</li>
+                    <li>✓ Publish digital books (like Kindle)</li>
+                    <li>✓ Build your own course library</li>
+                    <li>✓ Earn from your content</li>
+                    <li className="font-bangla text-pink-600">কোর্স ও বই তৈরি করে আয় করুন!</li>
+                  </ul>
+                </div>
+              ) : (
+                <p className="text-gray-600 mb-6">
+                  Sign up now to access all features including AI chat, emergency support, reporting, and community help!
+                </p>
+              )}
               
               <div className="space-y-3">
                 <button
