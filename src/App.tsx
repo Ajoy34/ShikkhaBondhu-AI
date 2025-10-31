@@ -7,6 +7,7 @@ import VoiceAssistant from './components/VoiceAssistant';
 import UserProfile from './components/UserProfile';
 import SOSButton from './components/SOSButton';
 import ReportSystem from './components/ReportSystem';
+import Library from './components/Library';
 import './styles/fonts.css';
 
 function App() {
@@ -57,6 +58,7 @@ function App() {
         )}
         
         {activeSection === 'profile' && <UserProfile user={user} setUser={setUser} />}
+        {activeSection === 'library' && <Library user={user} />}
         {activeSection === 'report' && <ReportSystem />}
         
         <ChatSystem

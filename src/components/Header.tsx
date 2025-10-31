@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, User, MessageCircle, Search, Code, Video } from 'lucide-react';
+import { Shield, User, MessageCircle, Search, Code, Video, BookOpen } from 'lucide-react';
 
 interface HeaderProps {
   activeSection: string;
@@ -90,6 +90,15 @@ const Header: React.FC<HeaderProps> = ({
               >
                 <Video className="w-4 h-4 text-pink-600" />
                 <span className="text-xs font-semibold text-pink-700">Create & Earn</span>
+              </button>
+
+              {/* Library */}
+              <button
+                onClick={() => setActiveSection('library')}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-colors"
+              >
+                <BookOpen className="w-4 h-4 text-amber-600" />
+                <span className="text-xs font-semibold text-amber-700">Library</span>
               </button>
             </div>
           )}
