@@ -100,6 +100,15 @@ const Header: React.FC<HeaderProps> = ({
                 <BookOpen className="w-4 h-4 text-amber-600" />
                 <span className="text-xs font-semibold text-amber-700">Library</span>
               </button>
+
+              {/* Bangladeshi E-Course & Book Library */}
+              <button
+                onClick={() => setActiveSection('home')}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-orange-50 hover:bg-orange-100 border border-orange-200 transition-colors"
+              >
+                <BookOpen className="w-4 h-4 text-orange-600" />
+                <span className="text-xs font-semibold text-orange-700">BD Library</span>
+              </button>
             </div>
           )}
 
