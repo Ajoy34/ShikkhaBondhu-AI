@@ -1,5 +1,5 @@
 import React from 'react';
-import { TrendingUp, Users, Share2, MessageCircle, ThumbsUp, Trophy, Star } from 'lucide-react';
+import { TrendingUp, Users, Share2, MessageCircle, ThumbsUp, Trophy, Star, Shield, Search, Code, Video, Sparkles } from 'lucide-react';
 
 interface DashboardProps {
   user: any;
@@ -283,6 +283,123 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                 <button className="bg-white/20 backdrop-blur-sm text-white px-6 py-2 rounded-xl font-semibold hover:bg-white/30 transition-all transform hover:scale-105">
                   🔍 Verify News
                 </button>
+              </div>
+            </div>
+
+            {/* Feature Cards Grid */}
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                <Sparkles className="w-6 h-6 mr-2 text-indigo-600" />
+                Explore Features
+                <span className="ml-2 font-bangla text-lg text-gray-600">ফিচার সমূহ</span>
+              </h3>
+              
+              <div className="grid md:grid-cols-2 gap-4">
+                {/* AI Chat Assistant */}
+                <div className="group relative bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-gray-200 rounded-xl p-5 cursor-pointer hover:border-blue-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-cyan-500 opacity-0 group-hover:opacity-10 rounded-xl transition-opacity duration-300"></div>
+                  <div className="relative">
+                    <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center text-white mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                      <MessageCircle className="w-7 h-7" />
+                    </div>
+                    <h4 className="text-lg font-bold text-gray-900 mb-1">AI Chat Assistant & Learn</h4>
+                    <p className="text-sm font-bangla text-blue-600 font-semibold mb-2">এআই চ্যাট সহায়ক এবং শিখুন</p>
+                    <p className="text-gray-600 text-xs mb-1">Get instant answers, guidance & quality education 24/7</p>
+                    <p className="text-gray-500 text-xs font-bangla mb-3">২৪/৭ তাৎক্ষণিক উত্তর, পরামর্শ এবং শিক্ষা পান</p>
+                    <button 
+                      onClick={() => setIsChatOpen(true)}
+                      className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"
+                    >
+                      Try Now
+                    </button>
+                  </div>
+                </div>
+
+                {/* Report SOS */}
+                <div className="group relative bg-gradient-to-br from-red-50 to-orange-50 border-2 border-gray-200 rounded-xl p-5 cursor-pointer hover:border-red-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-500 to-orange-500 opacity-0 group-hover:opacity-10 rounded-xl transition-opacity duration-300"></div>
+                  <div className="relative">
+                    <div className="w-14 h-14 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center text-white mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                      <Shield className="w-7 h-7" />
+                    </div>
+                    <h4 className="text-lg font-bold text-gray-900 mb-1">Report, SOS & Emergency Help</h4>
+                    <p className="text-sm font-bangla text-red-600 font-semibold mb-2">রিপোর্ট, এসওএস এবং জরুরি সাহায্য</p>
+                    <p className="text-gray-600 text-xs mb-1">Report issues, get emergency support & instant help</p>
+                    <p className="text-gray-500 text-xs font-bangla mb-3">সমস্যা জানান, জরুরি সহায়তা এবং তাৎক্ষণিক সাহায্য পান</p>
+                    <button 
+                      onClick={() => setActiveSection('report')}
+                      className="w-full bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors"
+                    >
+                      Try Now
+                    </button>
+                  </div>
+                </div>
+
+                {/* Fact Check */}
+                <div className="group relative bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-gray-200 rounded-xl p-5 cursor-pointer hover:border-green-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-emerald-500 opacity-0 group-hover:opacity-10 rounded-xl transition-opacity duration-300"></div>
+                  <div className="relative">
+                    <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center text-white mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                      <Search className="w-7 h-7" />
+                    </div>
+                    <h4 className="text-lg font-bold text-gray-900 mb-1">Fact Check & Gossip Detector</h4>
+                    <p className="text-sm font-bangla text-green-600 font-semibold mb-2">তথ্য যাচাই এবং গুজব শনাক্তকরণ</p>
+                    <p className="text-gray-600 text-xs mb-1">Verify news, detect fake information with AI</p>
+                    <p className="text-gray-500 text-xs font-bangla mb-3">AI দিয়ে খবর যাচাই করুন, ভুয়া তথ্য শনাক্ত করুন</p>
+                    <button className="w-full bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors">
+                      Try Now
+                    </button>
+                  </div>
+                </div>
+
+                {/* AI Lab */}
+                <div className="group relative bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-gray-200 rounded-xl p-5 cursor-pointer hover:border-purple-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                  <div className="absolute top-3 right-3 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">
+                    🚀 Upcoming
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-indigo-500 opacity-0 group-hover:opacity-10 rounded-xl transition-opacity duration-300"></div>
+                  <div className="relative">
+                    <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center text-white mb-3 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                      <Code className="w-7 h-7" />
+                    </div>
+                    <h4 className="text-lg font-bold text-gray-900 mb-1">AI Lab (Coming Soon)</h4>
+                    <p className="text-sm font-bangla text-purple-600 font-semibold mb-2">এআই ল্যাব (শীঘ্রই আসছে)</p>
+                    <p className="text-gray-600 text-xs mb-1">Build games, tools & code - Be independent, not dependent</p>
+                    <p className="text-gray-500 text-xs font-bangla mb-3">গেম, টুলস তৈরি করুন - নিজে শিখুন, অন্যের উপর নির্ভর করবেন না</p>
+                    <button className="w-full bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-purple-700 transition-colors">
+                      Try Now
+                    </button>
+                  </div>
+                </div>
+
+                {/* Create & Earn */}
+                <div className="group relative bg-gradient-to-br from-pink-50 to-rose-50 border-2 border-gray-200 rounded-xl p-5 cursor-pointer hover:border-pink-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 md:col-span-2">
+                  <div className="absolute inset-0 bg-gradient-to-br from-pink-500 to-rose-500 opacity-0 group-hover:opacity-10 rounded-xl transition-opacity duration-300"></div>
+                  <div className="relative flex items-center space-x-4">
+                    <div className="w-14 h-14 bg-gradient-to-br from-pink-500 to-rose-500 rounded-xl flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300 shadow-lg flex-shrink-0">
+                      <Video className="w-7 h-7" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold text-gray-900 mb-1">Create & Earn</h4>
+                      <p className="text-sm font-bangla text-pink-600 font-semibold mb-2">তৈরি করুন এবং আয় করুন</p>
+                      <p className="text-gray-600 text-xs mb-1">Create courses, books & videos - Earn like Udemy & Kindle</p>
+                      <p className="text-gray-500 text-xs font-bangla">কোর্স, বই এবং ভিডিও তৈরি করুন এবং আয় করুন</p>
+                    </div>
+                    <button className="bg-pink-600 text-white px-6 py-2 rounded-lg text-sm font-semibold hover:bg-pink-700 transition-colors flex-shrink-0">
+                      Try Now
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Get Started CTA */}
+              <div className="mt-6 text-center">
+                <button className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white px-10 py-3 rounded-xl font-bold text-lg hover:from-indigo-700 hover:to-pink-700 transition-all transform hover:scale-105 shadow-lg">
+                  🚀 Get Started Free
+                </button>
+                <p className="text-sm text-gray-600 font-bangla mt-2">
+                  ✨ সম্পূর্ণ বিনামূল্যে শুরু করুন • কোন ক্রেডিট কার্ড প্রয়োজন নেই
+                </p>
               </div>
             </div>
 
