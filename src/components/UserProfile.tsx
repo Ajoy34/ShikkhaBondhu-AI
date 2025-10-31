@@ -408,6 +408,46 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, setUser }) => {
               </div>
             </div>
 
+            {/* Leaderboard */}
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                <Trophy className="w-6 h-6 mr-2 text-yellow-500" />
+                <span className="font-bangla">লিডারবোর্ড</span>
+              </h3>
+              
+              <div className="space-y-3">
+                {[
+                  { name: "Arif Rahman", points: 2850, rank: 1 },
+                  { name: user.name, points: user.points, rank: 8, isYou: true },
+                  { name: "Fatima Noor", points: 1180, rank: 9 },
+                  { name: "Karim Ahmed", points: 980, rank: 10 }
+                ].map((leader, idx) => (
+                  <div key={idx} className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${leader.isYou ? 'bg-indigo-50 border-2 border-indigo-300' : 'hover:bg-gray-50'}`}>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
+                      leader.rank === 1 ? 'bg-yellow-400 text-yellow-900' :
+                      leader.rank <= 3 ? 'bg-gray-300 text-gray-700' :
+                      'bg-gray-100 text-gray-600'
+                    }`}>
+                      #{leader.rank}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-gray-900 font-bangla">
+                        {leader.name} {leader.isYou && '(You)'}
+                      </p>
+                      <p className="text-xs text-gray-600">{leader.points} points</p>
+                    </div>
+                    {leader.rank === 1 && (
+                      <div className="text-2xl">🏆</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              
+              <button className="w-full mt-4 text-indigo-600 font-semibold text-sm hover:text-indigo-700 transition-colors">
+                View Full Leaderboard →
+              </button>
+            </div>
+
             {/* Level Progress */}
             <div className="bg-white rounded-2xl shadow-lg p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">

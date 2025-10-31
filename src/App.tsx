@@ -30,6 +30,7 @@ function App() {
         activeSection={activeSection} 
         setActiveSection={setActiveSection}
         setIsChatOpen={setIsChatOpen}
+        setSelectedChatbot={setSelectedChatbot}
         user={user}
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}

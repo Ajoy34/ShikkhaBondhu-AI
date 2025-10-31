@@ -1,10 +1,11 @@
 import React from 'react';
-import { Shield, MessageCircle, User, AlertCircle } from 'lucide-react';
+import { Shield, User, MessageCircle, Search, Code, Video } from 'lucide-react';
 
 interface HeaderProps {
   activeSection: string;
   setActiveSection: (section: string) => void;
   setIsChatOpen: (open: boolean) => void;
+  setSelectedChatbot?: (bot: string) => void;
   user: any;
   isLoggedIn: boolean;
   setIsLoggedIn: (logged: boolean) => void;
@@ -13,7 +14,8 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ 
   activeSection, 
   setActiveSection, 
-  setIsChatOpen, 
+  setIsChatOpen,
+  setSelectedChatbot, 
   user, 
   isLoggedIn, 
   setIsLoggedIn 
@@ -36,32 +38,66 @@ const Header: React.FC<HeaderProps> = ({
             </div>
           </button>
 
+          {/* Center Navigation - Feature Items */}
+          {isLoggedIn && (
+            <div className="hidden lg:flex items-center gap-2 flex-1 justify-center mx-8">
+              {/* AI Chat */}
+              <button
+                onClick={() => {
+                  if (setSelectedChatbot) setSelectedChatbot('general');
+                  setTimeout(() => setIsChatOpen(true), 100);
+                }}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-colors"
+              >
+                <MessageCircle className="w-4 h-4 text-blue-600" />
+                <span className="text-xs font-semibold text-blue-700">AI Chat & Learn</span>
+              </button>
+
+              {/* Report & SOS */}
+              <button
+                onClick={() => setActiveSection('report')}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 hover:bg-red-100 border border-red-200 transition-colors"
+              >
+                <Shield className="w-4 h-4 text-red-600" />
+                <span className="text-xs font-semibold text-red-700">Report & SOS</span>
+              </button>
+
+              {/* Fact Check */}
+              <button
+                onClick={() => setActiveSection('home')}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-50 hover:bg-green-100 border border-green-200 transition-colors"
+              >
+                <Search className="w-4 h-4 text-green-600" />
+                <span className="text-xs font-semibold text-green-700">Fact Check</span>
+              </button>
+
+              {/* AI Lab */}
+              <button
+                disabled
+                className="relative flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-50 border border-purple-200 opacity-60 cursor-not-allowed"
+              >
+                <div className="absolute -top-2 -right-2 bg-orange-400 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                  🚀
+                </div>
+                <Code className="w-4 h-4 text-purple-600" />
+                <span className="text-xs font-semibold text-purple-700">AI Lab</span>
+              </button>
+
+              {/* Create & Earn */}
+              <button
+                onClick={() => setActiveSection('home')}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-pink-50 hover:bg-pink-100 border border-pink-200 transition-colors"
+              >
+                <Video className="w-4 h-4 text-pink-600" />
+                <span className="text-xs font-semibold text-pink-700">Create & Earn</span>
+              </button>
+            </div>
+          )}
+
           {/* Right Side Actions */}
           <div className="flex items-center space-x-3">
             {isLoggedIn ? (
               <>
-                {/* Chat Button */}
-                <button
-                  onClick={() => setIsChatOpen(true)}
-                  className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2.5 rounded-xl hover:bg-indigo-700 transition-all duration-200 shadow-md hover:shadow-lg"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  <span className="hidden sm:block text-sm font-medium">Chat</span>
-                </button>
-
-                {/* Report Button */}
-                <button
-                  onClick={() => setActiveSection('report')}
-                  className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg ${
-                    activeSection === 'report'
-                      ? 'bg-red-600 text-white'
-                      : 'bg-red-50 text-red-700 hover:bg-red-100'
-                  }`}
-                >
-                  <AlertCircle className="w-5 h-5" />
-                  <span className="hidden sm:block text-sm font-medium font-bangla">রিপোর্ট</span>
-                </button>
-
                 {/* Profile Button */}
                 <button
                   onClick={() => setActiveSection('profile')}
