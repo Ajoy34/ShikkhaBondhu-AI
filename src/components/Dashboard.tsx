@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { TrendingUp, Users, Share2, MessageCircle, ThumbsUp, Trophy, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import React from 'react';
+import { Users, Share2, MessageCircle, ThumbsUp, Trophy } from 'lucide-react';
 
 interface DashboardProps {
   user: any;
@@ -9,40 +9,6 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedChatbot, setActiveSection }) => {
-  const [currentCourseIndex, setCurrentCourseIndex] = useState(0);
-  const topCourses = [
-    {
-      title: "Advanced Python Programming",
-      titleBn: "উন্নত পাইথন প্রোগ্রামিং",
-      instructor: "Dr. Ahmed Khan",
-      students: 2345,
-      rating: 4.8,
-      image: "🐍",
-      progress: 65,
-      category: "Programming"
-    },
-    {
-      title: "Digital Marketing Mastery",
-      titleBn: "ডিজিটাল মার্কেটিং দক্ষতা",
-      instructor: "Sarah Rahman",
-      students: 1890,
-      rating: 4.9,
-      image: "📱",
-      progress: 0,
-      category: "Marketing"
-    },
-    {
-      title: "Web Development Bootcamp",
-      titleBn: "ওয়েব ডেভেলপমেন্ট বুটক্যাম্প",
-      instructor: "Karim Hossain",
-      students: 3120,
-      rating: 4.7,
-      image: "💻",
-      progress: 30,
-      category: "Development"
-    }
-  ];
-
   const communityPrograms = [
     {
       title: "Clean Water Initiative - Dhaka",
@@ -86,110 +52,6 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
           
           {/* MAIN FEED - Center Content */}
           <div className="lg:col-span-8 space-y-6">
-            
-            {/* Welcome Banner with Quick Actions */}
-            <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl p-6 text-white shadow-xl">
-              <h2 className="text-2xl font-bold mb-2">Ready to Make a Difference?</h2>
-              <p className="text-indigo-100 mb-4 font-bangla">আজ কি করতে চান?</p>
-              <div className="flex flex-wrap gap-3">
-                <button className="bg-white/20 backdrop-blur-sm text-white px-6 py-2 rounded-xl font-semibold hover:bg-white/30 transition-all transform hover:scale-105">
-                  🔍 Verify News
-                </button>
-              </div>
-            </div>
-
-            {/* Top Trending Courses - Carousel */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-2xl font-bold text-gray-900 flex items-center">
-                  <TrendingUp className="w-6 h-6 mr-2 text-indigo-600" />
-                  Top Trending Courses
-                  <span className="ml-2 font-bangla text-lg text-gray-600">জনপ্রিয় কোর্স</span>
-                </h3>
-                <button className="text-indigo-600 hover:text-indigo-700 text-sm font-semibold">View All →</button>
-              </div>
-              
-              {/* Carousel Container */}
-              <div className="relative">
-                {/* Course Card */}
-                <div className="border-2 border-gray-200 rounded-xl p-4 hover:border-indigo-300 hover:shadow-md transition-all">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl flex items-center justify-center text-3xl hover:scale-110 transition-transform">
-                      {topCourses[currentCourseIndex].image}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-bold text-gray-900 hover:text-indigo-600 transition-colors">{topCourses[currentCourseIndex].title}</h4>
-                          <p className="text-sm text-gray-600 font-bangla">{topCourses[currentCourseIndex].titleBn}</p>
-                          <p className="text-xs text-gray-500 mt-1">by {topCourses[currentCourseIndex].instructor}</p>
-                        </div>
-                        <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-semibold">{topCourses[currentCourseIndex].category}</span>
-                      </div>
-                      
-                      <div className="flex items-center space-x-4 mt-2 text-xs text-gray-600">
-                        <div className="flex items-center space-x-1">
-                          <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                          <span className="font-semibold">{topCourses[currentCourseIndex].rating}</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Users className="w-3 h-3" />
-                          <span>{topCourses[currentCourseIndex].students.toLocaleString()} students</span>
-                        </div>
-                      </div>
-
-                      {topCourses[currentCourseIndex].progress > 0 && (
-                        <div className="mt-3">
-                          <div className="flex justify-between text-xs mb-1">
-                            <span className="text-gray-600">Your Progress</span>
-                            <span className="font-bold text-indigo-600">{topCourses[currentCourseIndex].progress}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full" style={{ width: `${topCourses[currentCourseIndex].progress}%` }}></div>
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="flex items-center space-x-2 mt-3">
-                        <button className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors">
-                          {topCourses[currentCourseIndex].progress > 0 ? 'Continue' : 'Enroll Now'}
-                        </button>
-                        <button className="p-2 border-2 border-gray-200 rounded-lg hover:border-indigo-300 hover:bg-indigo-50 transition-colors">
-                          <Share2 className="w-4 h-4 text-gray-600" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Navigation Arrows */}
-                <button
-                  onClick={() => setCurrentCourseIndex((prev) => (prev === 0 ? topCourses.length - 1 : prev - 1))}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all hover:scale-110 z-10"
-                >
-                  <ChevronLeft className="w-5 h-5 text-indigo-600" />
-                </button>
-                <button
-                  onClick={() => setCurrentCourseIndex((prev) => (prev === topCourses.length - 1 ? 0 : prev + 1))}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all hover:scale-110 z-10"
-                >
-                  <ChevronRight className="w-5 h-5 text-indigo-600" />
-                </button>
-
-                {/* Dots Indicator */}
-                <div className="flex justify-center gap-2 mt-4">
-                  {topCourses.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setCurrentCourseIndex(idx)}
-                      className={`h-2 rounded-full transition-all ${
-                        idx === currentCourseIndex ? 'w-8 bg-indigo-600' : 'w-2 bg-gray-300 hover:bg-gray-400'
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
 
             {/* Running Community Programs */}
             <div className="bg-white rounded-2xl shadow-lg p-6">
