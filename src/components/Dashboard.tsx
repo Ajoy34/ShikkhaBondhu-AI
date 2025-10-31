@@ -479,44 +479,51 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
               </div>
             </div>
 
-            {/* Emergency Helplines */}
+            {/* Community Forums */}
             <div className="bg-white rounded-2xl shadow-lg p-4">
-              <h4 className="font-bold text-gray-900 mb-4 font-bangla">জরুরি হেল্পলাইন</h4>
+              <h4 className="font-bold text-gray-900 mb-4 font-bangla">কমিউনিটি ফোরাম</h4>
               <div className="space-y-3">
                 {[
                   { 
-                    name: "Bangladesh Police Helpline", 
-                    nameBn: "বাংলাদেশ পুলিশ হেল্পলাইন",
-                    contact: "999",
+                    name: "Bangladesh Police Forum", 
+                    nameBn: "বাংলাদেশ পুলিশ ফোরাম",
+                    members: "12.5K members",
+                    posts: "245 posts today",
                     icon: "🚓",
                     color: "from-red-400 to-red-600"
                   },
                   { 
-                    name: "UNDP Student Helpline", 
-                    nameBn: "ইউএনডিপি শিক্ষার্থী হেল্পলাইন",
-                    contact: "16263",
+                    name: "UNDP Student Forum", 
+                    nameBn: "ইউএনডিপি শিক্ষার্থী ফোরাম",
+                    members: "8.3K members",
+                    posts: "189 posts today",
                     icon: "🎓",
                     color: "from-blue-400 to-blue-600"
                   },
                   { 
-                    name: "UNESCO Help Center", 
-                    nameBn: "ইউনেস্কো সহায়তা কেন্দ্র",
-                    contact: "16430",
+                    name: "UNESCO Community Forum", 
+                    nameBn: "ইউনেস্কো কমিউনিটি ফোরাম",
+                    members: "15.7K members",
+                    posts: "312 posts today",
                     icon: "🌍",
                     color: "from-green-400 to-green-600"
                   }
-                ].map((helpline, idx) => (
-                  <div key={idx} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
-                    <div className={`w-12 h-12 bg-gradient-to-br ${helpline.color} rounded-full flex items-center justify-center text-2xl shadow-md`}>
-                      {helpline.icon}
+                ].map((forum, idx) => (
+                  <div key={idx} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
+                    <div className={`w-12 h-12 bg-gradient-to-br ${forum.color} rounded-full flex items-center justify-center text-2xl shadow-md`}>
+                      {forum.icon}
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-bold text-gray-900">{helpline.name}</p>
-                      <p className="text-xs font-bangla text-gray-600">{helpline.nameBn}</p>
-                      <p className="text-xs text-indigo-600 font-semibold mt-1">📞 {helpline.contact}</p>
+                      <p className="text-sm font-bold text-gray-900">{forum.name}</p>
+                      <p className="text-xs font-bangla text-gray-600">{forum.nameBn}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <p className="text-xs text-gray-500">👥 {forum.members}</p>
+                        <span className="text-gray-300">•</span>
+                        <p className="text-xs text-green-600">� {forum.posts}</p>
+                      </div>
                     </div>
-                    <button className="bg-green-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-green-600 transition-colors">
-                      Call
+                    <button className="bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-indigo-600 transition-colors">
+                      Join
                     </button>
                   </div>
                 ))}
