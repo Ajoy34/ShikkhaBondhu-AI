@@ -64,7 +64,7 @@ const Header: React.FC<HeaderProps> = ({
 
               {/* Fact Check */}
               <button
-                onClick={() => setActiveSection('home')}
+                onClick={() => setActiveSection('factcheck')}
                 className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-50 hover:bg-green-100 border border-green-200 transition-colors"
               >
                 <Search className="w-4 h-4 text-green-600" />
@@ -85,7 +85,7 @@ const Header: React.FC<HeaderProps> = ({
 
               {/* Create & Earn */}
               <button
-                onClick={() => setActiveSection('home')}
+                onClick={() => setActiveSection('createandearn')}
                 className="flex items-center gap-2 px-3 py-2 rounded-lg bg-pink-50 hover:bg-pink-100 border border-pink-200 transition-colors"
               >
                 <Video className="w-4 h-4 text-pink-600" />
