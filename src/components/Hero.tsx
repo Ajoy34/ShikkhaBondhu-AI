@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { MessageCircle, Shield, AlertTriangle, Bot, Sparkles, BookOpen, Code, TrendingUp, Zap, Lock, Video } from 'lucide-react';
+import { MessageCircle, Shield, Bot, Sparkles, Code, TrendingUp, Zap, Lock, Video, Search } from 'lucide-react';
 
 interface HeroProps {
   setIsChatOpen: (open: boolean) => void;
@@ -25,43 +25,33 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
   const features = [
     {
       icon: <MessageCircle className="w-8 h-8" />,
-      title: "AI Chat Assistant",
-      titleBn: "এআই চ্যাট সহায়ক",
-      description: "Get instant answers and guidance 24/7",
-      descriptionBn: "২৪/৭ তাৎক্ষণিক উত্তর এবং পরামর্শ পান",
+      title: "AI Chat Assistant & Learn",
+      titleBn: "এআই চ্যাট সহায়ক এবং শিখুন",
+      description: "Get instant answers, guidance & quality education 24/7",
+      descriptionBn: "২৪/৭ তাৎক্ষণিক উত্তর, পরামর্শ এবং শিক্ষা পান",
       gradient: "from-blue-500 to-cyan-500",
       bgGradient: "from-blue-50 to-cyan-50",
-      action: () => handleFeatureClick("AI Chat Assistant")
+      action: () => handleFeatureClick("AI Chat Assistant & Learn")
     },
     {
       icon: <Shield className="w-8 h-8" />,
-      title: "Emergency SOS",
-      titleBn: "জরুরি এসওএস",
-      description: "Instant help when you need it most",
-      descriptionBn: "প্রয়োজনে তাৎক্ষণিক সাহায্য",
-      gradient: "from-red-500 to-pink-500",
-      bgGradient: "from-red-50 to-pink-50",
-      action: () => handleFeatureClick("Emergency SOS")
+      title: "Report, SOS & Emergency Help",
+      titleBn: "রিপোর্ট, এসওএস এবং জরুরি সাহায্য",
+      description: "Report issues, get emergency support & instant help",
+      descriptionBn: "সমস্যা জানান, জরুরি সহায়তা এবং তাৎক্ষণিক সাহায্য পান",
+      gradient: "from-red-500 to-orange-500",
+      bgGradient: "from-red-50 to-orange-50",
+      action: () => handleFeatureClick("Report, SOS & Emergency Help")
     },
     {
-      icon: <AlertTriangle className="w-8 h-8" />,
-      title: "Report & Get Help",
-      titleBn: "রিপোর্ট ও সাহায্য",
-      description: "Report issues and find support",
-      descriptionBn: "সমস্যা জানান এবং সহায়তা পান",
-      gradient: "from-orange-500 to-red-500",
-      bgGradient: "from-orange-50 to-red-50",
-      action: () => handleFeatureClick("Report & Get Help")
-    },
-    {
-      icon: <BookOpen className="w-8 h-8" />,
-      title: "Learn & Grow",
-      titleBn: "শিখুন ও বেড়ে উঠুন",
-      description: "Access quality education resources",
-      descriptionBn: "মানসম্মত শিক্ষা সামগ্রী পান",
+      icon: <Search className="w-8 h-8" />,
+      title: "Fact Check & Gossip Detector",
+      titleBn: "তথ্য যাচাই এবং গুজব শনাক্তকরণ",
+      description: "Verify news, detect fake information with AI",
+      descriptionBn: "AI দিয়ে খবর যাচাই করুন, ভুয়া তথ্য শনাক্ত করুন",
       gradient: "from-green-500 to-emerald-500",
       bgGradient: "from-green-50 to-emerald-50",
-      action: () => handleFeatureClick("Learn & Grow")
+      action: () => handleFeatureClick("Fact Check & Gossip Detector")
     },
     {
       icon: <Code className="w-8 h-8" />,
@@ -254,6 +244,39 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
                     <li>✓ Build your own course library</li>
                     <li>✓ Earn from your content</li>
                     <li className="font-bangla text-pink-600">কোর্স ও বই তৈরি করে আয় করুন!</li>
+                  </ul>
+                </div>
+              ) : selectedFeature === "Fact Check & Gossip Detector" ? (
+                <div className="text-left bg-green-50 rounded-xl p-4 mb-4">
+                  <p className="text-sm text-gray-700 mb-2 font-semibold">🔍 Fact Check Features:</p>
+                  <ul className="text-xs text-gray-600 space-y-1">
+                    <li>✓ AI-powered news verification</li>
+                    <li>✓ Detect fake news & misinformation</li>
+                    <li>✓ Gossip detector with source checking</li>
+                    <li>✓ Real-time fact checking</li>
+                    <li className="font-bangla text-green-600">গুজব ও ভুয়া খবর থেকে সুরক্ষিত থাকুন!</li>
+                  </ul>
+                </div>
+              ) : selectedFeature === "AI Chat Assistant & Learn" ? (
+                <div className="text-left bg-blue-50 rounded-xl p-4 mb-4">
+                  <p className="text-sm text-gray-700 mb-2 font-semibold">💬 AI Chat & Learning:</p>
+                  <ul className="text-xs text-gray-600 space-y-1">
+                    <li>✓ 24/7 instant answers & guidance</li>
+                    <li>✓ Quality education resources</li>
+                    <li>✓ Personalized learning paths</li>
+                    <li>✓ Interactive study assistance</li>
+                    <li className="font-bangla text-blue-600">শিখুন এবং এগিয়ে যান আত্মবিশ্বাসের সাথে!</li>
+                  </ul>
+                </div>
+              ) : selectedFeature === "Report, SOS & Emergency Help" ? (
+                <div className="text-left bg-red-50 rounded-xl p-4 mb-4">
+                  <p className="text-sm text-gray-700 mb-2 font-semibold">🚨 Report & Emergency:</p>
+                  <ul className="text-xs text-gray-600 space-y-1">
+                    <li>✓ Instant emergency SOS alerts</li>
+                    <li>✓ Report issues & get support</li>
+                    <li>✓ Connect with help services</li>
+                    <li>✓ Location-based emergency response</li>
+                    <li className="font-bangla text-red-600">জরুরি মুহূর্তে তাৎক্ষণিক সাহায্য পান!</li>
                   </ul>
                 </div>
               ) : (
