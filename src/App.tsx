@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
-import Features from './components/Features';
+import Dashboard from './components/Dashboard';
 import ChatSystem from './components/ChatSystem';
 import VoiceAssistant from './components/VoiceAssistant';
 import UserProfile from './components/UserProfile';
@@ -45,12 +45,13 @@ function App() {
           />
         )}
 
-        {/* After Login: Show Dashboard with Trending Content */}
+        {/* After Login: Show Dashboard with Facebook-like Feed */}
         {activeSection === 'home' && isLoggedIn && (
-          <Features 
+          <Dashboard
+            user={user}
             setSelectedChatbot={setSelectedChatbot}
             setIsChatOpen={setIsChatOpen}
-            user={user}
+            setActiveSection={setActiveSection}
           />
         )}
         

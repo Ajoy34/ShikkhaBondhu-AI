@@ -10,16 +10,24 @@ interface HeroProps {
 const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSection }) => {
   const [showSignupPrompt, setShowSignupPrompt] = useState(false);
   const [selectedFeature, setSelectedFeature] = useState('');
+  const [targetSection, setTargetSection] = useState('home');
 
-  const handleFeatureClick = (featureName: string) => {
+  const handleFeatureClick = (featureName: string, section: string = 'home') => {
     setSelectedFeature(featureName);
+    setTargetSection(section);
     setShowSignupPrompt(true);
   };
 
   const handleSignupNow = () => {
     setShowSignupPrompt(false);
     setIsLoggedIn(true);
-    setActiveSection('home');
+    // Redirect to specific section based on feature clicked
+    if (targetSection === 'chat') {
+      setActiveSection('home');
+      setTimeout(() => setIsChatOpen(true), 500);
+    } else {
+      setActiveSection(targetSection);
+    }
   };
 
   const features = [
@@ -31,7 +39,7 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
       descriptionBn: "২৪/৭ তাৎক্ষণিক উত্তর, পরামর্শ এবং শিক্ষা পান",
       gradient: "from-blue-500 to-cyan-500",
       bgGradient: "from-blue-50 to-cyan-50",
-      action: () => handleFeatureClick("AI Chat Assistant & Learn")
+      action: () => handleFeatureClick("AI Chat Assistant & Learn", "chat")
     },
     {
       icon: <Shield className="w-8 h-8" />,
@@ -41,7 +49,7 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
       descriptionBn: "সমস্যা জানান, জরুরি সহায়তা এবং তাৎক্ষণিক সাহায্য পান",
       gradient: "from-red-500 to-orange-500",
       bgGradient: "from-red-50 to-orange-50",
-      action: () => handleFeatureClick("Report, SOS & Emergency Help")
+      action: () => handleFeatureClick("Report, SOS & Emergency Help", "report")
     },
     {
       icon: <Search className="w-8 h-8" />,
@@ -51,7 +59,7 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
       descriptionBn: "AI দিয়ে খবর যাচাই করুন, ভুয়া তথ্য শনাক্ত করুন",
       gradient: "from-green-500 to-emerald-500",
       bgGradient: "from-green-50 to-emerald-50",
-      action: () => handleFeatureClick("Fact Check & Gossip Detector")
+      action: () => handleFeatureClick("Fact Check & Gossip Detector", "home")
     },
     {
       icon: <Code className="w-8 h-8" />,
@@ -62,7 +70,7 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
       gradient: "from-purple-500 to-indigo-500",
       bgGradient: "from-purple-50 to-indigo-50",
       badge: "🚀 Upcoming",
-      action: () => handleFeatureClick("AI Lab")
+      action: () => handleFeatureClick("AI Lab", "home")
     },
     {
       icon: <Video className="w-8 h-8" />,
@@ -72,7 +80,7 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
       descriptionBn: "কোর্স, বই এবং ভিডিও তৈরি করুন এবং আয় করুন",
       gradient: "from-pink-500 to-rose-500",
       bgGradient: "from-pink-50 to-rose-50",
-      action: () => handleFeatureClick("Create & Earn")
+      action: () => handleFeatureClick("Create & Earn", "home")
     }
   ];
 
