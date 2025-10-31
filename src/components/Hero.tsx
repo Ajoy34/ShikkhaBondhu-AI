@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { MessageCircle, Shield, Bot, Sparkles, Code, TrendingUp, Zap, Lock, Video, Search } from 'lucide-react';
+import { MessageCircle, Shield, Bot, Sparkles, Code, TrendingUp, Zap, Lock, Video, Search, BookOpen, GraduationCap } from 'lucide-react';
 
 interface HeroProps {
   setIsChatOpen: (open: boolean) => void;
@@ -198,6 +198,163 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Bangladeshi E-Course & Book Library Section */}
+        <div className="max-w-7xl mx-auto mb-16">
+          <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 border-2 border-amber-200 rounded-3xl p-8 md:p-12 shadow-xl">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center space-x-3 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-md mb-4">
+                <BookOpen className="w-6 h-6 text-amber-600 animate-pulse" />
+                <span className="text-amber-900 font-bold text-lg">বাংলাদেশি শিক্ষা সম্পদ</span>
+                <GraduationCap className="w-6 h-6 text-amber-600" />
+              </div>
+              
+              <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-3">
+                Bangladeshi E-Course & Book Library
+                <span className="block text-2xl font-bangla text-amber-700 mt-2">
+                  বাংলাদেশি ই-কোর্স এবং বই লাইব্রেরি
+                </span>
+              </h2>
+              
+              <p className="text-lg text-gray-700 max-w-3xl mx-auto mb-2">
+                Access thousands of quality courses and books created by Bangladeshi experts
+              </p>
+              <p className="text-base text-gray-600 font-bangla max-w-3xl mx-auto">
+                বাংলাদেশী বিশেষজ্ঞদের তৈরি হাজারো মানসম্পন্ন কোর্স এবং বই অ্যাক্সেস করুন
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Courses */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-2 border-transparent hover:border-indigo-300">
+                <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center text-white mb-4 shadow-md">
+                  <Video className="w-7 h-7" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Video Courses</h3>
+                <p className="text-sm font-bangla text-indigo-600 font-semibold mb-3">ভিডিও কোর্স</p>
+                <ul className="space-y-2 text-sm text-gray-600 mb-4">
+                  <li className="flex items-start">
+                    <span className="text-green-500 mr-2">✓</span>
+                    <span>Programming, Web Dev, AI/ML</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-500 mr-2">✓</span>
+                    <span>Digital Marketing & Business</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-500 mr-2">✓</span>
+                    <span>Life Skills & Personal Growth</span>
+                  </li>
+                  <li className="flex items-start font-bangla text-indigo-600">
+                    <span className="text-green-500 mr-2">✓</span>
+                    <span>বাংলায় ও ইংরেজিতে উপলব্ধ</span>
+                  </li>
+                </ul>
+                <div className="flex items-center justify-between text-xs text-gray-500 bg-indigo-50 rounded-lg p-3">
+                  <span className="font-semibold">5,000+ Courses</span>
+                  <span className="font-bangla">৫,০০০+ কোর্স</span>
+                </div>
+              </div>
+
+              {/* Books */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-2 border-transparent hover:border-green-300">
+                <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center text-white mb-4 shadow-md">
+                  <BookOpen className="w-7 h-7" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Digital Books</h3>
+                <p className="text-sm font-bangla text-green-600 font-semibold mb-3">ডিজিটাল বই</p>
+                <ul className="space-y-2 text-sm text-gray-600 mb-4">
+                  <li className="flex items-start">
+                    <span className="text-green-500 mr-2">✓</span>
+                    <span>Academic & Educational Books</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-500 mr-2">✓</span>
+                    <span>Self-Help & Motivation</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-500 mr-2">✓</span>
+                    <span>Technology & Innovation</span>
+                  </li>
+                  <li className="flex items-start font-bangla text-green-600">
+                    <span className="text-green-500 mr-2">✓</span>
+                    <span>বাংলাদেশী লেখকদের বই</span>
+                  </li>
+                </ul>
+                <div className="flex items-center justify-between text-xs text-gray-500 bg-green-50 rounded-lg p-3">
+                  <span className="font-semibold">10,000+ Books</span>
+                  <span className="font-bangla">১০,০০০+ বই</span>
+                </div>
+              </div>
+
+              {/* AI Books */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-2 border-transparent hover:border-purple-300">
+                <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white mb-4 shadow-md">
+                  <Bot className="w-7 h-7" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">AI-Generated Books</h3>
+                <p className="text-sm font-bangla text-purple-600 font-semibold mb-3">এআই দ্বারা তৈরি বই</p>
+                <ul className="space-y-2 text-sm text-gray-600 mb-4">
+                  <li className="flex items-start">
+                    <span className="text-green-500 mr-2">✓</span>
+                    <span>Custom AI-generated content</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-500 mr-2">✓</span>
+                    <span>Personalized study materials</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-500 mr-2">✓</span>
+                    <span>Quick summaries & guides</span>
+                  </li>
+                  <li className="flex items-start font-bangla text-purple-600">
+                    <span className="text-green-500 mr-2">✓</span>
+                    <span>এআই সহায়তায় শিখুন দ্রুত</span>
+                  </li>
+                </ul>
+                <div className="flex items-center justify-between text-xs text-gray-500 bg-purple-50 rounded-lg p-3">
+                  <span className="font-semibold">Unlimited Access</span>
+                  <span className="font-bangla">সীমাহীন সুবিধা</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Library Stats */}
+            <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 text-center shadow-md">
+                <div className="text-2xl font-bold text-indigo-600">5K+</div>
+                <div className="text-xs text-gray-600 font-bangla">ভিডিও কোর্স</div>
+              </div>
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 text-center shadow-md">
+                <div className="text-2xl font-bold text-green-600">10K+</div>
+                <div className="text-xs text-gray-600 font-bangla">ডিজিটাল বই</div>
+              </div>
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 text-center shadow-md">
+                <div className="text-2xl font-bold text-purple-600">100%</div>
+                <div className="text-xs text-gray-600 font-bangla">বাংলায়</div>
+              </div>
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 text-center shadow-md">
+                <div className="text-2xl font-bold text-orange-600">Free</div>
+                <div className="text-xs text-gray-600 font-bangla">বিনামূল্যে</div>
+              </div>
+            </div>
+
+            {/* CTA Button */}
+            <div className="text-center mt-8">
+              <button
+                onClick={handleSignupNow}
+                className="inline-flex items-center space-x-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
+              >
+                <BookOpen className="w-6 h-6" />
+                <span>Browse Library</span>
+                <span className="font-bangla">লাইব্রেরি দেখুন</span>
+              </button>
+              <p className="mt-3 text-sm text-gray-600 font-bangla">
+                ✨ সম্পূর্ণ বিনামূল্যে • কোন সাবস্ক্রিপশন ফি নেই
+              </p>
+            </div>
           </div>
         </div>
 
