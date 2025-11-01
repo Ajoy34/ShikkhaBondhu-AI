@@ -356,6 +356,19 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                   <span className="font-bangla">লিডারবোর্ড</span>
                 </h4>
               </div>
+
+              {/* Achievement Titles Info */}
+              <div className="mb-4 p-3 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl border border-purple-200">
+                <p className="text-xs font-bold text-purple-900 mb-2">🏆 Achievement Titles</p>
+                <div className="grid grid-cols-2 gap-1 text-xs">
+                  <div className="text-gray-600">0-500: <span className="font-semibold text-gray-800">Beginner</span></div>
+                  <div className="text-gray-600">500-1000: <span className="font-semibold text-blue-700">Helper</span></div>
+                  <div className="text-gray-600">1000-1500: <span className="font-semibold text-green-700">Change Maker</span></div>
+                  <div className="text-gray-600">1500-2000: <span className="font-semibold text-orange-700">Community Hero</span></div>
+                  <div className="text-gray-600">2000-2500: <span className="font-semibold text-red-700">Impact Leader</span></div>
+                  <div className="text-gray-600">2500+: <span className="font-semibold text-purple-700">Legend</span></div>
+                </div>
+              </div>
               
               <div className="space-y-3">
                 {[
@@ -363,24 +376,116 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                   { name: user.name, points: user.points, rank: 8, isYou: true },
                   { name: "Fatima Noor", points: 1180, rank: 9 },
                   { name: "Karim Ahmed", points: 980, rank: 10 }
-                ].map((leader, idx) => (
-                  <div key={idx} className={`flex items-center space-x-3 p-2 rounded-lg ${leader.isYou ? 'bg-indigo-50 border-2 border-indigo-300' : ''}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                      leader.rank === 1 ? 'bg-yellow-400 text-yellow-900' :
-                      leader.rank <= 3 ? 'bg-gray-300 text-gray-700' :
-                      'bg-gray-100 text-gray-600'
-                    }`}>
-                      #{leader.rank}
+                ].map((leader, idx) => {
+                  // Determine achievement title based on points
+                  const getAchievementTitle = (points: number) => {
+                    if (points >= 2500) return { title: "Legend", titleBn: "কিংবদন্তি", color: "from-purple-500 to-pink-500", textColor: "text-purple-700", icon: "👑" };
+                    if (points >= 2000) return { title: "Impact Leader", titleBn: "প্রভাব নেতা", color: "from-red-500 to-orange-500", textColor: "text-red-700", icon: "🌟" };
+                    if (points >= 1500) return { title: "Community Hero", titleBn: "কমিউনিটি হিরো", color: "from-orange-500 to-yellow-500", textColor: "text-orange-700", icon: "🦸" };
+                    if (points >= 1000) return { title: "Change Maker", titleBn: "পরিবর্তনকারী", color: "from-green-500 to-emerald-500", textColor: "text-green-700", icon: "💪" };
+                    if (points >= 500) return { title: "Helper", titleBn: "সহায়ক", color: "from-blue-500 to-indigo-500", textColor: "text-blue-700", icon: "🤝" };
+                    return { title: "Beginner", titleBn: "শিক্ষানবিস", color: "from-gray-400 to-gray-500", textColor: "text-gray-700", icon: "🌱" };
+                  };
+
+                  const achievement = getAchievementTitle(leader.points);
+
+                  return (
+                    <div key={idx} className={`relative overflow-hidden rounded-xl ${leader.isYou ? 'ring-2 ring-indigo-400 shadow-lg' : 'border border-gray-200'}`}>
+                      {/* Achievement Badge Background */}
+                      <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${achievement.color} opacity-10 rounded-bl-full`}></div>
+                      
+                      <div className="relative p-3">
+                        <div className="flex items-center space-x-3">
+                          {/* Rank Badge */}
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shadow-md ${
+                            leader.rank === 1 ? 'bg-gradient-to-br from-yellow-400 to-orange-500 text-white' :
+                            leader.rank <= 3 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-gray-800' :
+                            leader.isYou ? 'bg-gradient-to-br from-indigo-500 to-purple-500 text-white' :
+                            'bg-gray-100 text-gray-600'
+                          }`}>
+                            #{leader.rank}
+                          </div>
+                          
+                          <div className="flex-1 min-w-0">
+                            {/* Name */}
+                            <div className="flex items-center space-x-2 mb-1">
+                              <p className="text-sm font-bold text-gray-900 font-bangla truncate">
+                                {leader.name}
+                              </p>
+                              {leader.isYou && (
+                                <span className="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded-full">You</span>
+                              )}
+                            </div>
+                            
+                            {/* Achievement Title */}
+                            <div className="flex items-center space-x-2 mb-1">
+                              <span className="text-base">{achievement.icon}</span>
+                              <div className="flex flex-col">
+                                <span className={`text-xs font-bold ${achievement.textColor}`}>
+                                  {achievement.title}
+                                </span>
+                                <span className="text-xs text-gray-500 font-bangla">
+                                  {achievement.titleBn}
+                                </span>
+                              </div>
+                            </div>
+                            
+                            {/* Points Progress */}
+                            <div className="flex items-center space-x-2">
+                              <span className="text-xs font-bold text-gray-900">{leader.points} points</span>
+                              {leader.points < 2500 && (
+                                <>
+                                  <span className="text-xs text-gray-400">→</span>
+                                  <span className="text-xs text-gray-500">
+                                    {leader.points >= 2000 ? '2500' :
+                                     leader.points >= 1500 ? '2000' :
+                                     leader.points >= 1000 ? '1500' :
+                                     leader.points >= 500 ? '1000' : '500'} for next title
+                                  </span>
+                                </>
+                              )}
+                            </div>
+
+                            {/* Progress Bar for You */}
+                            {leader.isYou && leader.points < 2500 && (
+                              <div className="mt-2">
+                                <div className="w-full bg-gray-200 rounded-full h-1.5">
+                                  <div 
+                                    className={`bg-gradient-to-r ${achievement.color} h-1.5 rounded-full transition-all duration-500`}
+                                    style={{ 
+                                      width: `${
+                                        leader.points >= 2000 ? ((leader.points - 2000) / 500) * 100 :
+                                        leader.points >= 1500 ? ((leader.points - 1500) / 500) * 100 :
+                                        leader.points >= 1000 ? ((leader.points - 1000) / 500) * 100 :
+                                        leader.points >= 500 ? ((leader.points - 500) / 500) * 100 :
+                                        (leader.points / 500) * 100
+                                      }%` 
+                                    }}
+                                  ></div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-gray-900 font-bangla">
-                        {leader.name} {leader.isYou && '(You)'}
-                      </p>
-                      <p className="text-xs text-gray-600">{leader.points} points</p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
+
+              {/* Motivational Message for User */}
+              {user.points < 2500 && (
+                <div className="mt-4 p-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-200">
+                  <p className="text-xs font-bold text-indigo-900 mb-1">💡 Keep Going!</p>
+                  <p className="text-xs text-gray-700 font-bangla">
+                    {user.points >= 2000 ? `আরও ${2500 - user.points} পয়েন্ট পেয়ে Legend হয়ে যান!` :
+                     user.points >= 1500 ? `আরও ${2000 - user.points} পয়েন্ট পেয়ে Impact Leader হয়ে যান!` :
+                     user.points >= 1000 ? `আরও ${1500 - user.points} পয়েন্ট পেয়ে Community Hero হয়ে যান!` :
+                     user.points >= 500 ? `আরও ${1000 - user.points} পয়েন্ট পেয়ে Change Maker হয়ে যান!` :
+                     `আরও ${500 - user.points} পয়েন্ট পেয়ে Helper হয়ে যান!`}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Community Forums */}
