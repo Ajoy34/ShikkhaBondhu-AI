@@ -5,6 +5,8 @@ import {
   PhoneCall, MessageCircle, Shield, User, Calendar
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { awardPoints, PointAction } from '../utils/pointsSystem';
+import PointsToast from './PointsToast';
 
 interface Organization {
   id: string;
@@ -46,7 +48,12 @@ interface ReportProgress {
   created_at: string;
 }
 
-const ReportSystem: React.FC = () => {
+interface ReportSystemProps {
+  user?: any;
+  updateUserPoints?: (points: number) => void;
+}
+
+const ReportSystem: React.FC<ReportSystemProps> = ({ user, updateUserPoints }) => {
   const [activeView, setActiveView] = useState<'report' | 'track' | 'organizations'>('report');
   const [showOrgRegistration, setShowOrgRegistration] = useState(false);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -54,6 +61,7 @@ const ReportSystem: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [reportProgress, setReportProgress] = useState<ReportProgress[]>([]);
   const [loading, setLoading] = useState(false);
+  const [pointsToast, setPointsToast] = useState<{ points: number; action: PointAction } | null>(null);
 
   const [reportForm, setReportForm] = useState({
     reporter_name: '',
@@ -172,6 +180,17 @@ const ReportSystem: React.FC = () => {
         }]);
 
       alert(`রিপোর্ট সফলভাবে জমা দেওয়া হয়েছে। রিপোর্ট নম্বর: ${data.report_number}`);
+      
+      // Award points for submitting report
+      if (user) {
+        awardPoints(user.email || 'user', 'SUBMIT_REPORT', (points, action) => {
+          setPointsToast({ points, action });
+          if (updateUserPoints) {
+            updateUserPoints(points);
+          }
+        });
+      }
+      
       setReportForm({
         reporter_name: '',
         reporter_contact: '',
@@ -839,6 +858,15 @@ const ReportSystem: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Points Toast Notification */}
+      {pointsToast && (
+        <PointsToast
+          points={pointsToast.points}
+          action={pointsToast.action}
+          onClose={() => setPointsToast(null)}
+        />
+      )}
     </div>
   );
 };

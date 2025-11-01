@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { X, Send, Bot, User, Mic, Square, Volume2 } from 'lucide-react';
 import ChatbotSelector from './ChatbotSelector';
 import { getChatbotResponse } from '../utils/chatbotLogic';
+import { awardPoints, PointAction } from '../utils/pointsSystem';
+import PointsToast from './PointsToast';
 
 interface ChatSystemProps {
   isOpen: boolean;
@@ -26,6 +28,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [pointsToast, setPointsToast] = useState<{ points: number; action: PointAction } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
@@ -133,12 +136,19 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
       setMessages(prev => [...prev, botMessage]);
       setIsLoading(false);
 
-      // Update user points for interaction
-      setUser(prev => ({
-        ...prev,
-        points: prev.points + 5,
-        impactScore: Math.min(prev.impactScore + 1, 100)
-      }));
+      // Update user points for interaction using points system
+      const success = awardPoints(user.email || 'user', 'CHAT_MESSAGE', (points, action) => {
+        setPointsToast({ points, action });
+        setUser((prev: any) => ({
+          ...prev,
+          points: prev.points + points,
+          impactScore: Math.min(prev.impactScore + 1, 100)
+        }));
+      });
+
+      if (!success) {
+        console.log('Daily chat limit reached');
+      }
 
       // Auto-speak bot response if TTS is enabled
       if (isSpeaking) {
@@ -323,6 +333,15 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
           )}
         </div>
       </div>
+
+      {/* Points Toast Notification */}
+      {pointsToast && (
+        <PointsToast
+          points={pointsToast.points}
+          action={pointsToast.action}
+          onClose={() => setPointsToast(null)}
+        />
+      )}
     </div>
   );
 };

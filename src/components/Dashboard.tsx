@@ -1,16 +1,68 @@
 import React, { useState } from 'react';
 import { Users, Share2, MessageCircle, ThumbsUp, Trophy, Plus, MapPin, Globe, DollarSign, Clock, User } from 'lucide-react';
+import { awardPoints, PointAction } from '../utils/pointsSystem';
+import PointsToast from './PointsToast';
 
 interface DashboardProps {
   user: any;
   setIsChatOpen: (open: boolean) => void;
   setSelectedChatbot: (bot: string) => void;
   setActiveSection: (section: string) => void;
+  updateUserPoints?: (points: number) => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedChatbot, setActiveSection }) => {
+const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedChatbot, setActiveSection, updateUserPoints }) => {
   const [filterType, setFilterType] = useState<'all' | 'local' | 'global'>('all');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [pointsToast, setPointsToast] = useState<{ points: number; action: PointAction } | null>(null);
+
+  // Helper function to award points and show toast
+  const handlePointsAward = (action: PointAction) => {
+    const success = awardPoints(user.email || 'user', action, (points, awardedAction) => {
+      setPointsToast({ points, action: awardedAction });
+      if (updateUserPoints) {
+        updateUserPoints(points);
+      }
+    });
+    return success;
+  };
+
+  // Handle campaign creation
+  const handleCreateCampaign = () => {
+    // Award points for creating campaign
+    handlePointsAward('CREATE_CAMPAIGN');
+    setShowCreateModal(false);
+    // In real app, would save campaign to backend
+  };
+
+  // Handle like action
+  const handleLike = () => {
+    const success = handlePointsAward('LIKE_CAMPAIGN');
+    if (!success) {
+      alert('You\'ve reached your daily limit for likes!');
+    }
+  };
+
+  // Handle comment action
+  const handleComment = () => {
+    const success = handlePointsAward('COMMENT_ON_CAMPAIGN');
+    if (!success) {
+      alert('You\'ve reached your daily limit for comments!');
+    }
+  };
+
+  // Handle share action
+  const handleShare = () => {
+    const success = handlePointsAward('SHARE_CAMPAIGN');
+    if (!success) {
+      alert('You\'ve reached your daily limit for shares!');
+    }
+  };
+
+  // Handle donate action
+  const handleDonate = () => {
+    handlePointsAward('DONATE_TO_CAMPAIGN');
+  };
 
   const communityPrograms = [
     {
@@ -279,20 +331,32 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
 
                     {/* Action Buttons - Like Facebook */}
                     <div className="px-4 py-2 bg-white flex items-center justify-around">
-                      <button className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors flex-1 justify-center">
+                      <button 
+                        onClick={handleLike}
+                        className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors flex-1 justify-center"
+                      >
                         <ThumbsUp className="w-5 h-5 text-gray-600" />
                         <span className="text-gray-700 font-semibold">Like</span>
                       </button>
-                      <button className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors flex-1 justify-center">
+                      <button 
+                        onClick={handleComment}
+                        className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors flex-1 justify-center"
+                      >
                         <MessageCircle className="w-5 h-5 text-gray-600" />
                         <span className="text-gray-700 font-semibold">Comment</span>
                       </button>
-                      <button className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors flex-1 justify-center">
+                      <button 
+                        onClick={handleShare}
+                        className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors flex-1 justify-center"
+                      >
                         <Share2 className="w-5 h-5 text-gray-600" />
                         <span className="text-gray-700 font-semibold">Share</span>
                       </button>
                       {program.isCrowdfunding && (
-                        <button className="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-2 rounded-lg font-bold hover:from-green-700 hover:to-emerald-700 transition-all shadow-md hover:shadow-lg ml-2">
+                        <button 
+                          onClick={handleDonate}
+                          className="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-2 rounded-lg font-bold hover:from-green-700 hover:to-emerald-700 transition-all shadow-md hover:shadow-lg ml-2"
+                        >
                           <DollarSign className="w-5 h-5" />
                           <span>Donate</span>
                         </button>
@@ -727,13 +791,25 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                 >
                   Cancel
                 </button>
-                <button className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all">
+                <button 
+                  onClick={handleCreateCampaign}
+                  className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all"
+                >
                   Create Campaign
                 </button>
               </div>
             </div>
           </div>
         </div>
+      )}
+
+      {/* Points Toast Notification */}
+      {pointsToast && (
+        <PointsToast
+          points={pointsToast.points}
+          action={pointsToast.action}
+          onClose={() => setPointsToast(null)}
+        />
       )}
     </div>
   );
