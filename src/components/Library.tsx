@@ -1,595 +1,411 @@
-import React, { useState } from 'react';
-import { TrendingUp, Users, Star, Share2, BookOpen, Video, Play, ChevronLeft, ChevronRight, Bot, GraduationCap } from 'lucide-react';
+﻿import React, { useState } from 'react';
+import { TrendingUp, Users, Star, BookOpen, Video, Play, Filter, Clock, Award, Search } from 'lucide-react';
 
 interface LibraryProps {
   user: any;
 }
 
 const Library: React.FC<LibraryProps> = ({ user }) => {
-  const [currentCourseIndex, setCurrentCourseIndex] = useState(0);
-  const [currentBookIndex, setCurrentBookIndex] = useState(0);
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedType, setSelectedType] = useState<'courses' | 'books'>('courses');
 
-  const topCourses = [
+  const categories = ['All', 'Programming', 'Marketing', 'Design', 'Business', 'AI/ML', 'Self-Help'];
+
+  const courses = [
     {
+      id: 1,
       title: "Advanced Python Programming",
       titleBn: "উন্নত পাইথন প্রোগ্রামিং",
       instructor: "Dr. Ahmed Khan",
       students: 2345,
       rating: 4.8,
-      image: "🐍",
-      progress: 65,
-      category: "Programming"
+      image: "https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=400&q=80",
+      duration: "12 hours",
+      lessons: 45,
+      category: "Programming",
+      level: "Advanced",
+      price: "Free"
     },
     {
+      id: 2,
       title: "Digital Marketing Mastery",
       titleBn: "ডিজিটাল মার্কেটিং দক্ষতা",
       instructor: "Sarah Rahman",
       students: 1890,
       rating: 4.9,
-      image: "📱",
-      progress: 0,
-      category: "Marketing"
+      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80",
+      duration: "8 hours",
+      lessons: 32,
+      category: "Marketing",
+      level: "Beginner",
+      price: "Free"
     },
     {
+      id: 3,
       title: "Web Development Bootcamp",
       titleBn: "ওয়েব ডেভেলপমেন্ট বুটক্যাম্প",
       instructor: "Karim Hossain",
       students: 3120,
       rating: 4.7,
-      image: "💻",
-      progress: 30,
-      category: "Development"
+      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&q=80",
+      duration: "20 hours",
+      lessons: 78,
+      category: "Programming",
+      level: "Intermediate",
+      price: "Free"
     },
     {
-      title: "AI & Machine Learning Fundamentals",
-      titleBn: "এআই এবং মেশিন লার্নিং মূলনীতি",
+      id: 4,
+      title: "AI & Machine Learning",
+      titleBn: "এআই এবং মেশিন লার্নিং",
       instructor: "Dr. Fatima Noor",
       students: 2567,
       rating: 4.9,
-      image: "🤖",
-      progress: 0,
-      category: "AI/ML"
+      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&q=80",
+      duration: "15 hours",
+      lessons: 56,
+      category: "AI/ML",
+      level: "Advanced",
+      price: "Free"
+    },
+    {
+      id: 5,
+      title: "UI/UX Design Fundamentals",
+      titleBn: "UI/UX ডিজাইন মূলনীতি",
+      instructor: "Nadia Islam",
+      students: 1456,
+      rating: 4.8,
+      image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&q=80",
+      duration: "10 hours",
+      lessons: 38,
+      category: "Design",
+      level: "Beginner",
+      price: "Free"
+    },
+    {
+      id: 6,
+      title: "Business Strategy & Growth",
+      titleBn: "ব্যবসায়িক কৌশল এবং বৃদ্ধি",
+      instructor: "Rahim Uddin",
+      students: 1234,
+      rating: 4.7,
+      image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=80",
+      duration: "9 hours",
+      lessons: 35,
+      category: "Business",
+      level: "Intermediate",
+      price: "Free"
     }
   ];
 
-  const topBooks = [
+  const books = [
     {
+      id: 1,
       title: "Atomic Habits",
       titleBn: "পরমাণু অভ্যাস",
       author: "James Clear",
       readers: 1234,
       rating: 4.9,
-      image: "📘",
-      progress: 45,
+      image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&q=80",
+      pages: 320,
       category: "Self-Help",
-      pages: 320
+      language: "English"
     },
     {
-      title: "Deep Work",
-      titleBn: "গভীর কাজ",
-      author: "Cal Newport",
-      readers: 987,
-      rating: 4.8,
-      image: "📗",
-      progress: 0,
-      category: "Productivity",
-      pages: 296
-    },
-    {
-      title: "Think Like a Monk",
-      titleBn: "সন্ন্যাসীর মতো চিন্তা করুন",
-      author: "Jay Shetty",
-      readers: 1456,
-      rating: 4.7,
-      image: "📙",
-      progress: 78,
-      category: "Mindfulness",
-      pages: 352
-    },
-    {
+      id: 2,
       title: "The Psychology of Money",
       titleBn: "অর্থের মনোবিজ্ঞান",
       author: "Morgan Housel",
       readers: 1678,
       rating: 4.9,
-      image: "📕",
-      progress: 0,
-      category: "Finance",
-      pages: 256
+      image: "https://images.unsplash.com/photo-1592496431122-2349e0fbc666?w=400&q=80",
+      pages: 256,
+      category: "Business",
+      language: "English"
+    },
+    {
+      id: 3,
+      title: "Clean Code",
+      titleBn: "ক্লিন কোড",
+      author: "Robert Martin",
+      readers: 987,
+      rating: 4.8,
+      image: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=400&q=80",
+      pages: 464,
+      category: "Programming",
+      language: "English"
+    },
+    {
+      id: 4,
+      title: "Deep Work",
+      titleBn: "গভীর কাজ",
+      author: "Cal Newport",
+      readers: 1456,
+      rating: 4.8,
+      image: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=400&q=80",
+      pages: 296,
+      category: "Self-Help",
+      language: "English"
+    },
+    {
+      id: 5,
+      title: "Marketing 4.0",
+      titleBn: "মার্কেটিং ৪.০",
+      author: "Philip Kotler",
+      readers: 890,
+      rating: 4.7,
+      image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400&q=80",
+      pages: 208,
+      category: "Marketing",
+      language: "English"
+    },
+    {
+      id: 6,
+      title: "The Design of Everyday Things",
+      titleBn: "দৈনন্দিন জিনিসের ডিজাইন",
+      author: "Don Norman",
+      readers: 756,
+      rating: 4.9,
+      image: "https://images.unsplash.com/photo-1513001900722-370f803f498d?w=400&q=80",
+      pages: 368,
+      category: "Design",
+      language: "English"
     }
   ];
 
-  const topVideos = [
-    {
-      title: "Introduction to Python Programming",
-      titleBn: "পাইথন প্রোগ্রামিং পরিচিতি",
-      instructor: "Dr. Ahmed Khan",
-      views: 45600,
-      rating: 4.8,
-      thumbnail: "🎬",
-      duration: "2:45:30",
-      category: "Programming",
-      isWatched: true
-    },
-    {
-      title: "Digital Marketing Strategies 2024",
-      titleBn: "ডিজিটাল মার্কেটিং কৌশল ২০২৪",
-      instructor: "Sarah Rahman",
-      views: 32400,
-      rating: 4.9,
-      thumbnail: "📹",
-      duration: "1:30:20",
-      category: "Marketing",
-      isWatched: false
-    },
-    {
-      title: "React.js Complete Tutorial",
-      titleBn: "রিঅ্যাক্ট.জেএস সম্পূর্ণ টিউটোরিয়াল",
-      instructor: "Karim Hossain",
-      views: 56700,
-      rating: 4.7,
-      thumbnail: "🎥",
-      duration: "3:15:45",
-      category: "Web Dev",
-      isWatched: false
-    },
-    {
-      title: "AI Fundamentals for Beginners",
-      titleBn: "শিক্ষানবিসদের জন্য এআই মূলনীতি",
-      instructor: "Dr. Fatima Noor",
-      views: 38900,
-      rating: 4.9,
-      thumbnail: "🎞️",
-      duration: "2:00:15",
-      category: "AI/ML",
-      isWatched: true
-    }
-  ];
+  const filteredCourses = selectedCategory === 'All' 
+    ? courses 
+    : courses.filter(course => course.category === selectedCategory);
+
+  const filteredBooks = selectedCategory === 'All'
+    ? books
+    : books.filter(book => book.category === selectedCategory);
+
+  const displayItems = selectedType === 'courses' ? filteredCourses : filteredBooks;
 
   return (
-    <section className="py-8 bg-gray-100 min-h-screen">
-      <div className="container mx-auto px-4">
+    <section className="py-8 bg-gradient-to-br from-gray-50 via-white to-indigo-50 min-h-screen">
+      <div className="container mx-auto px-4 max-w-7xl">
         
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Library</h1>
-          <p className="text-gray-600 font-bangla text-lg">কোর্স, বই এবং ভিডিও লাইব্রেরি</p>
+          <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-2">
+            শিক্ষা Library
+          </h1>
+          <p className="text-gray-600 text-lg">Discover thousands of courses and books to advance your skills</p>
+          <p className="text-gray-500 font-bangla">হাজারো কোর্স এবং বই দিয়ে আপনার দক্ষতা বৃদ্ধি করুন</p>
         </div>
 
-        {/* Top Trending Courses */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-2xl font-bold text-gray-900 flex items-center">
-              <TrendingUp className="w-6 h-6 mr-2 text-indigo-600" />
-              Top Trending Courses
-              <span className="ml-2 font-bangla text-lg text-gray-600">জনপ্রিয় কোর্স</span>
-            </h3>
-            <button className="text-indigo-600 hover:text-indigo-700 text-sm font-semibold">View All →</button>
-          </div>
-          
-          {/* Course Carousel */}
+        {/* Search Bar */}
+        <div className="mb-6">
           <div className="relative">
-            <div className="border-2 border-gray-200 rounded-xl p-4 hover:border-indigo-300 hover:shadow-md transition-all">
-              <div className="flex items-start space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl flex items-center justify-center text-3xl hover:scale-110 transition-transform">
-                  {topCourses[currentCourseIndex].image}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h4 className="font-bold text-gray-900 hover:text-indigo-600 transition-colors">{topCourses[currentCourseIndex].title}</h4>
-                      <p className="text-sm text-gray-600 font-bangla">{topCourses[currentCourseIndex].titleBn}</p>
-                      <p className="text-xs text-gray-500 mt-1">by {topCourses[currentCourseIndex].instructor}</p>
-                    </div>
-                    <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-semibold">{topCourses[currentCourseIndex].category}</span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-4 mt-2 text-xs text-gray-600">
-                    <div className="flex items-center space-x-1">
-                      <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold">{topCourses[currentCourseIndex].rating}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Users className="w-3 h-3" />
-                      <span>{topCourses[currentCourseIndex].students.toLocaleString()} students</span>
-                    </div>
-                  </div>
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search courses, books, instructors..."
+              className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all text-gray-700 font-medium"
+            />
+          </div>
+        </div>
 
-                  {topCourses[currentCourseIndex].progress > 0 && (
-                    <div className="mt-3">
-                      <div className="flex justify-between text-xs mb-1">
-                        <span className="text-gray-600">Your Progress</span>
-                        <span className="font-bold text-indigo-600">{topCourses[currentCourseIndex].progress}%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full" style={{ width: `${topCourses[currentCourseIndex].progress}%` }}></div>
-                      </div>
+        {/* Type Selector */}
+        <div className="flex items-center space-x-3 mb-6">
+          <button
+            onClick={() => setSelectedType('courses')}
+            className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-bold transition-all ${
+              selectedType === 'courses'
+                ? 'bg-indigo-600 text-white shadow-lg scale-105'
+                : 'bg-white text-gray-700 hover:bg-gray-50 shadow'
+            }`}
+          >
+            <Video className="w-5 h-5" />
+            <span>Courses</span>
+            <span className="font-bangla">কোর্স</span>
+          </button>
+          <button
+            onClick={() => setSelectedType('books')}
+            className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-bold transition-all ${
+              selectedType === 'books'
+                ? 'bg-green-600 text-white shadow-lg scale-105'
+                : 'bg-white text-gray-700 hover:bg-gray-50 shadow'
+            }`}
+          >
+            <BookOpen className="w-5 h-5" />
+            <span>Books</span>
+            <span className="font-bangla">বই</span>
+          </button>
+        </div>
+
+        {/* Category Filters */}
+        <div className="mb-8">
+          <div className="flex items-center space-x-2 mb-4">
+            <Filter className="w-5 h-5 text-gray-600" />
+            <h3 className="font-bold text-gray-900">Filter by Category</h3>
+            <span className="text-gray-500 font-bangla">ক্যাটাগরি অনুযায়ী</span>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-4 py-2 rounded-xl font-semibold transition-all ${
+                  selectedCategory === category
+                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg scale-105'
+                    : 'bg-white text-gray-700 hover:bg-gray-50 shadow hover:shadow-md'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Trending Badge */}
+        <div className="mb-6 flex items-center space-x-2 bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-xl px-4 py-3">
+          <TrendingUp className="w-5 h-5 text-orange-600" />
+          <span className="font-bold text-gray-900">Trending {selectedType === 'courses' ? 'Courses' : 'Books'}</span>
+          <span className="font-bangla text-gray-600">• জনপ্রিয় {selectedType === 'courses' ? 'কোর্স' : 'বই'}</span>
+          <span className="ml-auto text-sm text-gray-600">{displayItems.length} items</span>
+        </div>
+
+        {/* Content Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {displayItems.map((item) => (
+            <div
+              key={item.id}
+              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-transparent hover:border-indigo-200"
+            >
+              {/* Image */}
+              <div className="relative h-48 bg-gray-200 overflow-hidden group">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  onError={(e) => {
+                    e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23f3f4f6" width="400" height="300"/%3E%3Ctext fill="%239ca3af" font-family="Arial" font-size="24" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3E' + (selectedType === 'courses' ? 'Course' : 'Book') + '%3C/text%3E%3C/svg%3E';
+                  }}
+                />
+                {selectedType === 'courses' && (
+                  <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+                      <Play className="w-8 h-8 text-indigo-600" />
+                    </div>
+                  </div>
+                )}
+                <div className="absolute top-3 right-3 bg-white rounded-full px-3 py-1 text-xs font-bold text-gray-900 shadow-lg">
+                  {selectedType === 'courses' ? (item as any).level : (item as any).language}
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-5">
+                {/* Category Badge */}
+                <div className="mb-3">
+                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
+                    selectedType === 'courses'
+                      ? 'bg-indigo-100 text-indigo-700'
+                      : 'bg-green-100 text-green-700'
+                  }`}>
+                    {item.category}
+                  </span>
+                </div>
+
+                {/* Title */}
+                <h3 className="font-bold text-gray-900 text-lg mb-1 line-clamp-2 hover:text-indigo-600 transition-colors cursor-pointer">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-gray-600 font-bangla mb-3">{item.titleBn}</p>
+
+                {/* Instructor/Author */}
+                <p className="text-sm text-gray-600 mb-3">
+                  by <span className="font-semibold">{selectedType === 'courses' ? (item as any).instructor : (item as any).author}</span>
+                </p>
+
+                {/* Stats */}
+                <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
+                  <div className="flex items-center space-x-1">
+                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    <span className="text-sm font-bold text-gray-900">{item.rating}</span>
+                  </div>
+                  <div className="flex items-center space-x-1 text-gray-600">
+                    <Users className="w-4 h-4" />
+                    <span className="text-sm">{selectedType === 'courses' ? (item as any).students : (item as any).readers}</span>
+                  </div>
+                  {selectedType === 'courses' ? (
+                    <div className="flex items-center space-x-1 text-gray-600">
+                      <Clock className="w-4 h-4" />
+                      <span className="text-sm">{(item as any).duration}</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center space-x-1 text-gray-600">
+                      <BookOpen className="w-4 h-4" />
+                      <span className="text-sm">{(item as any).pages}p</span>
                     </div>
                   )}
-
-                  <div className="flex items-center space-x-2 mt-3">
-                    <button className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors">
-                      {topCourses[currentCourseIndex].progress > 0 ? 'Continue' : 'Enroll Now'}
-                    </button>
-                    <button className="p-2 border-2 border-gray-200 rounded-lg hover:border-indigo-300 hover:bg-indigo-50 transition-colors">
-                      <Share2 className="w-4 h-4 text-gray-600" />
-                    </button>
-                  </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Navigation Arrows */}
-            <button
-              onClick={() => setCurrentCourseIndex((prev) => (prev === 0 ? topCourses.length - 1 : prev - 1))}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all hover:scale-110 z-10"
-            >
-              <ChevronLeft className="w-5 h-5 text-indigo-600" />
-            </button>
-            <button
-              onClick={() => setCurrentCourseIndex((prev) => (prev === topCourses.length - 1 ? 0 : prev + 1))}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all hover:scale-110 z-10"
-            >
-              <ChevronRight className="w-5 h-5 text-indigo-600" />
-            </button>
-
-            {/* Dots Indicator */}
-            <div className="flex justify-center gap-2 mt-4">
-              {topCourses.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentCourseIndex(idx)}
-                  className={`h-2 rounded-full transition-all ${
-                    idx === currentCourseIndex ? 'w-8 bg-indigo-600' : 'w-2 bg-gray-300 hover:bg-gray-400'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Top Books Read by Students */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-2xl font-bold text-gray-900 flex items-center">
-              <BookOpen className="w-6 h-6 mr-2 text-green-600" />
-              Top Books Read by Students
-              <span className="ml-2 font-bangla text-lg text-gray-600">জনপ্রিয় বই</span>
-            </h3>
-            <button className="text-green-600 hover:text-green-700 text-sm font-semibold">View All →</button>
-          </div>
-          
-          {/* Book Carousel */}
-          <div className="relative">
-            <div className="border-2 border-gray-200 rounded-xl p-4 hover:border-green-300 hover:shadow-md transition-all">
-              <div className="flex items-start space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl flex items-center justify-center text-3xl hover:scale-110 transition-transform">
-                  {topBooks[currentBookIndex].image}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h4 className="font-bold text-gray-900 hover:text-green-600 transition-colors">{topBooks[currentBookIndex].title}</h4>
-                      <p className="text-sm text-gray-600 font-bangla">{topBooks[currentBookIndex].titleBn}</p>
-                      <p className="text-xs text-gray-500 mt-1">by {topBooks[currentBookIndex].author}</p>
-                    </div>
-                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">{topBooks[currentBookIndex].category}</span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-4 mt-2 text-xs text-gray-600">
-                    <div className="flex items-center space-x-1">
-                      <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold">{topBooks[currentBookIndex].rating}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Users className="w-3 h-3" />
-                      <span>{topBooks[currentBookIndex].readers.toLocaleString()} readers</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <BookOpen className="w-3 h-3" />
-                      <span>{topBooks[currentBookIndex].pages} pages</span>
-                    </div>
-                  </div>
-
-                  {topBooks[currentBookIndex].progress > 0 && (
-                    <div className="mt-3">
-                      <div className="flex justify-between text-xs mb-1">
-                        <span className="text-gray-600">Reading Progress</span>
-                        <span className="font-bold text-green-600">{topBooks[currentBookIndex].progress}%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full" style={{ width: `${topBooks[currentBookIndex].progress}%` }}></div>
-                      </div>
-                    </div>
+                {/* Action Button */}
+                <button className={`w-full py-3 rounded-xl font-bold transition-all shadow-md hover:shadow-lg ${
+                  selectedType === 'courses'
+                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700'
+                    : 'bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700'
+                }`}>
+                  {selectedType === 'courses' ? (
+                    <>
+                      <span>Enroll Now • </span>
+                      <span className="font-bangla">এনরোল করুন</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Read Now • </span>
+                      <span className="font-bangla">পড়ুন</span>
+                    </>
                   )}
-
-                  <div className="flex items-center space-x-2 mt-3">
-                    <button className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors">
-                      {topBooks[currentBookIndex].progress > 0 ? 'Continue Reading' : 'Start Reading'}
-                    </button>
-                    <button className="p-2 border-2 border-gray-200 rounded-lg hover:border-green-300 hover:bg-green-50 transition-colors">
-                      <Share2 className="w-4 h-4 text-gray-600" />
-                    </button>
-                  </div>
-                </div>
+                </button>
               </div>
             </div>
-
-            {/* Navigation Arrows */}
-            <button
-              onClick={() => setCurrentBookIndex((prev) => (prev === 0 ? topBooks.length - 1 : prev - 1))}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all hover:scale-110 z-10"
-            >
-              <ChevronLeft className="w-5 h-5 text-green-600" />
-            </button>
-            <button
-              onClick={() => setCurrentBookIndex((prev) => (prev === topBooks.length - 1 ? 0 : prev + 1))}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all hover:scale-110 z-10"
-            >
-              <ChevronRight className="w-5 h-5 text-green-600" />
-            </button>
-
-            {/* Dots Indicator */}
-            <div className="flex justify-center gap-2 mt-4">
-              {topBooks.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentBookIndex(idx)}
-                  className={`h-2 rounded-full transition-all ${
-                    idx === currentBookIndex ? 'w-8 bg-green-600' : 'w-2 bg-gray-300 hover:bg-gray-400'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
 
-        {/* Top Videos */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-2xl font-bold text-gray-900 flex items-center">
-              <Video className="w-6 h-6 mr-2 text-red-600" />
-              Top Videos
-              <span className="ml-2 font-bangla text-lg text-gray-600">জনপ্রিয় ভিডিও</span>
-            </h3>
-            <button className="text-red-600 hover:text-red-700 text-sm font-semibold">View All →</button>
+        {/* Empty State */}
+        {displayItems.length === 0 && (
+          <div className="text-center py-16">
+            <div className="text-6xl mb-4">📚</div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">No items found</h3>
+            <p className="text-gray-600">Try selecting a different category</p>
           </div>
-          
-          {/* Video Carousel */}
-          <div className="relative">
-            <div className="border-2 border-gray-200 rounded-xl p-4 hover:border-red-300 hover:shadow-md transition-all">
-              <div className="flex items-start space-x-4">
-                <div className="relative w-16 h-16 bg-gradient-to-br from-red-100 to-pink-100 rounded-xl flex items-center justify-center text-3xl hover:scale-110 transition-transform">
-                  {topVideos[currentVideoIndex].thumbnail}
-                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 rounded-xl">
-                    <Play className="w-6 h-6 text-white" />
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h4 className="font-bold text-gray-900 hover:text-red-600 transition-colors">{topVideos[currentVideoIndex].title}</h4>
-                      <p className="text-sm text-gray-600 font-bangla">{topVideos[currentVideoIndex].titleBn}</p>
-                      <p className="text-xs text-gray-500 mt-1">by {topVideos[currentVideoIndex].instructor}</p>
-                    </div>
-                    <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">{topVideos[currentVideoIndex].category}</span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-4 mt-2 text-xs text-gray-600">
-                    <div className="flex items-center space-x-1">
-                      <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold">{topVideos[currentVideoIndex].rating}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Users className="w-3 h-3" />
-                      <span>{topVideos[currentVideoIndex].views.toLocaleString()} views</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Video className="w-3 h-3" />
-                      <span>{topVideos[currentVideoIndex].duration}</span>
-                    </div>
-                  </div>
+        )}
 
-                  {topVideos[currentVideoIndex].isWatched && (
-                    <div className="mt-3">
-                      <span className="inline-flex items-center gap-1 text-xs text-green-600 font-semibold">
-                        ✓ Watched
-                      </span>
-                    </div>
-                  )}
-
-                  <div className="flex items-center space-x-2 mt-3">
-                    <button className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors flex items-center justify-center gap-2">
-                      <Play className="w-4 h-4" />
-                      {topVideos[currentVideoIndex].isWatched ? 'Watch Again' : 'Watch Now'}
-                    </button>
-                    <button className="p-2 border-2 border-gray-200 rounded-lg hover:border-red-300 hover:bg-red-50 transition-colors">
-                      <Share2 className="w-4 h-4 text-gray-600" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Navigation Arrows */}
-            <button
-              onClick={() => setCurrentVideoIndex((prev) => (prev === 0 ? topVideos.length - 1 : prev - 1))}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all hover:scale-110 z-10"
-            >
-              <ChevronLeft className="w-5 h-5 text-red-600" />
+        {/* Load More */}
+        {displayItems.length > 0 && (
+          <div className="text-center mt-12">
+            <button className="bg-white text-gray-700 px-8 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
+              Load More • <span className="font-bangla">আরও দেখুন</span>
             </button>
-            <button
-              onClick={() => setCurrentVideoIndex((prev) => (prev === topVideos.length - 1 ? 0 : prev + 1))}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all hover:scale-110 z-10"
-            >
-              <ChevronRight className="w-5 h-5 text-red-600" />
-            </button>
-
-            {/* Dots Indicator */}
-            <div className="flex justify-center gap-2 mt-4">
-              {topVideos.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentVideoIndex(idx)}
-                  className={`h-2 rounded-full transition-all ${
-                    idx === currentVideoIndex ? 'w-8 bg-red-600' : 'w-2 bg-gray-300 hover:bg-gray-400'
-                  }`}
-                />
-              ))}
-            </div>
           </div>
-        </div>
+        )}
 
-        {/* Bangladeshi E-Course & Book Library Section */}
-        <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 border-2 border-amber-200 rounded-3xl p-8 md:p-12 shadow-xl">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center space-x-3 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-md mb-4">
-              <BookOpen className="w-6 h-6 text-amber-600 animate-pulse" />
-              <span className="text-amber-900 font-bold text-lg">বাংলাদেশি শিক্ষা সম্পদ</span>
-              <GraduationCap className="w-6 h-6 text-amber-600" />
-            </div>
-            
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-3">
-              Bangladeshi E-Course & Book Library
-              <span className="block text-2xl font-bangla text-amber-700 mt-2">
-                বাংলাদেশি ই-কোর্স এবং বই লাইব্রেরি
-              </span>
-            </h2>
-            
-            <p className="text-lg text-gray-700 max-w-3xl mx-auto mb-2">
-              Access thousands of quality courses and books created by Bangladeshi experts
-            </p>
-            <p className="text-base text-gray-600 font-bangla max-w-3xl mx-auto">
-              বাংলাদেশী বিশেষজ্ঞদের তৈরি হাজারো মানসম্পন্ন কোর্স এবং বই অ্যাক্সেস করুন
-            </p>
+        {/* Stats Section */}
+        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl p-6 text-white shadow-xl">
+            <Award className="w-10 h-10 mb-3 opacity-80" />
+            <div className="text-3xl font-black mb-1">5,000+</div>
+            <div className="text-sm opacity-90 font-bangla">ভিডিও কোর্স</div>
           </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Courses */}
-            <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-2 border-transparent hover:border-indigo-300">
-              <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center text-white mb-4 shadow-md">
-                <Video className="w-7 h-7" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Video Courses</h3>
-              <p className="text-sm font-bangla text-indigo-600 font-semibold mb-3">ভিডিও কোর্স</p>
-              <ul className="space-y-2 text-sm text-gray-600 mb-4">
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>Programming, Web Dev, AI/ML</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>Digital Marketing & Business</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>Life Skills & Personal Growth</span>
-                </li>
-                <li className="flex items-start font-bangla text-indigo-600">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>বাংলায় ও ইংরেজিতে উপলব্ধ</span>
-                </li>
-              </ul>
-              <div className="flex items-center justify-between text-xs text-gray-500 bg-indigo-50 rounded-lg p-3">
-                <span className="font-semibold">5,000+ Courses</span>
-                <span className="font-bangla">৫,০০০+ কোর্স</span>
-              </div>
-            </div>
-
-            {/* Books */}
-            <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-2 border-transparent hover:border-green-300">
-              <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center text-white mb-4 shadow-md">
-                <BookOpen className="w-7 h-7" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Digital Books</h3>
-              <p className="text-sm font-bangla text-green-600 font-semibold mb-3">ডিজিটাল বই</p>
-              <ul className="space-y-2 text-sm text-gray-600 mb-4">
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>Academic & Educational Books</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>Self-Help & Motivation</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>Technology & Innovation</span>
-                </li>
-                <li className="flex items-start font-bangla text-green-600">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>বাংলাদেশী লেখকদের বই</span>
-                </li>
-              </ul>
-              <div className="flex items-center justify-between text-xs text-gray-500 bg-green-50 rounded-lg p-3">
-                <span className="font-semibold">10,000+ Books</span>
-                <span className="font-bangla">১০,০০০+ বই</span>
-              </div>
-            </div>
-
-            {/* AI Books */}
-            <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-2 border-transparent hover:border-purple-300">
-              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white mb-4 shadow-md">
-                <Bot className="w-7 h-7" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">AI-Generated Books</h3>
-              <p className="text-sm font-bangla text-purple-600 font-semibold mb-3">এআই দ্বারা তৈরি বই</p>
-              <ul className="space-y-2 text-sm text-gray-600 mb-4">
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>Custom AI-generated content</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>Personalized study materials</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>Quick summaries & guides</span>
-                </li>
-                <li className="flex items-start font-bangla text-purple-600">
-                  <span className="text-green-500 mr-2">✓</span>
-                  <span>এআই সহায়তায় শিখুন দ্রুত</span>
-                </li>
-              </ul>
-              <div className="flex items-center justify-between text-xs text-gray-500 bg-purple-50 rounded-lg p-3">
-                <span className="font-semibold">Unlimited Access</span>
-                <span className="font-bangla">সীমাহীন সুবিধা</span>
-              </div>
-            </div>
+          <div className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl p-6 text-white shadow-xl">
+            <BookOpen className="w-10 h-10 mb-3 opacity-80" />
+            <div className="text-3xl font-black mb-1">10,000+</div>
+            <div className="text-sm opacity-90 font-bangla">ডিজিটাল বই</div>
           </div>
-
-          {/* Library Stats */}
-          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 text-center shadow-md">
-              <div className="text-2xl font-bold text-indigo-600">5K+</div>
-              <div className="text-xs text-gray-600 font-bangla">ভিডিও কোর্স</div>
-            </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 text-center shadow-md">
-              <div className="text-2xl font-bold text-green-600">10K+</div>
-              <div className="text-xs text-gray-600 font-bangla">ডিজিটাল বই</div>
-            </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 text-center shadow-md">
-              <div className="text-2xl font-bold text-purple-600">100%</div>
-              <div className="text-xs text-gray-600 font-bangla">বাংলায়</div>
-            </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 text-center shadow-md">
-              <div className="text-2xl font-bold text-orange-600">Free</div>
-              <div className="text-xs text-gray-600 font-bangla">বিনামূল্যে</div>
-            </div>
+          <div className="bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl p-6 text-white shadow-xl">
+            <Users className="w-10 h-10 mb-3 opacity-80" />
+            <div className="text-3xl font-black mb-1">50,000+</div>
+            <div className="text-sm opacity-90 font-bangla">শিক্ষার্থী</div>
           </div>
-
-          {/* CTA Button */}
-          <div className="text-center mt-8">
-            <button className="inline-flex items-center space-x-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105">
-              <BookOpen className="w-6 h-6" />
-              <span>Browse Library</span>
-              <span className="font-bangla">লাইব্রেরি দেখুন</span>
-            </button>
-            <p className="mt-3 text-sm text-gray-600 font-bangla">
-              ✨ সম্পূর্ণ বিনামূল্যে • কোন সাবস্ক্রিপশন ফি নেই
-            </p>
+          <div className="bg-gradient-to-br from-pink-500 to-purple-500 rounded-2xl p-6 text-white shadow-xl">
+            <TrendingUp className="w-10 h-10 mb-3 opacity-80" />
+            <div className="text-3xl font-black mb-1">100%</div>
+            <div className="text-sm opacity-90">Free Access</div>
           </div>
         </div>
 
