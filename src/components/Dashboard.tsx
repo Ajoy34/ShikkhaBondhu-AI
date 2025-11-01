@@ -356,19 +356,6 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                   <span className="font-bangla">লিডারবোর্ড</span>
                 </h4>
               </div>
-
-              {/* Achievement Titles Info */}
-              <div className="mb-4 p-3 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl border border-purple-200">
-                <p className="text-xs font-bold text-purple-900 mb-2">🏆 Achievement Titles</p>
-                <div className="grid grid-cols-2 gap-1 text-xs">
-                  <div className="text-gray-600">0-500: <span className="font-semibold text-gray-800">Beginner</span></div>
-                  <div className="text-gray-600">500-1000: <span className="font-semibold text-blue-700">Helper</span></div>
-                  <div className="text-gray-600">1000-1500: <span className="font-semibold text-green-700">Change Maker</span></div>
-                  <div className="text-gray-600">1500-2000: <span className="font-semibold text-orange-700">Community Hero</span></div>
-                  <div className="text-gray-600">2000-2500: <span className="font-semibold text-red-700">Impact Leader</span></div>
-                  <div className="text-gray-600">2500+: <span className="font-semibold text-purple-700">Legend</span></div>
-                </div>
-              </div>
               
               <div className="space-y-3">
                 {[
