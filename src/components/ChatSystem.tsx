@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { X, Send, Bot, User, Mic, Square, Volume2 } from 'lucide-react';
 import ChatbotSelector from './ChatbotSelector';
 import { getChatbotResponse } from '../utils/chatbotLogic';
+import { callGeminiAPI } from '../utils/geminiClient';
 import { awardPoints, PointAction } from '../utils/pointsSystem';
 import PointsToast from './PointsToast';
 
@@ -121,62 +122,91 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
     setMessages(prev => [...prev, typingMessage]);
 
     try {
-      // Call secure server endpoint
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: message,
-          botType: selectedBot,
-          userId: user.email || 'anonymous'
-        }),
-      });
+      // Try Vercel API first (if available)
+      let apiResponse = null;
+      let useDirectAPI = false;
+
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: message,
+            botType: selectedBot,
+            userId: user.email || 'anonymous'
+          }),
+        });
+
+        if (response.ok) {
+          apiResponse = await response.json();
+        } else {
+          console.log('Vercel API unavailable, switching to direct API');
+          useDirectAPI = true;
+        }
+      } catch (error) {
+        console.log('Vercel endpoint not found, using direct API');
+        useDirectAPI = true;
+      }
+
+      // If Vercel API failed, try direct Gemini API
+      if (useDirectAPI) {
+        const directResult = await callGeminiAPI(
+          message,
+          selectedBot,
+          user.email || 'anonymous'
+        );
+
+        if (directResult.error) {
+          // If API key missing or error, use fallback
+          if (directResult.error === 'API_KEY_MISSING') {
+            console.log('Google API key not configured, using fallback');
+          } else {
+            console.log('Direct API error:', directResult.error);
+          }
+          
+          // Use fallback chatbot
+          const fallbackResponse = getChatbotResponse(message, selectedBot, false, user);
+          
+          setMessages(prev => prev.filter(msg => msg.id !== 'typing'));
+          
+          const botMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            content: fallbackResponse,
+            sender: 'bot',
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, botMessage]);
+          setIsLoading(false);
+
+          // Award points
+          awardPoints(user.email || 'user', 'CHAT_MESSAGE', (points, action) => {
+            setPointsToast({ points, action });
+            setUser((prev: any) => ({
+              ...prev,
+              points: prev.points + points,
+              impactScore: Math.min(prev.impactScore + 1, 100)
+            }));
+          });
+
+          if (isSpeaking) {
+            speakText(fallbackResponse);
+          }
+          return;
+        }
+
+        // Use direct API response
+        apiResponse = { response: directResult.response };
+      }
 
       // Remove typing indicator
       setMessages(prev => prev.filter(msg => msg.id !== 'typing'));
 
-      if (!response.ok) {
-        // If API fails (local dev or error), use fallback chatbot logic
-        console.log('API unavailable, using fallback');
-        const fallbackResponse = getChatbotResponse(message, selectedBot, false, user);
-        
-        const botMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          content: fallbackResponse,
-          sender: 'bot',
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, botMessage]);
-        setIsLoading(false);
-
-        // Award points
-        const success = awardPoints(user.email || 'user', 'CHAT_MESSAGE', (points, action) => {
-          setPointsToast({ points, action });
-          setUser((prev: any) => ({
-            ...prev,
-            points: prev.points + points,
-            impactScore: Math.min(prev.impactScore + 1, 100)
-          }));
-        });
-
-        if (!success) {
-          console.log('Daily chat limit reached');
-        }
-
-        if (isSpeaking) {
-          speakText(fallbackResponse);
-        }
-        return;
-      }
-
-      const data = await response.json();
-
       // Add bot response
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: data.response,
+        content: apiResponse.response,
         sender: 'bot',
         timestamp: new Date()
       };
@@ -199,8 +229,8 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
       }
 
       // Auto-speak bot response if TTS is enabled
-      if (isSpeaking) {
-        speakText(data.response);
+      if (isSpeaking && apiResponse) {
+        speakText(apiResponse.response);
       }
     } catch (error) {
       console.error('Chat error:', error);
