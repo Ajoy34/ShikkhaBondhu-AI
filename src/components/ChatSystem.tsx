@@ -99,7 +99,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleUserMessage = (message: string) => {
+  const handleUserMessage = async (message: string) => {
     const userMessage: Message = {
       id: Date.now().toString(),
       content: message,
@@ -120,15 +120,43 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
     };
     setMessages(prev => [...prev, typingMessage]);
 
-    // Simulate AI processing delay
-    setTimeout(() => {
-      const botResponse = getChatbotResponse(message, selectedBot, false, user);
-      
+    try {
+      // Call secure server endpoint instead of Google directly
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: message,
+          botType: selectedBot,
+          userId: user.email || 'anonymous'
+        }),
+      });
+
+      const data = await response.json();
+
+      // Remove typing indicator
       setMessages(prev => prev.filter(msg => msg.id !== 'typing'));
-      
+
+      if (!response.ok) {
+        // Handle errors
+        const errorMessage = data.errorBn || data.error || 'একটি ত্রুটি ঘটেছে। দয়া করে আবার চেষ্টা করুন।';
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          content: errorMessage,
+          sender: 'bot',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, botMessage]);
+        setIsLoading(false);
+        return;
+      }
+
+      // Add bot response
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: botResponse,
+        content: data.response,
         sender: 'bot',
         timestamp: new Date()
       };
@@ -152,9 +180,24 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
 
       // Auto-speak bot response if TTS is enabled
       if (isSpeaking) {
-        speakText(botResponse);
+        speakText(data.response);
       }
-    }, 1500);
+    } catch (error) {
+      console.error('Chat error:', error);
+      
+      // Remove typing indicator
+      setMessages(prev => prev.filter(msg => msg.id !== 'typing'));
+      
+      // Show error message
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: 'দুঃখিত, একটি সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।',
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      setIsLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -187,7 +230,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
       // Clean HTML tags from text
       const cleanText = text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
       
-      const utterance = new SpeechSynthesisUtterance(text);
+      const utterance = new SpeechSynthesisUtterance(cleanText);
       utterance.lang = 'bn-BD';
       utterance.rate = 0.9;
       utterance.pitch = 1.2;
