@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, Bot, User, Mic, Square, Volume2 } from 'lucide-react';
+import { X, Send, Bot, User, Mic, Square, Volume2, Trash2, Copy, CheckCheck } from 'lucide-react';
 import ChatbotSelector from './ChatbotSelector';
 import { getChatbotResponse } from '../utils/chatbotLogic';
 import { callGeminiAPI } from '../utils/geminiClient';
@@ -21,6 +21,7 @@ interface Message {
   sender: 'user' | 'bot';
   timestamp: Date;
   isTyping?: boolean;
+  error?: boolean;
 }
 
 const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, onBotChange, user, setUser }) => {
@@ -29,9 +30,10 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [pointsToast, setPointsToast] = useState<{ points: number; action: PointAction } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<any>(null);
 
   // Initialize chat when bot changes
   useEffect(() => {
@@ -328,6 +330,25 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
     }
   };
 
+  const copyMessage = (text: string, id: string) => {
+    const cleanText = text.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+    navigator.clipboard.writeText(cleanText);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const clearChat = () => {
+    if (confirm('আপনি কি সমস্ত চ্যাট মুছে ফেলতে চান? (Clear all chat messages?)')) {
+      const welcomeMessage = getChatbotResponse('', selectedBot, true, user);
+      setMessages([{
+        id: Date.now().toString(),
+        content: welcomeMessage,
+        sender: 'bot',
+        timestamp: new Date()
+      }]);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -336,21 +357,31 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
         {/* Header */}
         <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <Bot className="w-6 h-6" />
+            <div className="relative">
+              <Bot className="w-8 h-8" />
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
+            </div>
             <div>
               <h3 className="font-bold text-lg">ShikkhaBondhu AI</h3>
-              <p className="text-sm text-indigo-200">Your specialized assistant</p>
+              <p className="text-sm text-indigo-200">বিশেষায়িত সহায়ক • Online</p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="text-right text-sm">
-              <div className="font-bangla">পয়েন্ট: {user.points}</div>
-              <div className="text-xs text-indigo-200">Level {user.level}</div>
+            <div className="hidden sm:block text-right text-sm bg-white bg-opacity-10 px-3 py-1 rounded-lg">
+              <div className="font-bangla font-semibold">🏆 {user.points} পয়েন্ট</div>
+              <div className="text-xs text-indigo-200">স্তর {user.level}</div>
             </div>
+            <button
+              onClick={clearChat}
+              className="p-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition-colors"
+              title="Clear Chat"
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
             <button
               onClick={toggleTTS}
               className={`p-2 rounded-lg transition-colors ${isSpeaking ? 'bg-white bg-opacity-20' : 'hover:bg-white hover:bg-opacity-10'}`}
-              title="Toggle Text-to-Speech"
+              title={isSpeaking ? 'Disable Voice' : 'Enable Voice'}
             >
               <Volume2 className="w-5 h-5" />
             </button>
@@ -372,34 +403,67 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4 bg-gradient-to-b from-gray-50 to-white">
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} animate-fadeIn`}
             >
-              <div
-                className={`max-w-[80%] rounded-2xl p-4 ${
-                  message.sender === 'user'
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-100 text-gray-800'
-                }`}
-              >
-                {message.isTyping ? (
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+              <div className="flex items-end space-x-2 max-w-[85%]">
+                {message.sender === 'bot' && (
+                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <Bot className="w-5 h-5 text-white" />
                   </div>
-                ) : (
-                  <div 
-                    className={`${message.sender === 'bot' ? 'font-bangla' : ''}`}
-                    dangerouslySetInnerHTML={{ __html: message.content }}
-                  />
                 )}
-                <div className={`text-xs mt-2 ${message.sender === 'user' ? 'text-indigo-200' : 'text-gray-500'}`}>
-                  {message.timestamp.toLocaleTimeString()}
+                <div className="flex-1">
+                  <div
+                    className={`rounded-2xl p-4 shadow-md ${
+                      message.sender === 'user'
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-br-sm'
+                        : message.error
+                        ? 'bg-red-50 text-red-800 border border-red-200 rounded-bl-sm'
+                        : 'bg-white text-gray-800 border border-gray-200 rounded-bl-sm'
+                    }`}
+                  >
+                    {message.isTyping ? (
+                      <div className="flex space-x-1 py-1">
+                        <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+                        <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      </div>
+                    ) : (
+                      <>
+                        <div 
+                          className={`${message.sender === 'bot' ? 'font-bangla' : ''} leading-relaxed`}
+                          dangerouslySetInnerHTML={{ __html: message.content }}
+                        />
+                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-opacity-20 border-current">
+                          <div className={`text-xs ${message.sender === 'user' ? 'text-indigo-200' : 'text-gray-400'}`}>
+                            {message.timestamp.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                          {message.sender === 'bot' && !message.isTyping && (
+                            <button
+                              onClick={() => copyMessage(message.content, message.id)}
+                              className="text-gray-400 hover:text-indigo-600 transition-colors p-1 rounded"
+                              title="Copy message"
+                            >
+                              {copiedId === message.id ? (
+                                <CheckCheck className="w-4 h-4 text-green-500" />
+                              ) : (
+                                <Copy className="w-4 h-4" />
+                              )}
+                            </button>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
+                {message.sender === 'user' && (
+                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center">
+                    <User className="w-5 h-5 text-white" />
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -407,26 +471,27 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
         </div>
 
         {/* Input Form */}
-        <div className="p-4 border-t border-gray-200 bg-gray-50">
+        <div className="p-4 border-t border-gray-200 bg-white">
           <form onSubmit={handleSubmit} className="flex items-center space-x-3">
             <div className="flex-1 relative">
               <input
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="আপনার প্রশ্ন টাইপ করুন..."
-                className="w-full px-4 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 pr-12"
+                placeholder="আপনার প্রশ্ন টাইপ করুন... (Type your question...)"
+                className="w-full px-4 py-3 rounded-full border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent pr-12 transition-all"
                 disabled={isLoading}
               />
               <button
                 type="button"
                 onClick={isListening ? stopListening : startListening}
-                className={`absolute right-3 top-1/2 transform -translate-y-1/2 p-2 rounded-full transition-colors ${
+                className={`absolute right-3 top-1/2 transform -translate-y-1/2 p-2 rounded-full transition-all ${
                   isListening 
-                    ? 'bg-red-500 text-white' 
-                    : 'text-gray-400 hover:text-indigo-600'
+                    ? 'bg-red-500 text-white scale-110 animate-pulse' 
+                    : 'text-gray-400 hover:text-indigo-600 hover:bg-gray-100'
                 }`}
                 title={isListening ? 'Stop Recording' : 'Start Voice Input'}
+                disabled={isLoading}
               >
                 {isListening ? <Square className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
               </button>
@@ -434,16 +499,35 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
             <button
               type="submit"
               disabled={isLoading || !inputValue.trim()}
-              className="bg-indigo-600 text-white p-3 rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-300 transition-colors"
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-3 rounded-full hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 disabled:hover:scale-100"
             >
               <Send className="w-5 h-5" />
             </button>
           </form>
           {isListening && (
-            <p className="text-sm text-gray-500 mt-2 text-center font-bangla">
-              শুনছি... কথা বলুন
-            </p>
+            <div className="mt-2 text-center">
+              <p className="text-sm text-red-600 font-bangla font-semibold animate-pulse">
+                🎤 শুনছি... কথা বলুন
+              </p>
+            </div>
           )}
+          {isLoading && !isListening && (
+            <div className="mt-2 text-center">
+              <p className="text-sm text-indigo-600 font-bangla">
+                উত্তর তৈরি করা হচ্ছে... ⏳
+              </p>
+            </div>
+          )}
+          <div className="mt-2 flex items-center justify-center space-x-4 text-xs text-gray-500">
+            <span className="flex items-center">
+              <span className="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></span>
+              AI Powered
+            </span>
+            <span>•</span>
+            <span>Gemini 2.5 Flash</span>
+            <span>•</span>
+            <span className="font-bangla">বাংলা + English</span>
+          </div>
         </div>
       </div>
 

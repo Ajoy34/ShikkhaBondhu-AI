@@ -54,8 +54,10 @@ export async function callGeminiAPI(
     // Get API key from environment
     const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
     
-    if (!apiKey) {
-      console.warn('Google API key not found, will use fallback');
+    console.log('🔑 API Key check:', apiKey ? `Found (${apiKey.substring(0, 10)}...)` : 'NOT FOUND');
+    
+    if (!apiKey || apiKey === 'your-api-key-here') {
+      console.warn('Google API key not found or placeholder, will use fallback');
       return {
         response: '',
         error: 'API_KEY_MISSING'
@@ -64,7 +66,7 @@ export async function callGeminiAPI(
 
     // Initialize Gemini
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     // Get system instruction based on bot type
     const systemInstruction = getSystemInstruction(botType);

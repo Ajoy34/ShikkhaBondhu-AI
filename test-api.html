@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Key Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔑 Google Gemini API Test</h1>
+    
+    <div class="test-box">
+        <h3>Test 1: Check Environment Variable</h3>
+        <button onclick="checkEnvVar()">Check API Key</button>
+        <div id="envResult"></div>
+    </div>
+
+    <div class="test-box">
+        <h3>Test 2: Test Direct API Call</h3>
+        <input type="text" id="testMessage" placeholder="Type a message (e.g., 'হ্যালো' or 'Hello')" value="হ্যালো">
+        <button onclick="testDirectAPI()">Send Test Message</button>
+        <div id="apiResult"></div>
+    </div>
+
+    <div class="test-box">
+        <h3>Instructions:</h3>
+        <ul>
+            <li>Test 1 checks if the API key is loaded from .env file</li>
+            <li>Test 2 sends an actual message to Google Gemini API</li>
+            <li>If Test 1 fails, restart your dev server: <code>npm run dev</code></li>
+            <li>Check browser console (F12) for detailed logs</li>
+        </ul>
+    </div>
+
+    <script type="module">
+        import { GoogleGenerativeAI } from 'https://esm.run/@google/generative-ai';
+
+        window.checkEnvVar = function() {
+            const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+            const resultDiv = document.getElementById('envResult');
+            
+            console.log('Environment check:', {
+                apiKey: apiKey ? 'Found' : 'Not found',
+                length: apiKey ? apiKey.length : 0,
+                preview: apiKey ? apiKey.substring(0, 10) + '...' : 'N/A'
+            });
+
+            if (!apiKey || apiKey === 'your-api-key-here') {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        ❌ API Key NOT FOUND or is placeholder!
+                        <br><br>
+                        <strong>Fix:</strong>
+                        <ol>
+                            <li>Check .env file has: VITE_GOOGLE_API_KEY=AIza...</li>
+                            <li>Restart dev server: npm run dev</li>
+                            <li>Refresh this page</li>
+                        </ol>
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        ✅ API Key Found!
+                        <br><br>
+                        Key starts with: <code>${apiKey.substring(0, 10)}...</code>
+                        <br>
+                        Length: ${apiKey.length} characters
+                        <br><br>
+                        <strong>Next:</strong> Try Test 2 to verify it works with Google API
+                    </div>
+                `;
+            }
+        };
+
+        window.testDirectAPI = async function() {
+            const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+            const message = document.getElementById('testMessage').value;
+            const resultDiv = document.getElementById('apiResult');
+            
+            resultDiv.innerHTML = '<div class="result info">⏳ Sending message to Google Gemini API...</div>';
+
+            if (!apiKey || apiKey === 'your-api-key-here') {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        ❌ Cannot test: API Key not configured
+                        <br><br>
+                        Run Test 1 first to check API key
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                console.log('Testing API with message:', message);
+                
+                const genAI = new GoogleGenerativeAI(apiKey);
+                const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+
+                const result = await model.generateContent(message);
+                const response = result.response;
+                const text = response.text();
+
+                console.log('API Response:', text);
+
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        ✅ SUCCESS! API is working!
+                        <br><br>
+                        <strong>Your message:</strong> ${message}
+                        <br><br>
+                        <strong>Gemini's response:</strong>
+                        <br>${text}
+                        <br><br>
+                        <strong>✨ Your chat system should work now!</strong>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('API Error:', error);
+                
+                let errorMsg = error.message || 'Unknown error';
+                
+                if (errorMsg.includes('API key')) {
+                    errorMsg += '<br><br><strong>Fix:</strong> Check if your API key is correct at: https://aistudio.google.com/app/apikey';
+                } else if (errorMsg.includes('quota')) {
+                    errorMsg += '<br><br><strong>Issue:</strong> API quota exceeded. Try again in a few minutes.';
+                }
+
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        ❌ API Error:
+                        <br><br>
+                        ${errorMsg}
+                        <br><br>
+                        Check browser console (F12) for details
+                    </div>
+                `;
+            }
+        };
+
+        // Auto-run test 1 on load
+        window.addEventListener('load', () => {
+            setTimeout(() => checkEnvVar(), 500);
+        });
+    </script>
+</body>
+</html>
