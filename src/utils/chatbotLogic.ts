@@ -450,8 +450,11 @@ const getAcademicResponse = (input: string, user?: any): string => {
 };
 
 const getGeneralResponse = (input: string, user?: any): string => {
-  if (input.includes('hello') || input.includes('hi') || input.includes('হ্যালো') || input.includes('হাই')) {
-    const userName = user?.name || 'বন্ধু';
+  const userName = user?.name || 'বন্ধু';
+  
+  // Greetings
+  if (input.includes('hello') || input.includes('hi') || input.includes('hey') || 
+      input.includes('হ্যালো') || input.includes('হাই') || input.includes('হে')) {
     return `<p class="font-bangla">হ্যালো ${userName}! কেমন আছেন? আজ কিভাবে সাহায্য করতে পারি?</p>
             <div class="mt-3 grid grid-cols-2 gap-2">
               <button class="chat-option bg-blue-100 p-2 rounded text-sm font-bangla" data-message="সাধারণ কথা বলতে চাই">💬 সাধারণ কথা</button>
@@ -459,6 +462,7 @@ const getGeneralResponse = (input: string, user?: any): string => {
             </div>`;
   }
 
+  // Thanks
   if (input.includes('ধন্যবাদ') || input.includes('thanks') || input.includes('thank you')) {
     return `<p class="font-bangla">আপনাকেও ধন্যবাদ! আমি সবসময় আপনার সেবায় আছি। আর কোন সাহায্য লাগলে জানাবেন।</p>
             <div class="mt-3">
@@ -466,14 +470,123 @@ const getGeneralResponse = (input: string, user?: any): string => {
             </div>`;
   }
 
-  return `<p class="font-bangla">দুঃখিত, আপনার প্রশ্নটি স্পষ্ট বুঝতে পারিনি। অনুগ্রহ করে আরও নির্দিষ্টভাবে জিজ্ঞাসা করুন।</p>
+  // Want to talk / conversation starters
+  if (input.includes('talk') || input.includes('chat') || input.includes('কথা') || 
+      input.includes('বলতে') || input.includes('hmm') || input.includes('well')) {
+    return `<p class="font-bangla">অবশ্যই! আমি এখানে আপনার কথা শুনতে আছি। কোন বিষয়ে কথা বলতে চান?</p>
+            <div class="mt-3 space-y-2">
+              <button class="chat-option w-full text-left p-3 bg-gradient-to-r from-blue-100 to-blue-50 rounded-lg hover:from-blue-200 hover:to-blue-100" data-message="আমার পড়াশোনায় সাহায্য চাই">
+                <div class="font-bangla font-bold">📚 একাডেমিক সাহায্য</div>
+                <div class="font-bangla text-xs text-gray-600">পড়াশোনা, পরীক্ষা, লক্ষ্য নির্ধারণ</div>
+              </button>
+              <button class="chat-option w-full text-left p-3 bg-gradient-to-r from-green-100 to-green-50 rounded-lg hover:from-green-200 hover:to-green-100" data-message="দৈনন্দিন সমস্যার সমাধান চাই">
+                <div class="font-bangla font-bold">💡 দৈনন্দিন সমস্যা</div>
+                <div class="font-bangla text-xs text-gray-600">জীবনের বিভিন্ন চ্যালেঞ্জের সমাধান</div>
+              </button>
+              <button class="chat-option w-full text-left p-3 bg-gradient-to-r from-purple-100 to-purple-50 rounded-lg hover:from-purple-200 hover:to-purple-100" data-message="ক্যারিয়ার পরামর্শ চাই">
+                <div class="font-bangla font-bold">🚀 ক্যারিয়ার গাইডেন্স</div>
+                <div class="font-bangla text-xs text-gray-600">ভবিষ্যৎ পরিকল্পনা ও দক্ষতা</div>
+              </button>
+            </div>`;
+  }
+
+  // Study/academic help
+  if (input.includes('study') || input.includes('পড়া') || input.includes('reading') || 
+      input.includes('একাডেমিক') || input.includes('academic')) {
+    return `<p class="font-bangla">পড়াশোনায় সাহায্য চান? দারুণ! আমি আপনাকে সাহায্য করতে পারি।</p>
+            <div class="mt-3 space-y-2">
+              <button class="chat-option w-full text-left p-2 bg-indigo-100 rounded-lg hover:bg-indigo-200" data-message="পরীক্ষার প্রস্তুতি নিতে চাই">
+                <span class="font-bangla">📝 পরীক্ষার প্রস্তুতি</span>
+              </button>
+              <button class="chat-option w-full text-left p-2 bg-blue-100 rounded-lg hover:bg-blue-200" data-message="পড়ার কৌশল জানতে চাই">
+                <span class="font-bangla">🎯 কার্যকর পড়ার কৌশল</span>
+              </button>
+              <button class="chat-option w-full text-left p-2 bg-green-100 rounded-lg hover:bg-green-200" data-message="সময় ব্যবস্থাপনা শিখতে চাই">
+                <span class="font-bangla">⏰ সময় ব্যবস্থাপনা</span>
+              </button>
+              <button class="chat-option w-full text-left p-2 bg-purple-100 rounded-lg hover:bg-purple-200" data-message="লক্ষ্য নির্ধারণে সাহায্য চাই">
+                <span class="font-bangla">🎓 লক্ষ্য নির্ধারণ</span>
+              </button>
+            </div>`;
+  }
+
+  // Legal help
+  if (input.includes('legal') || input.includes('law') || input.includes('আইন') || 
+      input.includes('rights') || input.includes('অধিকার')) {
+    return `<p class="font-bangla">আইনি সাহায্য চান? আমি বাংলাদেশের আইন সম্পর্কে তথ্য দিতে পারি।</p>
+            <div class="mt-3 bg-red-50 p-3 rounded-lg">
+              <p class="font-bangla text-sm mb-2">বিশেষ বট ব্যবহার করুন:</p>
+              <button class="chat-option w-full bg-red-500 text-white p-3 rounded-lg font-bangla hover:bg-red-600" data-message="আইনি অধিকার বট খুলতে চাই">
+                ⚖️ আইনি অধিকার বট ব্যবহার করুন
+              </button>
+              <p class="font-bangla text-xs mt-2 text-gray-600">সাইবার আইন, ছাত্র অধিকার, হয়রানির বিরুদ্ধে আইন</p>
+            </div>`;
+  }
+
+  // Health/wellness
+  if (input.includes('health') || input.includes('stress') || input.includes('স্বাস্থ্য') || 
+      input.includes('মানসিক') || input.includes('mental')) {
+    return `<p class="font-bangla">স্বাস্থ্য ও মানসিক স্বাস্থ্য খুবই গুরুত্বপূর্ণ। আমি সাহায্য করতে পারি।</p>
+            <div class="mt-3 bg-green-50 p-3 rounded-lg">
+              <p class="font-bangla text-sm mb-2">বিশেষ বট ব্যবহার করুন:</p>
+              <button class="chat-option w-full bg-green-500 text-white p-3 rounded-lg font-bangla hover:bg-green-600" data-message="স্বাস্থ্য বট খুলতে চাই">
+                ❤️ স্বাস্থ্য ও মানসিক সহায়ক বট
+              </button>
+              <p class="font-bangla text-xs mt-2 text-gray-600">মানসিক স্বাস্থ্য, স্ট্রেস ম্যানেজমেন্ট, প্রজনন স্বাস্থ্য</p>
+              <div class="mt-2 p-2 bg-white rounded text-sm">
+                <p class="font-bangla font-bold">জরুরি হেল্পলাইন:</p>
+                <p class="font-bangla">☎️ ১৬২৬৩ - স্বাস্থ্য বাতায়ন (24/7)</p>
+              </div>
+            </div>`;
+  }
+
+  // Skills/career
+  if (input.includes('skill') || input.includes('career') || input.includes('job') || 
+      input.includes('দক্ষতা') || input.includes('ক্যারিয়ার') || input.includes('চাকরি')) {
+    return `<p class="font-bangla">দক্ষতা উন্নয়ন ও ক্যারিয়ার নিয়ে ভাবছেন? চমৎকার!</p>
+            <div class="mt-3 bg-yellow-50 p-3 rounded-lg">
+              <p class="font-bangla text-sm mb-2">বিশেষ বট ব্যবহার করুন:</p>
+              <button class="chat-option w-full bg-yellow-500 text-white p-3 rounded-lg font-bangla hover:bg-yellow-600" data-message="দক্ষতা উন্নয়ন বট খুলতে চাই">
+                💻 দক্ষতা উন্নয়ন বট
+              </button>
+              <p class="font-bangla text-xs mt-2 text-gray-600">টেকনিক্যাল দক্ষতা, সফট স্কিল, ক্যারিয়ার গাইডেন্স, ফ্রিল্যান্সিং</p>
+            </div>`;
+  }
+
+  // Default response - more helpful and conversational
+  return `<p class="font-bangla">আমি আপনার সাধারণ সহায়ক। আমি বিভিন্ন বিষয়ে সাহায্য করতে পারি! 😊</p>
           <div class="mt-3">
-            <p class="font-bangla text-sm text-gray-600">আপনি এই বিষয়গুলো নিয়ে জিজ্ঞাসা করতে পারেন:</p>
-            <div class="mt-2 grid grid-cols-2 gap-1 text-xs">
-              <button class="chat-option bg-gray-100 p-2 rounded font-bangla hover:bg-gray-200" data-message="আইনি সাহায্য চাই">আইনি সাহায্য</button>
-              <button class="chat-option bg-gray-100 p-2 rounded font-bangla hover:bg-gray-200" data-message="স্বাস্থ্য পরামর্শ চাই">স্বাস্থ্য পরামর্শ</button>
-              <button class="chat-option bg-gray-100 p-2 rounded font-bangla hover:bg-gray-200" data-message="দক্ষতা উন্নয়ন করতে চাই">দক্ষতা উন্নয়ন</button>
-              <button class="chat-option bg-gray-100 p-2 rounded font-bangla hover:bg-gray-200" data-message="পড়াশোনায় সাহায্য চাই">পড়াশোনা</button>
+            <p class="font-bangla text-sm font-bold mb-2">জনপ্রিয় বিষয়সমূহ:</p>
+            <div class="grid grid-cols-2 gap-2">
+              <button class="chat-option bg-indigo-100 p-3 rounded-lg hover:bg-indigo-200" data-message="পড়াশোনায় সাহায্য চাই">
+                <div class="text-2xl mb-1">📚</div>
+                <div class="font-bangla text-xs">পড়াশোনা</div>
+              </button>
+              <button class="chat-option bg-red-100 p-3 rounded-lg hover:bg-red-200" data-message="আইনি সাহায্য চাই">
+                <div class="text-2xl mb-1">⚖️</div>
+                <div class="font-bangla text-xs">আইনি সাহায্য</div>
+              </button>
+              <button class="chat-option bg-green-100 p-3 rounded-lg hover:bg-green-200" data-message="স্বাস্থ্য পরামর্শ চাই">
+                <div class="text-2xl mb-1">❤️</div>
+                <div class="font-bangla text-xs">স্বাস্থ্য</div>
+              </button>
+              <button class="chat-option bg-yellow-100 p-3 rounded-lg hover:bg-yellow-200" data-message="দক্ষতা উন্নয়ন করতে চাই">
+                <div class="text-2xl mb-1">💻</div>
+                <div class="font-bangla text-xs">দক্ষতা উন্নয়ন</div>
+              </button>
+              <button class="chat-option bg-blue-100 p-3 rounded-lg hover:bg-blue-200" data-message="ক্যারিয়ার পরামর্শ চাই">
+                <div class="text-2xl mb-1">🚀</div>
+                <div class="font-bangla text-xs">ক্যারিয়ার</div>
+              </button>
+              <button class="chat-option bg-purple-100 p-3 rounded-lg hover:bg-purple-200" data-message="সাধারণ কথা বলতে চাই">
+                <div class="text-2xl mb-1">💬</div>
+                <div class="font-bangla text-xs">সাধারণ কথা</div>
+              </button>
+            </div>
+            <div class="mt-3 p-2 bg-gray-50 rounded-lg">
+              <p class="font-bangla text-xs text-gray-600">
+                💡 <strong>টিপস:</strong> আপনি যেকোনো প্রশ্ন করতে পারেন বাংলা বা ইংরেজিতে। আমি সাহায্য করার চেষ্টা করব!
+              </p>
             </div>
           </div>`;
 };
