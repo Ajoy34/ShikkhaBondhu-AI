@@ -121,7 +121,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
     setMessages(prev => [...prev, typingMessage]);
 
     try {
-      // Call secure server endpoint instead of Google directly
+      // Call secure server endpoint
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
@@ -134,24 +134,44 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
         }),
       });
 
-      const data = await response.json();
-
       // Remove typing indicator
       setMessages(prev => prev.filter(msg => msg.id !== 'typing'));
 
       if (!response.ok) {
-        // Handle errors
-        const errorMessage = data.errorBn || data.error || 'একটি ত্রুটি ঘটেছে। দয়া করে আবার চেষ্টা করুন।';
+        // If API fails (local dev or error), use fallback chatbot logic
+        console.log('API unavailable, using fallback');
+        const fallbackResponse = getChatbotResponse(message, selectedBot, false, user);
+        
         const botMessage: Message = {
           id: (Date.now() + 1).toString(),
-          content: errorMessage,
+          content: fallbackResponse,
           sender: 'bot',
           timestamp: new Date()
         };
         setMessages(prev => [...prev, botMessage]);
         setIsLoading(false);
+
+        // Award points
+        const success = awardPoints(user.email || 'user', 'CHAT_MESSAGE', (points, action) => {
+          setPointsToast({ points, action });
+          setUser((prev: any) => ({
+            ...prev,
+            points: prev.points + points,
+            impactScore: Math.min(prev.impactScore + 1, 100)
+          }));
+        });
+
+        if (!success) {
+          console.log('Daily chat limit reached');
+        }
+
+        if (isSpeaking) {
+          speakText(fallbackResponse);
+        }
         return;
       }
+
+      const data = await response.json();
 
       // Add bot response
       const botMessage: Message = {
@@ -188,15 +208,35 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
       // Remove typing indicator
       setMessages(prev => prev.filter(msg => msg.id !== 'typing'));
       
-      // Show error message
+      // Use fallback chatbot logic when API unavailable
+      const fallbackResponse = getChatbotResponse(message, selectedBot, false, user);
+      
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: 'দুঃখিত, একটি সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।',
+        content: fallbackResponse,
         sender: 'bot',
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
       setIsLoading(false);
+
+      // Award points even with fallback
+      const success = awardPoints(user.email || 'user', 'CHAT_MESSAGE', (points, action) => {
+        setPointsToast({ points, action });
+        setUser((prev: any) => ({
+          ...prev,
+          points: prev.points + points,
+          impactScore: Math.min(prev.impactScore + 1, 100)
+        }));
+      });
+
+      if (!success) {
+        console.log('Daily chat limit reached');
+      }
+
+      if (isSpeaking) {
+        speakText(fallbackResponse);
+      }
     }
   };
 
