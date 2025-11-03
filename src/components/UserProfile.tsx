@@ -4,13 +4,17 @@ import {
   Edit3, Camera, Settings, Star, Trophy,
   BookOpen, Heart, Shield, Users, MessageCircle
 } from 'lucide-react';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
+import type { UserProfile as UserProfileType } from '../lib/auth';
 
 interface UserProfileProps {
   user: any;
   setUser: (user: any) => void;
+  authUser?: SupabaseUser | null;
+  userProfile?: UserProfileType | null;
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({ user, setUser }) => {
+const UserProfile: React.FC<UserProfileProps> = ({ user, setUser, authUser, userProfile }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState(user);
   const [selectedYear, setSelectedYear] = useState(2024);

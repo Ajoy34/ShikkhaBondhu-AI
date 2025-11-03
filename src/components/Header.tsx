@@ -1,5 +1,7 @@
-import React from 'react';
-import { Shield, User, MessageCircle, Search, Code, Video, BookOpen } from 'lucide-react';
+import React, { useState } from 'react';
+import { Shield, User, MessageCircle, Search, Code, Video, BookOpen, LogOut } from 'lucide-react';
+import { signOut } from '../lib/auth';
+import AuthModal from './AuthModal';
 
 interface HeaderProps {
   activeSection: string;
@@ -9,6 +11,7 @@ interface HeaderProps {
   user: any;
   isLoggedIn: boolean;
   setIsLoggedIn: (logged: boolean) => void;
+  onAuthChange?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
@@ -18,8 +21,28 @@ const Header: React.FC<HeaderProps> = ({
   setSelectedChatbot, 
   user, 
   isLoggedIn, 
-  setIsLoggedIn 
+  setIsLoggedIn,
+  onAuthChange
 }) => {
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      setIsLoggedIn(false);
+      setActiveSection('home');
+      if (onAuthChange) onAuthChange();
+      setShowProfileMenu(false);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  const handleAuthSuccess = () => {
+    setShowAuthModal(false);
+    if (onAuthChange) onAuthChange();
+  };
   return (
     <header className="bg-white/98 backdrop-blur-md shadow-md sticky top-0 z-50 border-b border-gray-200">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -107,42 +130,75 @@ const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center space-x-3">
             {isLoggedIn ? (
               <>
-                {/* Profile Button */}
-                <button
-                  onClick={() => setActiveSection('profile')}
-                  className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg ${
-                    activeSection === 'profile'
-                      ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white'
-                      : 'bg-green-50 text-green-700 hover:bg-green-100'
-                  }`}
-                >
-                  <User className="w-5 h-5" />
-                  <div className="hidden md:block text-left">
-                    <div className="text-xs font-medium leading-tight">{user.name}</div>
-                    <div className="text-xs opacity-90">⭐ {user.contributionRating}/5</div>
-                  </div>
-                </button>
+                {/* Profile Button with Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowProfileMenu(!showProfileMenu)}
+                    className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg ${
+                      activeSection === 'profile'
+                        ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white'
+                        : 'bg-green-50 text-green-700 hover:bg-green-100'
+                    }`}
+                  >
+                    <User className="w-5 h-5" />
+                    <div className="hidden md:block text-left">
+                      <div className="text-xs font-medium leading-tight">{user.name}</div>
+                      <div className="text-xs opacity-90">⭐ {user.contributionRating}/5</div>
+                    </div>
+                  </button>
+
+                  {/* Profile Dropdown Menu */}
+                  {showProfileMenu && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                      <button
+                        onClick={() => {
+                          setActiveSection('profile');
+                          setShowProfileMenu(false);
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2"
+                      >
+                        <User className="w-4 h-4" />
+                        <span className="font-bangla">প্রোফাইল (Profile)</span>
+                      </button>
+                      <div className="border-t border-gray-200 my-2"></div>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full px-4 py-2 text-left hover:bg-red-50 text-red-600 flex items-center gap-2"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span className="font-bangla">লগ আউট (Logout)</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </>
             ) : (
               <>
                 {/* Sign In / Sign Up Buttons */}
                 <button
-                  onClick={() => setIsLoggedIn(true)}
+                  onClick={() => setShowAuthModal(true)}
                   className="px-5 py-2.5 text-indigo-600 font-semibold hover:bg-indigo-50 rounded-xl transition-all duration-200"
                 >
-                  Sign In
+                  <span className="font-bangla">লগইন</span> / Sign In
                 </button>
                 <button
-                  onClick={() => setIsLoggedIn(true)}
+                  onClick={() => setShowAuthModal(true)}
                   className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg"
                 >
-                  Sign Up
+                  <span className="font-bangla">নিবন্ধন</span> / Sign Up
                 </button>
               </>
             )}
           </div>
         </div>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={handleAuthSuccess}
+      />
     </header>
   );
 };

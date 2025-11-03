@@ -1,33 +1,36 @@
 ﻿import React, { useState } from 'react';
 import { MessageCircle, Shield, Bot, Sparkles, Code, TrendingUp, Zap, Lock, Video, Search, BookOpen } from 'lucide-react';
+import AuthModal from './AuthModal';
 
 interface HeroProps {
   setIsChatOpen: (open: boolean) => void;
   setIsLoggedIn: (logged: boolean) => void;
   setActiveSection: (section: string) => void;
+  onAuthSuccess?: () => void;
 }
 
-const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSection }) => {
-  const [showSignupPrompt, setShowSignupPrompt] = useState(false);
-  const [selectedFeature, setSelectedFeature] = useState('');
+const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSection, onAuthSuccess }) => {
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [targetSection, setTargetSection] = useState('home');
 
-  const handleFeatureClick = (featureName: string, section: string = 'home') => {
-    setSelectedFeature(featureName);
+  const handleFeatureClick = (section: string = 'home') => {
     setTargetSection(section);
-    setShowSignupPrompt(true);
+    setShowAuthModal(true);
   };
 
-  const handleSignupNow = () => {
-    setShowSignupPrompt(false);
-    setIsLoggedIn(true);
+  const handleAuthSuccess = () => {
+    setShowAuthModal(false);
+    if (onAuthSuccess) onAuthSuccess();
+    
     // Redirect to specific section based on feature clicked
-    if (targetSection === 'chat') {
-      setActiveSection('home');
-      setTimeout(() => setIsChatOpen(true), 500);
-    } else {
-      setActiveSection(targetSection);
-    }
+    setTimeout(() => {
+      if (targetSection === 'chat') {
+        setActiveSection('home');
+        setTimeout(() => setIsChatOpen(true), 500);
+      } else {
+        setActiveSection(targetSection);
+      }
+    }, 500);
   };
 
   const features = [
@@ -39,7 +42,7 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
       descriptionBn: "২৪/৭ তাৎক্ষণিক উত্তর, পরামর্শ এবং শিক্ষা পান",
       gradient: "from-blue-500 to-cyan-500",
       bgGradient: "from-blue-50 to-cyan-50",
-      action: () => handleFeatureClick("AI Chat Assistant & Learn", "chat")
+      action: () => handleFeatureClick("chat")
     },
     {
       icon: <Shield className="w-8 h-8" />,
@@ -49,7 +52,7 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
       descriptionBn: "সমস্যা জানান, জরুরি সহায়তা এবং তাৎক্ষণিক সাহায্য পান",
       gradient: "from-red-500 to-orange-500",
       bgGradient: "from-red-50 to-orange-50",
-      action: () => handleFeatureClick("Report, SOS & Emergency Help", "report")
+      action: () => handleFeatureClick("report")
     },
     {
       icon: <Search className="w-8 h-8" />,
@@ -59,7 +62,7 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
       descriptionBn: "AI দিয়ে খবর যাচাই করুন, ভুয়া তথ্য শনাক্ত করুন",
       gradient: "from-green-500 to-emerald-500",
       bgGradient: "from-green-50 to-emerald-50",
-      action: () => handleFeatureClick("Fact Check & Gossip Detector", "home")
+      action: () => handleFeatureClick("factcheck")
     },
     {
       icon: <Code className="w-8 h-8" />,
@@ -70,7 +73,7 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
       gradient: "from-purple-500 to-indigo-500",
       bgGradient: "from-purple-50 to-indigo-50",
       badge: "🚀 Upcoming",
-      action: () => handleFeatureClick("AI Lab", "home")
+      action: () => handleFeatureClick("home")
     },
     {
       icon: <Video className="w-8 h-8" />,
@@ -80,7 +83,7 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
       descriptionBn: "কোর্স, বই এবং ভিডিও তৈরি করুন এবং আয় করুন",
       gradient: "from-pink-500 to-rose-500",
       bgGradient: "from-pink-50 to-rose-50",
-      action: () => handleFeatureClick("Create & Earn", "home")
+      action: () => handleFeatureClick("createandearn")
     },
     {
       icon: <BookOpen className="w-8 h-8" />,
@@ -90,7 +93,7 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
       descriptionBn: "৫হাজার+ কোর্স, ১০হাজার+ বই এবং এআই কন্টেন্ট অ্যাক্সেস করুন",
       gradient: "from-amber-500 to-orange-500",
       bgGradient: "from-amber-50 to-orange-50",
-      action: () => handleFeatureClick("Library", "library")
+      action: () => handleFeatureClick("library")
     }
   ];
 
@@ -214,7 +217,7 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
         {/* CTA Section */}
         <div className="text-center">
           <button
-            onClick={handleSignupNow}
+            onClick={() => setShowAuthModal(true)}
             className="group relative inline-flex items-center space-x-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white px-12 py-5 rounded-2xl font-bold text-xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
           >
             <span>🚀 Get Started Free</span>
@@ -226,106 +229,12 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
         </div>
       </div>
 
-      {/* Signup Prompt Modal */}
-      {showSignupPrompt && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 transform animate-bounceIn">
-            <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Lock className="w-10 h-10 text-white" />
-              </div>
-              
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                Unlock "{selectedFeature}"
-              </h3>
-              <p className="text-lg font-bangla text-indigo-600 mb-4">
-                এই ফিচার ব্যবহার করতে সাইন আপ করুন
-              </p>
-              
-              {selectedFeature === "AI Lab" ? (
-                <div className="text-left bg-purple-50 rounded-xl p-4 mb-4">
-                  <p className="text-sm text-gray-700 mb-2 font-semibold">🚀 AI Lab Features:</p>
-                  <ul className="text-xs text-gray-600 space-y-1">
-                    <li>✓ Build games & tools without dependency</li>
-                    <li>✓ Step-by-step coding guidance</li>
-                    <li>✓ Interactive learning chat system</li>
-                    <li>✓ Video tutorials & implementation guides</li>
-                    <li className="font-bangla text-indigo-600">নিজে তৈরি করুন, অন্যের উপর নির্ভর করবেন না!</li>
-                  </ul>
-                </div>
-              ) : selectedFeature === "Create & Earn" ? (
-                <div className="text-left bg-pink-50 rounded-xl p-4 mb-4">
-                  <p className="text-sm text-gray-700 mb-2 font-semibold">💰 Create & Earn Features:</p>
-                  <ul className="text-xs text-gray-600 space-y-1">
-                    <li>✓ Create video courses (like Udemy)</li>
-                    <li>✓ Publish digital books (like Kindle)</li>
-                    <li>✓ Build your own course library</li>
-                    <li>✓ Earn from your content</li>
-                    <li className="font-bangla text-pink-600">কোর্স ও বই তৈরি করে আয় করুন!</li>
-                  </ul>
-                </div>
-              ) : selectedFeature === "Fact Check & Gossip Detector" ? (
-                <div className="text-left bg-green-50 rounded-xl p-4 mb-4">
-                  <p className="text-sm text-gray-700 mb-2 font-semibold">🔍 Fact Check Features:</p>
-                  <ul className="text-xs text-gray-600 space-y-1">
-                    <li>✓ AI-powered news verification</li>
-                    <li>✓ Detect fake news & misinformation</li>
-                    <li>✓ Gossip detector with source checking</li>
-                    <li>✓ Real-time fact checking</li>
-                    <li className="font-bangla text-green-600">গুজব ও ভুয়া খবর থেকে সুরক্ষিত থাকুন!</li>
-                  </ul>
-                </div>
-              ) : selectedFeature === "AI Chat Assistant & Learn" ? (
-                <div className="text-left bg-blue-50 rounded-xl p-4 mb-4">
-                  <p className="text-sm text-gray-700 mb-2 font-semibold">💬 AI Chat & Learning:</p>
-                  <ul className="text-xs text-gray-600 space-y-1">
-                    <li>✓ 24/7 instant answers & guidance</li>
-                    <li>✓ Quality education resources</li>
-                    <li>✓ Personalized learning paths</li>
-                    <li>✓ Interactive study assistance</li>
-                    <li className="font-bangla text-blue-600">শিখুন এবং এগিয়ে যান আত্মবিশ্বাসের সাথে!</li>
-                  </ul>
-                </div>
-              ) : selectedFeature === "Report, SOS & Emergency Help" ? (
-                <div className="text-left bg-red-50 rounded-xl p-4 mb-4">
-                  <p className="text-sm text-gray-700 mb-2 font-semibold">🚨 Report & Emergency:</p>
-                  <ul className="text-xs text-gray-600 space-y-1">
-                    <li>✓ Instant emergency SOS alerts</li>
-                    <li>✓ Report issues & get support</li>
-                    <li>✓ Connect with help services</li>
-                    <li>✓ Location-based emergency response</li>
-                    <li className="font-bangla text-red-600">জরুরি মুহূর্তে তাৎক্ষণিক সাহায্য পান!</li>
-                  </ul>
-                </div>
-              ) : (
-                <p className="text-gray-600 mb-6">
-                  Sign up now to access all features including AI chat, emergency support, reporting, and community help!
-                </p>
-              )}
-              
-              <div className="space-y-3">
-                <button
-                  onClick={handleSignupNow}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-                >
-                  Sign Up Free 🚀
-                </button>
-                
-                <button
-                  onClick={() => setShowSignupPrompt(false)}
-                  className="w-full bg-gray-100 text-gray-700 px-8 py-4 rounded-xl font-semibold hover:bg-gray-200 transition-all duration-300"
-                >
-                  Maybe Later
-                </button>
-              </div>
-              
-              <p className="mt-4 text-xs text-gray-500">
-                ✓ Free forever • ✓ No credit card • ✓ 2-minute setup
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={handleAuthSuccess}
+      />
     </section>
   );
 };
