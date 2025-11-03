@@ -48,8 +48,11 @@ export interface UserProfile {
  * Sign up a new user with email and password
  */
 export async function signUp(data: SignUpData) {
+  console.log('🔵 Starting signup process for:', data.email);
+  
   try {
     // Create auth user first
+    console.log('🔵 Step 1: Creating auth user...');
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
@@ -63,17 +66,30 @@ export async function signUp(data: SignUpData) {
       },
     });
 
+    console.log('🔵 Signup response:', { 
+      user: authData?.user?.id, 
+      session: authData?.session?.access_token ? 'exists' : 'none',
+      error: authError 
+    });
+
     if (authError) {
-      console.error('Auth signup error:', authError);
+      console.error('❌ Auth signup error:', authError);
       throw authError;
     }
     
     if (!authData.user) {
+      console.error('❌ No user returned from signup');
       throw new Error('User creation failed - no user returned');
     }
 
+    console.log('✅ Step 1 complete: User created in auth.users');
+    console.log('📧 User ID:', authData.user.id);
+    console.log('📧 Email:', authData.user.email);
+    console.log('📧 Email confirmed:', authData.user.email_confirmed_at ? 'Yes' : 'No');
+
     // Try to create user profile (may fail if table doesn't exist)
     try {
+      console.log('🔵 Step 2: Creating user profile...');
       const { error: profileError } = await supabase
         .from('user_profiles')
         .insert({
@@ -85,7 +101,7 @@ export async function signUp(data: SignUpData) {
         });
 
       if (profileError) {
-        console.error('Profile creation error:', profileError);
+        console.error('⚠️ Profile creation error:', profileError);
         // Check if it's a table not found error
         if (profileError.message?.includes('relation') || profileError.message?.includes('does not exist')) {
           console.warn('⚠️ user_profiles table does not exist. User created in auth.users only.');
@@ -93,9 +109,11 @@ export async function signUp(data: SignUpData) {
         } else {
           throw profileError;
         }
+      } else {
+        console.log('✅ Step 2 complete: Profile created');
       }
     } catch (profileErr: any) {
-      console.warn('Profile creation skipped:', profileErr.message);
+      console.warn('⚠️ Profile creation skipped:', profileErr.message);
       // Don't throw - user is still created in auth.users
     }
 
@@ -105,20 +123,23 @@ export async function signUp(data: SignUpData) {
         method: 'email',
         email: data.email,
       });
+      console.log('✅ Activity logged');
     } catch (activityErr) {
-      console.warn('Activity logging skipped:', activityErr);
+      console.warn('⚠️ Activity logging skipped:', activityErr);
     }
 
     // Try to send verification email (optional)
     try {
       await sendEmailVerification(data.email);
+      console.log('✅ Verification email sent');
     } catch (emailErr) {
-      console.warn('Email verification skipped:', emailErr);
+      console.warn('⚠️ Email verification skipped:', emailErr);
     }
 
+    console.log('🎉 Signup completed successfully!');
     return { user: authData.user, session: authData.session };
   } catch (error: any) {
-    console.error('Sign up error:', error);
+    console.error('❌ Sign up error:', error);
     
     // Provide helpful error messages
     if (error.message?.includes('User already registered')) {
@@ -139,17 +160,38 @@ export async function signUp(data: SignUpData) {
  * Sign in with email and password
  */
 export async function signIn(data: SignInData) {
+  console.log('🔵 Starting login process for:', data.email);
+  
   try {
+    console.log('🔵 Attempting authentication...');
     const { data: authData, error } = await supabase.auth.signInWithPassword({
       email: data.email,
       password: data.password,
     });
 
-    if (error) throw error;
-    if (!authData.user) throw new Error('Sign in failed');
+    console.log('🔵 Login response:', {
+      user: authData?.user?.id,
+      session: authData?.session?.access_token ? 'exists' : 'none',
+      error: error
+    });
+
+    if (error) {
+      console.error('❌ Login error:', error);
+      throw error;
+    }
+    
+    if (!authData.user) {
+      console.error('❌ No user returned from login');
+      throw new Error('Sign in failed');
+    }
+
+    console.log('✅ Authentication successful!');
+    console.log('📧 User ID:', authData.user.id);
+    console.log('📧 Email:', authData.user.email);
 
     // Try to update user profile (optional if table doesn't exist)
     try {
+      console.log('🔵 Updating user profile...');
       const { data: profile } = await supabase
         .from('user_profiles')
         .select('login_count')
@@ -169,14 +211,17 @@ export async function signIn(data: SignInData) {
         method: 'email',
         email: data.email,
       });
+      
+      console.log('✅ Profile updated');
     } catch (profileErr) {
-      console.warn('Profile update skipped:', profileErr);
+      console.warn('⚠️ Profile update skipped:', profileErr);
       // Don't throw - user can still login
     }
 
+    console.log('🎉 Login completed successfully!');
     return { user: authData.user, session: authData.session };
   } catch (error: any) {
-    console.error('Sign in error:', error);
+    console.error('❌ Sign in error:', error);
     
     // Provide helpful error messages
     if (error.message?.includes('Invalid login credentials')) {

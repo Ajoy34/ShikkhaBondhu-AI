@@ -67,7 +67,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
       }
 
       // Sign up
-      await signUp({
+      const result = await signUp({
         email: formData.email,
         password: formData.password,
         fullName: formData.fullName,
@@ -75,13 +75,29 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
         district: formData.district || undefined
       });
 
-      setSuccess('সফলভাবে নিবন্ধিত হয়েছে! আপনার ইমেইল যাচাই করুন। (Successfully registered! Please check your email for verification.)');
-      
-      // Auto switch to login after 3 seconds
-      setTimeout(() => {
-        setMode('login');
-        setSuccess('');
-      }, 3000);
+      console.log('📧 Signup result:', result);
+
+      // Check if email confirmation is required
+      if (result.user && !result.session) {
+        setSuccess('✅ Account created! Please check your email to verify your account before logging in. (ইমেইল যাচাই করুন লগইন করার আগে)');
+        
+        // Auto switch to login after 5 seconds
+        setTimeout(() => {
+          setMode('login');
+          setSuccess('');
+        }, 5000);
+      } else if (result.session) {
+        // User can login immediately (auto-confirm enabled)
+        setSuccess('সফলভাবে নিবন্ধিত হয়েছে! You can now login. (এখন লগইন করুন)');
+        
+        // Auto switch to login after 3 seconds
+        setTimeout(() => {
+          setMode('login');
+          setSuccess('');
+        }, 3000);
+      } else {
+        setSuccess('Account created successfully!');
+      }
 
     } catch (err: any) {
       console.error('Signup error:', err);
@@ -123,10 +139,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
         throw new Error('সঠিক ইমেইল ঠিকানা দিন (Please enter a valid email)');
       }
 
-      await signIn({
+      console.log('🔵 Attempting login...');
+      const result = await signIn({
         email: formData.email,
         password: formData.password
       });
+
+      console.log('✅ Login successful:', result);
 
       setSuccess('সফলভাবে লগইন হয়েছে! (Successfully logged in!)');
       
@@ -137,8 +156,22 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
       }, 1000);
 
     } catch (err: any) {
-      console.error('Login error:', err);
-      setError(err.message || 'লগইন ব্যর্থ হয়েছে (Login failed)');
+      console.error('❌ Login error:', err);
+      
+      let errorMessage = 'লগইন ব্যর্থ হয়েছে (Login failed)';
+      
+      if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      // Check for common login errors
+      if (err.message?.includes('Email not confirmed')) {
+        errorMessage = '⚠️ Please verify your email first. Check your inbox for the verification link. (প্রথমে ইমেইল যাচাই করুন)';
+      } else if (err.message?.includes('Invalid login credentials')) {
+        errorMessage = 'ভুল ইমেইল বা পাসওয়ার্ড (Invalid email or password)';
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
