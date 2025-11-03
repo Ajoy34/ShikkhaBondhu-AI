@@ -49,7 +49,7 @@ export interface UserProfile {
  */
 export async function signUp(data: SignUpData) {
   try {
-    // Create auth user
+    // Create auth user first
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
@@ -63,34 +63,74 @@ export async function signUp(data: SignUpData) {
       },
     });
 
-    if (authError) throw authError;
-    if (!authData.user) throw new Error('User creation failed');
+    if (authError) {
+      console.error('Auth signup error:', authError);
+      throw authError;
+    }
+    
+    if (!authData.user) {
+      throw new Error('User creation failed - no user returned');
+    }
 
-    // Create user profile
-    const { error: profileError } = await supabase
-      .from('user_profiles')
-      .insert({
-        id: authData.user.id,
+    // Try to create user profile (may fail if table doesn't exist)
+    try {
+      const { error: profileError } = await supabase
+        .from('user_profiles')
+        .insert({
+          id: authData.user.id,
+          email: data.email,
+          full_name: data.fullName,
+          phone_number: data.phone,
+          district: data.district,
+        });
+
+      if (profileError) {
+        console.error('Profile creation error:', profileError);
+        // Check if it's a table not found error
+        if (profileError.message?.includes('relation') || profileError.message?.includes('does not exist')) {
+          console.warn('⚠️ user_profiles table does not exist. User created in auth.users only.');
+          console.warn('📝 Please run the SQL migration from SETUP-BACKEND-NOW.md');
+        } else {
+          throw profileError;
+        }
+      }
+    } catch (profileErr: any) {
+      console.warn('Profile creation skipped:', profileErr.message);
+      // Don't throw - user is still created in auth.users
+    }
+
+    // Try to log activity (optional)
+    try {
+      await logActivity(authData.user.id, 'signup', {
+        method: 'email',
         email: data.email,
-        full_name: data.fullName,
-        phone_number: data.phone,
-        district: data.district,
       });
+    } catch (activityErr) {
+      console.warn('Activity logging skipped:', activityErr);
+    }
 
-    if (profileError) throw profileError;
-
-    // Log activity
-    await logActivity(authData.user.id, 'signup', {
-      method: 'email',
-      email: data.email,
-    });
-
-    // Send verification email
-    await sendEmailVerification(data.email);
+    // Try to send verification email (optional)
+    try {
+      await sendEmailVerification(data.email);
+    } catch (emailErr) {
+      console.warn('Email verification skipped:', emailErr);
+    }
 
     return { user: authData.user, session: authData.session };
   } catch (error: any) {
     console.error('Sign up error:', error);
+    
+    // Provide helpful error messages
+    if (error.message?.includes('User already registered')) {
+      throw new Error('This email is already registered. Please login instead.');
+    } else if (error.message?.includes('Invalid email')) {
+      throw new Error('Please enter a valid email address.');
+    } else if (error.message?.includes('Password')) {
+      throw new Error('Password must be at least 6 characters long.');
+    } else if (error.message?.includes('rate limit')) {
+      throw new Error('Too many attempts. Please try again in a few minutes.');
+    }
+    
     throw new Error(error.message || 'Failed to sign up');
   }
 }
@@ -108,30 +148,43 @@ export async function signIn(data: SignInData) {
     if (error) throw error;
     if (!authData.user) throw new Error('Sign in failed');
 
-    // Update last active and login count
-    const { data: profile } = await supabase
-      .from('user_profiles')
-      .select('login_count')
-      .eq('id', authData.user.id)
-      .single();
+    // Try to update user profile (optional if table doesn't exist)
+    try {
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('login_count')
+        .eq('id', authData.user.id)
+        .single();
 
-    await supabase
-      .from('user_profiles')
-      .update({
-        last_active_at: new Date().toISOString(),
-        login_count: (profile?.login_count || 0) + 1,
-      })
-      .eq('id', authData.user.id);
+      await supabase
+        .from('user_profiles')
+        .update({
+          last_active_at: new Date().toISOString(),
+          login_count: (profile?.login_count || 0) + 1,
+        })
+        .eq('id', authData.user.id);
 
-    // Log activity
-    await logActivity(authData.user.id, 'login', {
-      method: 'email',
-      email: data.email,
-    });
+      // Try to log activity
+      await logActivity(authData.user.id, 'login', {
+        method: 'email',
+        email: data.email,
+      });
+    } catch (profileErr) {
+      console.warn('Profile update skipped:', profileErr);
+      // Don't throw - user can still login
+    }
 
     return { user: authData.user, session: authData.session };
   } catch (error: any) {
     console.error('Sign in error:', error);
+    
+    // Provide helpful error messages
+    if (error.message?.includes('Invalid login credentials')) {
+      throw new Error('ভুল ইমেইল বা পাসওয়ার্ড (Invalid email or password)');
+    } else if (error.message?.includes('Email not confirmed')) {
+      throw new Error('Please verify your email first. Check your inbox.');
+    }
+    
     throw new Error(error.message || 'Failed to sign in');
   }
 }

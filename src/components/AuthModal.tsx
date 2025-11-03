@@ -85,7 +85,25 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
 
     } catch (err: any) {
       console.error('Signup error:', err);
-      setError(err.message || 'সাইন আপ ব্যর্থ হয়েছে (Sign up failed)');
+      // Show more detailed error message
+      let errorMessage = 'সাইন আপ ব্যর্থ হয়েছে (Sign up failed)';
+      
+      if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      // Check for specific Supabase errors
+      if (err.message?.includes('relation') || err.message?.includes('does not exist')) {
+        errorMessage = '⚠️ Database not setup. Please run the SQL migration first. Check SETUP-BACKEND-NOW.md';
+      } else if (err.message?.includes('Invalid API key') || err.message?.includes('Invalid JWT')) {
+        errorMessage = '⚠️ Invalid Supabase credentials. Please check your .env file.';
+      } else if (err.message?.includes('Email rate limit')) {
+        errorMessage = 'Too many signup attempts. Please wait a few minutes.';
+      } else if (err.message?.includes('User already registered')) {
+        errorMessage = 'এই ইমেইল ইতিমধ্যে নিবন্ধিত (This email is already registered)';
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
