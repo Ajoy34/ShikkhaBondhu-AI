@@ -63,13 +63,17 @@ export async function signUp(data: SignUpData) {
           district: data.district,
         },
         emailRedirectTo: `${window.location.origin}/auth/callback`,
+        // Bypass email confirmation for testing (works if Supabase setting allows)
+        // To enable this: Supabase Dashboard → Authentication → Providers → Email
+        // Uncheck "Enable email confirmations"
       },
     });
 
     console.log('🔵 Signup response:', { 
       user: authData?.user?.id, 
       session: authData?.session?.access_token ? 'exists' : 'none',
-      error: authError 
+      error: authError,
+      emailConfirmed: authData?.user?.email_confirmed_at ? 'Yes' : 'No (Email confirmation required)'
     });
 
     if (authError) {
