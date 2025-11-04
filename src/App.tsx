@@ -10,6 +10,7 @@ import ReportSystem from './components/ReportSystem';
 import Library from './components/Library';
 import FactCheck from './components/FactCheck';
 import CreateAndEarn from './components/CreateAndEarn';
+import SignupDiagnostics from './components/SignupDiagnostics';
 import { awardPoints, PointAction } from './utils/pointsSystem';
 import PointsToast from './components/PointsToast';
 import './styles/fonts.css';
@@ -27,6 +28,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [hasReceivedSignupBonus, setHasReceivedSignupBonus] = useState(false);
   const [pointsToast, setPointsToast] = useState<{ points: number; action: PointAction } | null>(null);
+  const [showDiagnostics, setShowDiagnostics] = useState(false);
   
   // Fallback user state for display
   const [user, setUser] = useState({
@@ -42,6 +44,22 @@ function App() {
 
   // Check authentication on mount
   useEffect(() => {
+    // Check if diagnostics should be shown via URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('diagnostics') === 'true') {
+      setShowDiagnostics(true);
+    }
+    
+    // Keyboard shortcut: Ctrl+Shift+D to open diagnostics
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+        e.preventDefault();
+        setShowDiagnostics(prev => !prev);
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyPress);
+    
     checkAuth();
 
     // Subscribe to auth changes
@@ -59,6 +77,7 @@ function App() {
     });
 
     return () => {
+      window.removeEventListener('keydown', handleKeyPress);
       unsubscribe();
     };
   }, []);
@@ -239,6 +258,9 @@ function App() {
         
         <SOSButton user={user} />
         <VoiceAssistant />
+
+        {/* Diagnostics Modal - Auto-shows on mount for debugging */}
+        {showDiagnostics && <SignupDiagnostics />}
 
         {/* Points Toast Notification */}
         {pointsToast && (
