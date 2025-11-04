@@ -76,11 +76,15 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
       });
 
       console.log('📧 Signup result:', result);
+      console.log('📧 Has user:', !!result.user);
+      console.log('📧 Has session:', !!result.session);
+      console.log('📧 User ID:', result.user?.id);
 
       // Check if email confirmation is required
       if (result.user && !result.session) {
         const msg = '✅ Account created! Please check your email to verify your account before logging in. (ইমেইল যাচাই করুন লগইন করার আগে)';
         setSuccess(msg);
+        console.log('✅ Email verification required');
         
         // Auto switch to login after 5 seconds
         setTimeout(() => {
@@ -91,6 +95,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
         // User can login immediately (auto-confirm enabled)
         const msg = 'সফলভাবে নিবন্ধিত হয়েছে! You can now login. (এখন লগইন করুন)';
         setSuccess(msg);
+        console.log('✅ Auto-confirm enabled, switching to login');
         
         // Auto switch to login after 3 seconds
         setTimeout(() => {
@@ -98,11 +103,23 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
           setSuccess('');
         }, 3000);
       } else {
-        setSuccess('Account created successfully!');
+        const msg = '✅ Account created successfully! You can now login.';
+        setSuccess(msg);
+        console.log('✅ Account created, no session returned');
+        
+        setTimeout(() => {
+          setMode('login');
+          setSuccess('');
+        }, 3000);
       }
 
     } catch (err: any) {
-      console.error('Signup error:', err);
+      console.error('❌ Signup error:', err);
+      console.error('❌ Error message:', err.message);
+      console.error('❌ Error details:', err);
+      
+      // Alert for immediate feedback
+      alert('❌ Signup Error: ' + (err.message || 'Unknown error'));
       
       // Show more detailed error message
       let errorMessage = 'সাইন আপ ব্যর্থ হয়েছে (Sign up failed)';
