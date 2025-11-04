@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Direct Login Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            background: #6366f1;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #4f46e5;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        h1 {
+            color: #1f2937;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔐 Direct Login Test</h1>
+    <p>Test the login functionality directly</p>
+
+    <div>
+        <label><strong>Email:</strong></label>
+        <input type="email" id="email" value="test_working@example.com" placeholder="Enter email">
+        
+        <label><strong>Password:</strong></label>
+        <input type="password" id="password" value="TestPass123!" placeholder="Enter password">
+        
+        <button onclick="testLogin()">🚀 Login Now</button>
+        <button onclick="testSignup()">✨ Create New Account</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        const { createClient } = supabase;
+        
+        const supabaseUrl = 'https://pakkuvcnhleqpcaxtruw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
+        
+        const client = createClient(supabaseUrl, supabaseKey);
+
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.innerHTML = '<p>Logging in...</p>';
+            
+            try {
+                const { data, error } = await client.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    resultDiv.innerHTML = `<div class="result error">
+                        <h3>❌ Login Failed</h3>
+                        <p>${error.message}</p>
+                    </div>`;
+                    alert('❌ Login Failed: ' + error.message);
+                } else {
+                    resultDiv.innerHTML = `<div class="result success">
+                        <h3>✅ Login Successful!</h3>
+                        <p><strong>User ID:</strong> ${data.user.id}</p>
+                        <p><strong>Email:</strong> ${data.user.email}</p>
+                        <p><strong>Session:</strong> Active ✅</p>
+                        <p><strong>Token:</strong> ${data.session.access_token.substring(0, 50)}...</p>
+                        <hr>
+                        <p style="margin-top: 15px;">
+                            <strong>✅ YOU ARE NOW LOGGED IN!</strong><br>
+                            Go back to the main app and refresh the page.
+                        </p>
+                    </div>`;
+                    alert('✅ LOGIN SUCCESSFUL!\n\nYou are now logged in.\nGo to http://localhost:5173 and you should see your profile.');
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<div class="result error">
+                    <h3>❌ Error</h3>
+                    <p>${err.message}</p>
+                </div>`;
+                alert('❌ Error: ' + err.message);
+            }
+        }
+
+        async function testSignup() {
+            const email = document.getElementById('email').value || 'test_' + Date.now() + '@example.com';
+            const password = document.getElementById('password').value || 'TestPass123!';
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.innerHTML = '<p>Creating account...</p>';
+            
+            try {
+                const { data, error } = await client.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            full_name: 'Test User'
+                        }
+                    }
+                });
+
+                if (error) {
+                    resultDiv.innerHTML = `<div class="result error">
+                        <h3>❌ Signup Failed</h3>
+                        <p>${error.message}</p>
+                    </div>`;
+                    alert('❌ Signup Failed: ' + error.message);
+                } else {
+                    resultDiv.innerHTML = `<div class="result success">
+                        <h3>✅ Signup Successful!</h3>
+                        <p><strong>User ID:</strong> ${data.user.id}</p>
+                        <p><strong>Email:</strong> ${data.user.email}</p>
+                        <p><strong>Email Confirmed:</strong> ${data.user.email_confirmed_at ? 'Yes ✅' : 'No'}</p>
+                        <p><strong>Session:</strong> ${data.session ? 'Active ✅' : 'Not created'}</p>
+                        <hr>
+                        <p style="margin-top: 15px;">
+                            <strong>Account created!</strong><br>
+                            Use the email and password above to login.
+                        </p>
+                    </div>`;
+                    alert('✅ ACCOUNT CREATED!\n\nEmail: ' + email + '\nPassword: ' + password + '\n\nNow click "Login Now" to sign in.');
+                    document.getElementById('email').value = email;
+                    document.getElementById('password').value = password;
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<div class="result error">
+                    <h3>❌ Error</h3>
+                    <p>${err.message}</p>
+                </div>`;
+                alert('❌ Error: ' + err.message);
+            }
+        }
+    </script>
+</body>
+</html>

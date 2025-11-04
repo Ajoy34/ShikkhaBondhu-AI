@@ -24,6 +24,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
     district: ''
   });
 
+  // Clear errors when modal opens or mode changes
+  React.useEffect(() => {
+    if (isOpen) {
+      setError('');
+      setSuccess('');
+    }
+  }, [isOpen, mode]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData(prev => ({
       ...prev,
@@ -80,33 +88,49 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
       console.log('📧 Has session:', !!result.session);
       console.log('📧 User ID:', result.user?.id);
 
-      // Check if email confirmation is required
-      if (result.user && !result.session) {
-        const msg = '✅ Account created! Please check your email to verify your account before logging in. (ইমেইল যাচাই করুন লগইন করার আগে)';
-        setSuccess(msg);
-        console.log('✅ Email verification required');
+      // REAL-TIME LOGIN: Automatically log the user in after signup
+      if (result.user) {
+        console.log('🚀 REAL-TIME LOGIN: Auto-logging in user after signup...');
         
-        // Auto switch to login after 5 seconds
-        setTimeout(() => {
-          setMode('login');
-          setSuccess('');
-        }, 5000);
-      } else if (result.session) {
-        // User can login immediately (auto-confirm enabled)
-        const msg = 'সফলভাবে নিবন্ধিত হয়েছে! You can now login. (এখন লগইন করুন)';
-        setSuccess(msg);
-        console.log('✅ Auto-confirm enabled, switching to login');
-        
-        // Auto switch to login after 3 seconds
-        setTimeout(() => {
-          setMode('login');
-          setSuccess('');
-        }, 3000);
+        try {
+          // Automatically login the user with their credentials
+          const loginResult = await signIn({
+            email: formData.email,
+            password: formData.password
+          });
+
+          if (loginResult?.session) {
+            // Success! User is now logged in immediately
+            console.log('✅ REAL-TIME LOGIN SUCCESS! User logged in instantly.');
+            setSuccess('✅ স্বাগতম! (Welcome!) Account created and logged in successfully!');
+            
+            // Close modal and refresh after 1 second
+            setTimeout(() => {
+              onClose();
+              window.location.reload();
+            }, 1000);
+          } else {
+            // No session - unusual case
+            const msg = '✅ Account created! Please login. (লগইন করুন)';
+            setSuccess(msg);
+            setTimeout(() => {
+              setMode('login');
+              setSuccess('');
+            }, 2000);
+          }
+        } catch (autoLoginErr) {
+          console.error('❌ Auto-login exception:', autoLoginErr);
+          // Fall back to manual login
+          const msg = '✅ Account created! Please login. (লগইন করুন)';
+          setSuccess(msg);
+          setTimeout(() => {
+            setMode('login');
+            setSuccess('');
+          }, 3000);
+        }
       } else {
-        const msg = '✅ Account created successfully! You can now login.';
+        const msg = '✅ Account created successfully! Please login.';
         setSuccess(msg);
-        console.log('✅ Account created, no session returned');
-        
         setTimeout(() => {
           setMode('login');
           setSuccess('');
@@ -207,10 +231,18 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
   ];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 animate-fadeIn">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-center p-4 animate-fadeIn overflow-y-auto"
+      onClick={(e) => {
+        // Close modal if clicking on backdrop
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+    >
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-8 relative">
         {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-t-2xl relative">
+        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-t-2xl relative sticky top-0 z-10">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
@@ -226,15 +258,15 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-6 max-h-[calc(90vh-120px)] overflow-y-auto">
           {/* Error/Success Messages */}
           {error && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm animate-shake">
               {error}
             </div>
           )}
           {success && (
-            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm animate-pulse">
               {success}
             </div>
           )}

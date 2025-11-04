@@ -164,6 +164,7 @@ export async function signUp(data: SignUpData) {
  */
 export async function signIn(data: SignInData) {
   console.log('🔵 Starting login process for:', data.email);
+  console.log('🔵 Supabase URL:', supabase['supabaseUrl'] || 'Not available');
   
   try {
     console.log('🔵 Attempting authentication...');
@@ -180,7 +181,17 @@ export async function signIn(data: SignInData) {
 
     if (error) {
       console.error('❌ Login error:', error);
-      throw error;
+      console.error('❌ Error message:', error.message);
+      console.error('❌ Error status:', error.status);
+      
+      // Better error messages
+      if (error.message?.includes('Invalid API key')) {
+        throw new Error('⚠️ Configuration error: Please refresh the page and try again. If the issue persists, the dev server may need to be restarted.');
+      } else if (error.message?.includes('Invalid login credentials')) {
+        throw new Error('ভুল ইমেইল বা পাসওয়ার্ড (Invalid email or password). Please check and try again.');
+      } else {
+        throw error;
+      }
     }
     
     if (!authData.user) {

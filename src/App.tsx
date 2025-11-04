@@ -12,6 +12,7 @@ import FactCheck from './components/FactCheck';
 import CreateAndEarn from './components/CreateAndEarn';
 import SignupDiagnostics from './components/SignupDiagnostics';
 import SimpleSignupTest from './components/SimpleSignupTest';
+import { QuickTest } from './components/QuickTest';
 import { awardPoints, PointAction } from './utils/pointsSystem';
 import PointsToast from './components/PointsToast';
 import './styles/fonts.css';
@@ -263,6 +264,9 @@ function App() {
         
         <SOSButton user={user} />
         <VoiceAssistant />
+
+        {/* Quick Test Button - Always visible in bottom right */}
+        <QuickTest />
 
         {/* Diagnostics Modal - Auto-shows on mount for debugging */}
         {showDiagnostics && <SignupDiagnostics />}

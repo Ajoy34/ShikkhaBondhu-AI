@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Cache & Test Login</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 450px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #10b981;
+        }
+        
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+        
+        .status.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 2px solid #3b82f6;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .info-box {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+        
+        .info-box strong {
+            color: #374151;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 শিক্ষা বন্ধু Login</h1>
+        <p class="subtitle">Cache-free authentication test</p>
+        
+        <div id="status" class="status info" style="display: none;">
+            Initializing...
+        </div>
+
+        <div class="form-group">
+            <label>ইমেইল (Email)</label>
+            <input type="email" id="email" value="ajoyshutradhar53@gmail.com" placeholder="Enter your email">
+        </div>
+
+        <div class="form-group">
+            <label>পাসওয়ার্ড (Password)</label>
+            <input type="password" id="password" placeholder="Enter your password">
+        </div>
+
+        <button class="btn-primary" onclick="handleLogin()" id="loginBtn">
+            লগইন করুন (Login)
+        </button>
+
+        <div class="divider">অথবা (or)</div>
+
+        <button class="btn-secondary" onclick="handleSignup()" id="signupBtn">
+            নতুন অ্যাকাউন্ট তৈরি করুন (Create Account)
+        </button>
+
+        <button class="btn-secondary" onclick="testConnection()" id="testBtn">
+            🧪 Test Supabase Connection
+        </button>
+
+        <div class="info-box">
+            <strong>✨ No Cache Issues Here!</strong>
+            This page loads fresh every time with NO browser caching.
+            Perfect for testing authentication!
+        </div>
+    </div>
+
+    <script>
+        const { createClient } = supabase;
+        
+        // Fresh Supabase client (no cache)
+        const supabaseUrl = 'https://pakkuvcnhleqpcaxtruw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
+        
+        const client = createClient(supabaseUrl, supabaseKey);
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.style.display = 'block';
+        }
+
+        function setLoading(isLoading) {
+            document.getElementById('loginBtn').disabled = isLoading;
+            document.getElementById('signupBtn').disabled = isLoading;
+            document.getElementById('testBtn').disabled = isLoading;
+            
+            if (isLoading) {
+                document.getElementById('loginBtn').innerHTML = '<span class="loader"></span> Processing...';
+            } else {
+                document.getElementById('loginBtn').innerHTML = 'লগইন করুন (Login)';
+            }
+        }
+
+        async function testConnection() {
+            setLoading(true);
+            showStatus('Testing connection...', 'info');
+
+            try {
+                const testEmail = `test_${Date.now()}@example.com`;
+                const { data, error } = await client.auth.signUp({
+                    email: testEmail,
+                    password: 'TestPass123!'
+                });
+
+                if (error) {
+                    showStatus(`❌ Error: ${error.message}`, 'error');
+                } else {
+                    showStatus(`✅ Connection Working! Test user created: ${testEmail}`, 'success');
+                }
+            } catch (err) {
+                showStatus(`❌ Error: ${err.message}`, 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                showStatus('❌ Please enter email and password', 'error');
+                return;
+            }
+
+            setLoading(true);
+            showStatus('Logging in...', 'info');
+
+            try {
+                const { data, error } = await client.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    showStatus(`❌ Login Failed: ${error.message}`, 'error');
+                } else {
+                    showStatus(`✅ Login Successful! Welcome ${data.user.email}`, 'success');
+                    
+                    setTimeout(() => {
+                        showStatus('🎉 Redirecting to main app...', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 1000);
+                    }, 1000);
+                }
+            } catch (err) {
+                showStatus(`❌ Error: ${err.message}`, 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        async function handleSignup() {
+            const email = document.getElementById('email').value || `test_${Date.now()}@example.com`;
+            const password = document.getElementById('password').value || 'TestPass123!';
+
+            setLoading(true);
+            showStatus('Creating account...', 'info');
+
+            try {
+                const { data, error } = await client.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            full_name: 'Test User'
+                        }
+                    }
+                });
+
+                if (error) {
+                    showStatus(`❌ Signup Failed: ${error.message}`, 'error');
+                } else {
+                    showStatus(`✅ Account Created! Email: ${email}`, 'success');
+                    document.getElementById('password').value = password;
+                    
+                    setTimeout(() => {
+                        showStatus('Now click "Login" to log in!', 'info');
+                    }, 2000);
+                }
+            } catch (err) {
+                showStatus(`❌ Error: ${err.message}`, 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // Auto-test on load
+        window.addEventListener('load', () => {
+            showStatus('✅ Page loaded fresh (no cache)', 'success');
+            setTimeout(() => {
+                document.getElementById('status').style.display = 'none';
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
