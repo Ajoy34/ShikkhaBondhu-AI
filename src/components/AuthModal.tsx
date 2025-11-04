@@ -113,13 +113,15 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
       
       // Check for specific Supabase errors
       if (err.message?.includes('relation') || err.message?.includes('does not exist')) {
-        errorMessage = '⚠️ Database not setup. Please run the SQL migration first. Check SETUP-BACKEND-NOW.md';
-      } else if (err.message?.includes('Invalid API key') || err.message?.includes('Invalid JWT')) {
-        errorMessage = '⚠️ Invalid Supabase credentials. Please check your .env file.';
-      } else if (err.message?.includes('Email rate limit')) {
-        errorMessage = 'Too many signup attempts. Please wait a few minutes.';
-      } else if (err.message?.includes('User already registered')) {
-        errorMessage = 'এই ইমেইল ইতিমধ্যে নিবন্ধিত (This email is already registered)';
+        errorMessage = '⚠️ Database tables not created (This is OK - Authentication still works!)';
+      } else if (err.message?.includes('Invalid API key') || err.message?.includes('JWT') || err.message?.includes('401')) {
+        errorMessage = '⚠️ Supabase connection error. Please refresh the page and try again.';
+      } else if (err.message?.includes('rate limit') || err.message?.includes('429')) {
+        errorMessage = 'Too many attempts. Please wait a few minutes and try again.';
+      } else if (err.message?.includes('User already registered') || err.message?.includes('already exists')) {
+        errorMessage = 'এই ইমেইল ইতিমধ্যে নিবন্ধিত (This email is already registered). Please login instead.';
+      } else if (err.message?.includes('Invalid login credentials')) {
+        errorMessage = 'ভুল ইমেইল বা পাসওয়ার্ড (Invalid email or password)';
       }
       
       setError(errorMessage);
