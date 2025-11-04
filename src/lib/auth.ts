@@ -493,14 +493,13 @@ export async function getUserActivity(userId: string, limit = 50) {
  */
 export async function checkEmailExists(email: string): Promise<boolean> {
   try {
-    const { data, error } = await supabase
-      .from('user_profiles')
-      .select('email')
-      .eq('email', email)
-      .single();
-
-    return !!data && !error;
+    // Skip email check - let Supabase handle duplicate emails
+    // This avoids needing the user_profiles table or admin access
+    // Supabase will throw "User already registered" error if email exists
+    console.log('🔵 Skipping email existence check for:', email);
+    return false; // Always return false to allow signup attempt
   } catch (error) {
+    console.log('⚠️ Email check failed, allowing signup');
     return false;
   }
 }

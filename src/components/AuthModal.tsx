@@ -79,7 +79,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
 
       // Check if email confirmation is required
       if (result.user && !result.session) {
-        setSuccess('✅ Account created! Please check your email to verify your account before logging in. (ইমেইল যাচাই করুন লগইন করার আগে)');
+        const msg = '✅ Account created! Please check your email to verify your account before logging in. (ইমেইল যাচাই করুন লগইন করার আগে)';
+        setSuccess(msg);
         
         // Auto switch to login after 5 seconds
         setTimeout(() => {
@@ -88,7 +89,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
         }, 5000);
       } else if (result.session) {
         // User can login immediately (auto-confirm enabled)
-        setSuccess('সফলভাবে নিবন্ধিত হয়েছে! You can now login. (এখন লগইন করুন)');
+        const msg = 'সফলভাবে নিবন্ধিত হয়েছে! You can now login. (এখন লগইন করুন)';
+        setSuccess(msg);
         
         // Auto switch to login after 3 seconds
         setTimeout(() => {
@@ -101,6 +103,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
 
     } catch (err: any) {
       console.error('Signup error:', err);
+      
       // Show more detailed error message
       let errorMessage = 'সাইন আপ ব্যর্থ হয়েছে (Sign up failed)';
       
