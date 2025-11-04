@@ -105,14 +105,13 @@ export async function signUp(data: SignUpData) {
         });
 
       if (profileError) {
-        console.error('⚠️ Profile creation error:', profileError);
+        console.warn('⚠️ Profile creation error (ignoring):', profileError.message);
         // Check if it's a table not found error
         if (profileError.message?.includes('relation') || profileError.message?.includes('does not exist')) {
           console.warn('⚠️ user_profiles table does not exist. User created in auth.users only.');
-          console.warn('📝 Please run the SQL migration from SETUP-BACKEND-NOW.md');
-        } else {
-          throw profileError;
+          console.warn('📝 To enable full features, run SQL migration from SETUP-BACKEND-NOW.md');
         }
+        // DON'T throw - authentication is successful even without profile table
       } else {
         console.log('✅ Step 2 complete: Profile created');
       }
