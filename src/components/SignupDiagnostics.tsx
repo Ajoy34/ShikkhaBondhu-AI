@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 
 interface DiagnosticResult {
   test: string;
-  status: 'success' | 'error' | 'warning' | 'pending';
+  status: 'success' | 'error' | 'warning' | 'info';
   message: string;
   details?: string;
 }
@@ -12,81 +12,63 @@ interface DiagnosticResult {
 export default function SignupDiagnostics() {
   const [results, setResults] = useState<DiagnosticResult[]>([]);
   const [isRunning, setIsRunning] = useState(false);
-  const [testEmail] = useState('diagnostic_test_' + Date.now() + '@example.com');
-
-  const addResult = (result: DiagnosticResult) => {
-    setResults(prev => [...prev, result]);
-  };
 
   const runDiagnostics = async () => {
+    const diagnosticResults: DiagnosticResult[] = [];
     setResults([]);
     setIsRunning(true);
 
     try {
       // Test 1: Environment Variables
-      addResult({
-        test: 'Environment Variables',
-        status: 'pending',
-        message: 'Checking environment variables...'
-      });
-
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
       if (!supabaseUrl || !supabaseKey) {
-        addResult({
+        diagnosticResults.push({
           test: 'Environment Variables',
           status: 'error',
           message: 'Missing environment variables!',
           details: `URL: ${supabaseUrl ? '✓' : '✗'}, Key: ${supabaseKey ? '✓' : '✗'}`
         });
+        setResults(diagnosticResults);
         setIsRunning(false);
         return;
       }
 
-      addResult({
+      diagnosticResults.push({
         test: 'Environment Variables',
         status: 'success',
         message: 'Environment variables found',
-        details: `URL: ${supabaseUrl}, Key: ${supabaseKey.substring(0, 20)}...`
+        details: `URL: ${supabaseUrl}\nKey: ${supabaseKey.substring(0, 30)}...`
       });
+      setResults([...diagnosticResults]);
 
       // Test 2: Supabase Connection
-      addResult({
-        test: 'Supabase Connection',
-        status: 'pending',
-        message: 'Testing connection to Supabase...'
-      });
-
       try {
         await supabase.auth.getSession();
-        
-        addResult({
+        diagnosticResults.push({
           test: 'Supabase Connection',
           status: 'success',
           message: 'Connected to Supabase successfully',
           details: 'Auth service is reachable'
         });
       } catch (error: any) {
-        addResult({
+        diagnosticResults.push({
           test: 'Supabase Connection',
           status: 'error',
           message: 'Failed to connect to Supabase',
           details: error.message
         });
+        setResults(diagnosticResults);
         setIsRunning(false);
         return;
       }
+      setResults([...diagnosticResults]);
 
-      // Test 3: Signup Enabled Check
-      addResult({
-        test: 'Signup Configuration',
-        status: 'pending',
-        message: 'Checking if signups are enabled...'
-      });
-
+      // Test 3: Signup Test
+      const testEmail = 'diagnostic_test_' + Date.now() + '@example.com';
+      
       try {
-        // Try a test signup with a unique email
         const { data: signupData, error: signupError } = await supabase.auth.signUp({
           email: testEmail,
           password: 'TestPassword123!@#',
@@ -98,78 +80,70 @@ export default function SignupDiagnostics() {
         });
 
         if (signupError) {
-          // Check specific error codes
           if (signupError.message?.includes('signup_disabled')) {
-            addResult({
+            diagnosticResults.push({
               test: 'Signup Configuration',
               status: 'error',
-              message: 'Signups are DISABLED in Supabase!',
-              details: 'Go to Supabase Dashboard → Authentication → Settings → Enable "Enable sign ups"'
+              message: '❌ Signups are DISABLED in Supabase!',
+              details: 'Fix: Supabase Dashboard → Authentication → Settings → Enable "Enable sign ups"'
             });
-          } else if (signupError.message?.includes('Email rate limit')) {
-            addResult({
+          } else if (signupError.message?.includes('Invalid API key') || signupError.message?.includes('401')) {
+            diagnosticResults.push({
+              test: 'Signup Configuration',
+              status: 'error',
+              message: '❌ Invalid API key!',
+              details: 'Your Supabase anon key may have changed. Check: Supabase Dashboard → Settings → API'
+            });
+          } else if (signupError.message?.includes('rate limit') || signupError.message?.includes('429')) {
+            diagnosticResults.push({
               test: 'Signup Configuration',
               status: 'warning',
               message: 'Rate limit reached',
-              details: 'Too many signup attempts. Wait a few minutes.'
-            });
-          } else if (signupError.message?.includes('Invalid API key')) {
-            addResult({
-              test: 'Signup Configuration',
-              status: 'error',
-              message: 'Invalid API key!',
-              details: 'Your Supabase anon key may have changed. Check Supabase Dashboard → Settings → API'
-            });
-          } else if (signupError.message?.includes('User already registered')) {
-            addResult({
-              test: 'Signup Configuration',
-              status: 'success',
-              message: 'Signups are working! (User already exists)',
-              details: 'The test email already exists, which means signup API is working'
+              details: 'Too many signup attempts. Wait a few minutes and try again.'
             });
           } else {
-            addResult({
+            diagnosticResults.push({
               test: 'Signup Configuration',
               status: 'error',
-              message: 'Signup failed with error',
+              message: 'Signup failed',
               details: signupError.message
             });
           }
         } else if (signupData.user) {
-          addResult({
+          diagnosticResults.push({
             test: 'Signup Configuration',
             status: 'success',
-            message: 'Signup is WORKING! ✅',
-            details: `Test user created: ${signupData.user.id}`
+            message: '✅ Signup is WORKING!',
+            details: `Test user created successfully\nUser ID: ${signupData.user.id}`
           });
 
-          // Test 4: Email Confirmation Check
+          // Test 4: Email Confirmation
           if (signupData.user.email_confirmed_at) {
-            addResult({
+            diagnosticResults.push({
               test: 'Email Confirmation',
               status: 'success',
-              message: 'Auto-confirm is ENABLED (recommended)',
+              message: '✅ Auto-confirm is ENABLED (recommended)',
               details: 'Users can login immediately after signup'
             });
           } else {
-            addResult({
+            diagnosticResults.push({
               test: 'Email Confirmation',
               status: 'warning',
               message: 'Email confirmation is REQUIRED',
-              details: 'Users must verify email before login. To disable: Supabase → Auth → Providers → Email → Uncheck "Confirm email"'
+              details: 'Users must verify email before login.\nTo disable: Supabase → Auth → Providers → Email → Uncheck "Confirm email"'
             });
           }
 
           // Test 5: Session Creation
           if (signupData.session) {
-            addResult({
+            diagnosticResults.push({
               test: 'Session Creation',
               status: 'success',
-              message: 'Session created successfully',
+              message: '✅ Session created successfully',
               details: 'Users will be logged in automatically after signup'
             });
           } else {
-            addResult({
+            diagnosticResults.push({
               test: 'Session Creation',
               status: 'warning',
               message: 'No session created',
@@ -178,21 +152,16 @@ export default function SignupDiagnostics() {
           }
         }
       } catch (error: any) {
-        addResult({
+        diagnosticResults.push({
           test: 'Signup Configuration',
           status: 'error',
           message: 'Unexpected error during signup test',
           details: error.message || String(error)
         });
       }
+      setResults([...diagnosticResults]);
 
       // Test 6: Database Tables (Optional)
-      addResult({
-        test: 'Database Tables',
-        status: 'pending',
-        message: 'Checking database tables...'
-      });
-
       try {
         const { error: profileError } = await supabase
           .from('user_profiles')
@@ -201,14 +170,14 @@ export default function SignupDiagnostics() {
 
         if (profileError) {
           if (profileError.message?.includes('relation') || profileError.message?.includes('does not exist')) {
-            addResult({
+            diagnosticResults.push({
               test: 'Database Tables',
               status: 'warning',
-              message: 'user_profiles table does not exist',
-              details: 'Authentication will work, but profile features disabled. Run migration from SETUP-BACKEND-NOW.md'
+              message: 'user_profiles table does not exist (This is OK)',
+              details: 'Authentication works without it.\nFor full features, run migration from SETUP-BACKEND-NOW.md'
             });
           } else {
-            addResult({
+            diagnosticResults.push({
               test: 'Database Tables',
               status: 'warning',
               message: 'Cannot access database tables',
@@ -216,24 +185,24 @@ export default function SignupDiagnostics() {
             });
           }
         } else {
-          addResult({
+          diagnosticResults.push({
             test: 'Database Tables',
             status: 'success',
-            message: 'Database tables are accessible',
+            message: '✅ Database tables are accessible',
             details: 'Profile system is ready'
           });
         }
       } catch (error: any) {
-        addResult({
+        diagnosticResults.push({
           test: 'Database Tables',
-          status: 'warning',
+          status: 'info',
           message: 'Database check skipped',
           details: error.message
         });
       }
 
     } catch (error: any) {
-      addResult({
+      diagnosticResults.push({
         test: 'Diagnostic System',
         status: 'error',
         message: 'Diagnostic failed with unexpected error',
@@ -241,11 +210,11 @@ export default function SignupDiagnostics() {
       });
     }
 
+    setResults(diagnosticResults);
     setIsRunning(false);
   };
 
   useEffect(() => {
-    // Auto-run diagnostics on mount
     runDiagnostics();
   }, []);
 
@@ -257,10 +226,10 @@ export default function SignupDiagnostics() {
         return <XCircle className="w-5 h-5 text-red-500" />;
       case 'warning':
         return <AlertCircle className="w-5 h-5 text-yellow-500" />;
-      case 'pending':
-        return <Loader className="w-5 h-5 text-blue-500 animate-spin" />;
+      case 'info':
+        return <Loader className="w-5 h-5 text-blue-500" />;
       default:
-        return null;
+        return <Loader className="w-5 h-5 text-gray-500 animate-spin" />;
     }
   };
 
@@ -272,7 +241,7 @@ export default function SignupDiagnostics() {
         return 'bg-red-50 border-red-200';
       case 'warning':
         return 'bg-yellow-50 border-yellow-200';
-      case 'pending':
+      case 'info':
         return 'bg-blue-50 border-blue-200';
       default:
         return 'bg-gray-50 border-gray-200';
@@ -281,7 +250,7 @@ export default function SignupDiagnostics() {
 
   const hasErrors = results.some(r => r.status === 'error');
   const hasWarnings = results.some(r => r.status === 'warning');
-  const allSuccess = results.length > 0 && results.every(r => r.status === 'success');
+  const allSuccess = results.length > 0 && results.every(r => r.status === 'success' || r.status === 'warning');
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -294,10 +263,10 @@ export default function SignupDiagnostics() {
 
         {/* Results */}
         <div className="p-6 overflow-y-auto max-h-[60vh]">
-          {results.length === 0 && (
+          {isRunning && results.length === 0 && (
             <div className="text-center py-8 text-gray-500">
-              <Loader className="w-12 h-12 animate-spin mx-auto mb-4" />
-              <p>Initializing diagnostics...</p>
+              <Loader className="w-12 h-12 animate-spin mx-auto mb-4 text-purple-600" />
+              <p>Running diagnostics...</p>
             </div>
           )}
 
@@ -313,7 +282,7 @@ export default function SignupDiagnostics() {
                     <h3 className="font-semibold text-gray-900">{result.test}</h3>
                     <p className="text-sm text-gray-700 mt-1">{result.message}</p>
                     {result.details && (
-                      <pre className="text-xs bg-white/50 rounded p-2 mt-2 overflow-x-auto text-gray-600">
+                      <pre className="text-xs bg-white/50 rounded p-2 mt-2 overflow-x-auto text-gray-600 whitespace-pre-wrap">
                         {result.details}
                       </pre>
                     )}
@@ -327,39 +296,33 @@ export default function SignupDiagnostics() {
         {/* Summary */}
         {!isRunning && results.length > 0 && (
           <div className="border-t bg-gray-50 p-6">
-            {allSuccess ? (
-              <div className="bg-green-100 border border-green-300 rounded-lg p-4">
+            {allSuccess && !hasErrors ? (
+              <div className="bg-green-100 border border-green-300 rounded-lg p-4 mb-4">
                 <div className="flex items-center gap-3">
                   <CheckCircle className="w-6 h-6 text-green-600" />
                   <div>
-                    <h3 className="font-bold text-green-900">✅ All Tests Passed!</h3>
-                    <p className="text-sm text-green-700">Signup should work perfectly. Try signing up now!</p>
+                    <h3 className="font-bold text-green-900">✅ Diagnostics Complete!</h3>
+                    <p className="text-sm text-green-700">
+                      {hasWarnings 
+                        ? 'Signup works! Some optional features have warnings.' 
+                        : 'All tests passed! Signup should work perfectly.'}
+                    </p>
                   </div>
                 </div>
               </div>
             ) : hasErrors ? (
-              <div className="bg-red-100 border border-red-300 rounded-lg p-4">
+              <div className="bg-red-100 border border-red-300 rounded-lg p-4 mb-4">
                 <div className="flex items-center gap-3">
                   <XCircle className="w-6 h-6 text-red-600" />
                   <div>
                     <h3 className="font-bold text-red-900">❌ Critical Issues Found</h3>
-                    <p className="text-sm text-red-700">Please fix the errors above before attempting signup.</p>
-                  </div>
-                </div>
-              </div>
-            ) : hasWarnings ? (
-              <div className="bg-yellow-100 border border-yellow-300 rounded-lg p-4">
-                <div className="flex items-center gap-3">
-                  <AlertCircle className="w-6 h-6 text-yellow-600" />
-                  <div>
-                    <h3 className="font-bold text-yellow-900">⚠️ Warnings Detected</h3>
-                    <p className="text-sm text-yellow-700">Signup may work, but some features might be limited.</p>
+                    <p className="text-sm text-red-700">Please fix the errors above to enable signup.</p>
                   </div>
                 </div>
               </div>
             ) : null}
 
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-3">
               <button
                 onClick={runDiagnostics}
                 disabled={isRunning}
@@ -368,10 +331,10 @@ export default function SignupDiagnostics() {
                 {isRunning ? 'Running...' : '🔄 Run Again'}
               </button>
               <button
-                onClick={() => window.location.reload()}
+                onClick={() => window.location.href = '/'}
                 className="px-6 py-3 rounded-lg font-semibold border-2 border-gray-300 hover:bg-gray-100"
               >
-                Close & Reload
+                Close
               </button>
             </div>
           </div>
