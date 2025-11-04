@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>Signup Test</h1>
+    <button onclick="testSignup()">Test Signup</button>
+    <div id="result"></div>
+
+    <script>
+        const { createClient } = supabase;
+        
+        const supabaseUrl = 'https://pakkuvcnhleqpcaxtruw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
+        
+        const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+        async function testSignup() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Testing signup...</p>';
+            
+            const testEmail = 'test_html_' + Date.now() + '@example.com';
+            const testPassword = 'TestPass123!';
+            
+            try {
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: testEmail,
+                    password: testPassword,
+                    options: {
+                        data: {
+                            full_name: 'Test User'
+                        }
+                    }
+                });
+
+                if (error) {
+                    resultDiv.innerHTML = `<p style="color: red;">❌ Error: ${error.message}</p>`;
+                    console.error('Signup error:', error);
+                } else {
+                    resultDiv.innerHTML = `
+                        <p style="color: green;">✅ Signup successful!</p>
+                        <p>User ID: ${data.user?.id}</p>
+                        <p>Email: ${data.user?.email}</p>
+                        <p>Email Confirmed: ${data.user?.email_confirmed_at ? 'Yes' : 'No'}</p>
+                        <p>Session: ${data.session ? 'Yes ✅' : 'No ❌'}</p>
+                    `;
+                    console.log('Signup success:', data);
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<p style="color: red;">❌ Exception: ${err.message}</p>`;
+                console.error('Exception:', err);
+            }
+        }
+    </script>
+</body>
+</html>

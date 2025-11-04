@@ -11,6 +11,7 @@ import Library from './components/Library';
 import FactCheck from './components/FactCheck';
 import CreateAndEarn from './components/CreateAndEarn';
 import SignupDiagnostics from './components/SignupDiagnostics';
+import SimpleSignupTest from './components/SimpleSignupTest';
 import { awardPoints, PointAction } from './utils/pointsSystem';
 import PointsToast from './components/PointsToast';
 import './styles/fonts.css';
@@ -48,6 +49,10 @@ function App() {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('diagnostics') === 'true') {
       setShowDiagnostics(true);
+    }
+    if (urlParams.get('test') === 'signup') {
+      // Show simple signup test
+      window.location.href = '/?test=signup';
     }
     
     // Keyboard shortcut: Ctrl+Shift+D to open diagnostics
@@ -261,6 +266,9 @@ function App() {
 
         {/* Diagnostics Modal - Auto-shows on mount for debugging */}
         {showDiagnostics && <SignupDiagnostics />}
+        
+        {/* Simple Signup Test - Show with ?test=signup */}
+        {new URLSearchParams(window.location.search).get('test') === 'signup' && <SimpleSignupTest />}
 
         {/* Points Toast Notification */}
         {pointsToast && (
