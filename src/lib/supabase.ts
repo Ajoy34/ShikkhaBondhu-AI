@@ -22,7 +22,7 @@ const { supabaseUrl, supabaseAnonKey } = getSupabaseCredentials();
 
 // Force cache refresh with timestamp
 const initTime = new Date().toISOString();
-console.log('🔧 Initializing Supabase client... [v3 - ' + initTime + ']');
+console.log('🔧 Initializing Supabase client... [v4 - ' + initTime + ']');
 console.log('📍 URL Source:', import.meta.env.VITE_SUPABASE_URL ? 'ENV VAR ✅' : 'FALLBACK ⚠️');
 console.log('📍 URL Value:', supabaseUrl);
 console.log('🔑 Key Source:', import.meta.env.VITE_SUPABASE_ANON_KEY ? 'ENV VAR ✅' : 'FALLBACK ⚠️');
