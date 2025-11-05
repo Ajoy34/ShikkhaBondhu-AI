@@ -54,7 +54,19 @@ export async function signUp(data: SignUpData) {
   const SUPABASE_URL = 'https://pakkuvcnhleqpcaxtruw.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
 
+  console.log('🔐 SIGNUP - Using credentials:');
+  console.log('   URL:', SUPABASE_URL);
+  console.log('   Key (first 20 chars):', SUPABASE_KEY.substring(0, 20));
+  console.log('   Key length:', SUPABASE_KEY.length);
+
   try {
+    console.log('📤 Sending signup request...');
+    console.log('📤 Full URL:', `${SUPABASE_URL}/auth/v1/signup`);
+    console.log('📤 Headers:', {
+      'apikey': SUPABASE_KEY.substring(0, 30) + '...',
+      'Content-Type': 'application/json'
+    });
+    
     const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
       method: 'POST',
       headers: {
