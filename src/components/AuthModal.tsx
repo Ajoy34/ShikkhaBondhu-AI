@@ -89,57 +89,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
       console.log('📧 Has session:', !!result.session);
       console.log('📧 User ID:', result.user?.id);
 
-      // REAL-TIME LOGIN: Automatically log the user in after signup
-      if (result.user) {
-        console.log('🚀 REAL-TIME LOGIN: Auto-logging in user after signup...');
-        
-        try {
-          // Automatically login the user with their credentials
-          const loginResult = await signIn({
-            email: formData.email,
-            password: formData.password
-          });
-
-          if (loginResult?.session) {
-            // Success! User is now logged in immediately
-            console.log('✅ REAL-TIME LOGIN SUCCESS! User logged in instantly.');
-            setSuccess('✅ স্বাগতম! (Welcome!) Account created and logged in successfully!');
-            
-            // Close modal and redirect to dashboard after 1 second
-            setTimeout(() => {
-              onClose();
-              // ALWAYS navigate to dashboard - don't reload
-              if (onLoginSuccess) {
-                onLoginSuccess();
-              }
-            }, 1000);
-          } else {
-            // No session - unusual case
-            const msg = '✅ Account created! Please login. (লগইন করুন)';
-            setSuccess(msg);
-            setTimeout(() => {
-              setMode('login');
-              setSuccess('');
-            }, 2000);
-          }
-        } catch (autoLoginErr) {
-          console.error('❌ Auto-login exception:', autoLoginErr);
-          // Fall back to manual login
-          const msg = '✅ Account created! Please login. (লগইন করুন)';
-          setSuccess(msg);
-          setTimeout(() => {
-            setMode('login');
-            setSuccess('');
-          }, 3000);
-        }
-      } else {
-        const msg = '✅ Account created successfully! Please login.';
-        setSuccess(msg);
-        setTimeout(() => {
-          setMode('login');
-          setSuccess('');
-        }, 3000);
-      }
+      // Show success and switch to login mode - NO AUTO-LOGIN
+      console.log('✅ Account created! Switching to login mode...');
+      const msg = '✅ Account created! Please login. (অ্যাকাউন্ট তৈরি হয়েছে! এখন লগইন করুন)';
+      setSuccess(msg);
+      setTimeout(() => {
+        setMode('login');
+        setSuccess('');
+      }, 2000);
 
     } catch (err: any) {
       console.error('❌ Signup error:', err);

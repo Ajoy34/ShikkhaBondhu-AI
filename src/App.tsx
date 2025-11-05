@@ -249,7 +249,8 @@ function App() {
           />
         )}
 
-        {activeSection === 'home' && isLoggedIn && (
+        {/* Dashboard - show for 'home' when logged in OR 'dashboard' section */}
+        {((activeSection === 'home' || activeSection === 'dashboard') && isLoggedIn) && (
           <Dashboard
             user={user}
             setSelectedChatbot={setSelectedChatbot}
@@ -260,7 +261,7 @@ function App() {
         )}
         
         {/* Protected Sections */}
-        {activeSection !== 'home' && renderProtectedSection(activeSection)}
+        {activeSection !== 'home' && activeSection !== 'dashboard' && renderProtectedSection(activeSection)}
         
         {/* Chat System - Require Login */}
         {isLoggedIn ? (
