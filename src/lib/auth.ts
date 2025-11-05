@@ -48,14 +48,17 @@ export interface UserProfile {
  * Sign up a new user with email and password
  */
 export async function signUp(data: SignUpData) {
-  console.log('🔵 Bypassing Supabase JS library. Using direct API call for signup.');
+  console.log('🔵 Direct API signup with hardcoded credentials');
+
+  // Hardcoded credentials - bypassing all environment variable logic
+  const SUPABASE_URL = 'https://pakkuvcnhleqpcaxtruw.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
 
   try {
-    // Directly use the imported credentials, bypassing the client instance
-    const response = await fetch(`${supabaseUrl}/auth/v1/signup`, {
+    const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
       method: 'POST',
       headers: {
-        'apikey': supabaseAnonKey,
+        'apikey': SUPABASE_KEY,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -114,13 +117,17 @@ export async function signUp(data: SignUpData) {
  * Sign in with email and password
  */
 export async function signIn(data: SignInData) {
-  console.log('🔵 Bypassing Supabase JS library. Using direct API call for login.');
+  console.log('🔵 Direct API login with hardcoded credentials');
+
+  // Hardcoded credentials - bypassing all environment variable logic
+  const SUPABASE_URL = 'https://pakkuvcnhleqpcaxtruw.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
 
   try {
-    const response = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=password`, {
+    const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
       method: 'POST',
       headers: {
-        'apikey': supabaseAnonKey,
+        'apikey': SUPABASE_KEY,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
