@@ -142,9 +142,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
       console.error('❌ Error message:', err.message);
       console.error('❌ Error details:', err);
       
-      // Alert for immediate feedback
-      alert('❌ Signup Error: ' + (err.message || 'Unknown error'));
-      
       // Show more detailed error message
       let errorMessage = 'সাইন আপ ব্যর্থ হয়েছে (Sign up failed)';
       

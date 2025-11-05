@@ -78,7 +78,9 @@ export async function signUp(data: SignUpData) {
 
     if (authError) {
       console.error('❌ Auth signup error:', authError);
-      throw authError;
+      // Extract readable error message from Supabase error object
+      const errorMsg = authError.message || (authError as any).error_description || 'Sign up failed';
+      throw new Error(errorMsg);
     }
     
     if (!authData.user) {
