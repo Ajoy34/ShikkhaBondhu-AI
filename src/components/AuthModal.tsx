@@ -143,6 +143,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
       console.error('❌ Error details:', err);
       console.error('❌ Error type:', typeof err);
       console.error('❌ Error keys:', Object.keys(err));
+      console.error('🔍 Full error object:', JSON.stringify(err, null, 2));
       
       // Show more detailed error message
       let errorMessage = err.message || 'সাইন আপ ব্যর্থ হয়েছে (Sign up failed)';
