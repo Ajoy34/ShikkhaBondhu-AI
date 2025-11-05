@@ -7,7 +7,6 @@ import PointsToast from './components/PointsToast';
 import UserProfile from './components/UserProfile';
 import VoiceAssistant from './components/VoiceAssistant';
 import VolunteerSection from './components/VolunteerSection';
-import EnvVarCheck from './components/EnvVarCheck';
 import SOSButton from './components/SOSButton';
 import ReportSystem from './components/ReportSystem';
 import Library from './components/Library';
