@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Direct Signup Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #000;
+            color: #0f0;
+            padding: 20px;
+        }
+        button {
+            background: #0f0;
+            color: #000;
+            padding: 15px 30px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .result {
+            background: #222;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #0f0;
+            border-radius: 5px;
+        }
+        .error { color: #f00; }
+        .success { color: #0f0; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Direct Signup Test (Using App's Code)</h1>
+    
+    <button onclick="testWithFallback()">Test with FALLBACK credentials</button>
+    <button onclick="testWithEnvVars()">Test with ENV VARS</button>
+    
+    <div id="result" class="result">Click a button to test...</div>
+
+    <script type="module">
+        // Import Supabase
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+        
+        window.testWithFallback = async function() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '⏳ Testing with FALLBACK credentials...<br><br>';
+            
+            const url = 'https://pakkuvcnhleqpcaxtruw.supabase.co';
+            const key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
+            
+            resultDiv.innerHTML += `URL: ${url}<br>`;
+            resultDiv.innerHTML += `Key: ${key.substring(0, 40)}...<br><br>`;
+            
+            try {
+                const client = createClient(url, key);
+                resultDiv.innerHTML += 'Client created ✅<br><br>';
+                
+                const testEmail = `test_${Date.now()}@example.com`;
+                resultDiv.innerHTML += `Testing signup with: ${testEmail}<br>`;
+                
+                const { data, error } = await client.auth.signUp({
+                    email: testEmail,
+                    password: 'TestPass123!'
+                });
+                
+                if (error) {
+                    resultDiv.innerHTML += `<span class="error">❌ ERROR: ${error.message}</span><br>`;
+                    resultDiv.innerHTML += `<span class="error">Status: ${error.status}</span><br>`;
+                    resultDiv.innerHTML += `<span class="error">Name: ${error.name}</span><br>`;
+                } else {
+                    resultDiv.innerHTML += `<span class="success">✅ SUCCESS!</span><br>`;
+                    resultDiv.innerHTML += `User ID: ${data.user.id}<br>`;
+                    resultDiv.innerHTML += `Email: ${data.user.email}<br>`;
+                }
+            } catch (err) {
+                resultDiv.innerHTML += `<span class="error">❌ CRASHED: ${err.message}</span>`;
+            }
+        };
+        
+        window.testWithEnvVars = async function() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '⏳ Testing with ENV VARS...<br><br>';
+            
+            // This mimics what your app does
+            const url = import.meta.env.VITE_SUPABASE_URL || 'https://pakkuvcnhleqpcaxtruw.supabase.co';
+            const key = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
+            
+            resultDiv.innerHTML += `URL: ${url}<br>`;
+            resultDiv.innerHTML += `Key: ${key.substring(0, 40)}...<br>`;
+            resultDiv.innerHTML += `Source: ${import.meta.env.VITE_SUPABASE_URL ? 'ENV VAR' : 'FALLBACK'}<br><br>`;
+            
+            try {
+                const client = createClient(url, key);
+                resultDiv.innerHTML += 'Client created ✅<br><br>';
+                
+                const testEmail = `test_${Date.now()}@example.com`;
+                resultDiv.innerHTML += `Testing signup with: ${testEmail}<br>`;
+                
+                const { data, error } = await client.auth.signUp({
+                    email: testEmail,
+                    password: 'TestPass123!'
+                });
+                
+                if (error) {
+                    resultDiv.innerHTML += `<span class="error">❌ ERROR: ${error.message}</span><br>`;
+                    resultDiv.innerHTML += `<span class="error">Status: ${error.status}</span><br>`;
+                    resultDiv.innerHTML += `<span class="error">Name: ${error.name}</span><br>`;
+                } else {
+                    resultDiv.innerHTML += `<span class="success">✅ SUCCESS!</span><br>`;
+                    resultDiv.innerHTML += `User ID: ${data.user.id}<br>`;
+                    resultDiv.innerHTML += `Email: ${data.user.email}<br>`;
+                }
+            } catch (err) {
+                resultDiv.innerHTML += `<span class="error">❌ CRASHED: ${err.message}</span>`;
+            }
+        };
+    </script>
+</body>
+</html>
