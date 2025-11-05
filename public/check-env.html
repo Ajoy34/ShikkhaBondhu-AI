@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Environment Check</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #000;
+            color: #0f0;
+            padding: 20px;
+        }
+        .error { color: #f00; }
+        .success { color: #0f0; }
+        .warning { color: #fa0; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Environment Variables Check</h1>
+    <div id="result">Loading...</div>
+
+    <script type="module">
+        // This simulates what your app does
+        const envUrl = import.meta.env.VITE_SUPABASE_URL;
+        const envKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+        const fallbackUrl = 'https://pakkuvcnhleqpcaxtruw.supabase.co';
+        const fallbackKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
+
+        const supabaseUrl = envUrl || fallbackUrl;
+        const supabaseAnonKey = envKey || fallbackKey;
+
+        let html = '<h2>Build-time Environment Variables:</h2>';
+        html += '<pre>';
+        html += 'import.meta.env.VITE_SUPABASE_URL: ' + (envUrl ? '<span class="success">✅ SET</span>' : '<span class="error">❌ NOT SET</span>') + '\n';
+        html += 'import.meta.env.VITE_SUPABASE_ANON_KEY: ' + (envKey ? '<span class="success">✅ SET</span>' : '<span class="error">❌ NOT SET</span>') + '\n\n';
+        
+        html += '<h2>Final Values (with fallback):</h2>';
+        html += 'URL: ' + supabaseUrl + '\n';
+        html += 'Key: ' + supabaseAnonKey.substring(0, 40) + '...\n\n';
+
+        html += '<h2>Source:</h2>';
+        html += 'URL from: ' + (envUrl ? '<span class="success">ENV VAR</span>' : '<span class="warning">FALLBACK</span>') + '\n';
+        html += 'Key from: ' + (envKey ? '<span class="success">ENV VAR</span>' : '<span class="warning">FALLBACK</span>') + '\n';
+        html += '</pre>';
+
+        html += '<h2>✅ Conclusion:</h2>';
+        if (!envUrl && !envKey) {
+            html += '<p class="warning">⚠️ Environment variables NOT set, using FALLBACKS (this is OK for Vercel)</p>';
+        } else {
+            html += '<p class="success">✅ Environment variables are set!</p>';
+        }
+
+        html += '<hr>';
+        html += '<p>If you see "Invalid API key" error, it means the Supabase project might be PAUSED.</p>';
+        html += '<p><a href="https://supabase.com/dashboard" target="_blank">Check Supabase Dashboard →</a></p>';
+
+        document.getElementById('result').innerHTML = html;
+    </script>
+</body>
+</html>
