@@ -1,8 +1,24 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Get environment variables with fallbacks (for Vercel)
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://pakkuvcnhleqpcaxtruw.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
+// Function to safely get environment variables
+function getSupabaseCredentials() {
+  const envUrl = import.meta.env.VITE_SUPABASE_URL;
+  const envKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+  const fallbackUrl = 'https://pakkuvcnhleqpcaxtruw.supabase.co';
+  const fallbackKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
+
+  const finalUrl = (envUrl && envUrl.startsWith('https')) ? envUrl : fallbackUrl;
+  const finalKey = (envKey && envKey.length > 50) ? envKey : fallbackKey;
+  
+  console.log(`[Supabase Init] Using URL: ${finalUrl === fallbackUrl ? 'FALLBACK' : 'ENV_VAR'}`);
+  console.log(`[Supabase Init] Using Key: ${finalKey === fallbackKey ? 'FALLBACK' : 'ENV_VAR'}`);
+
+  return { supabaseUrl: finalUrl, supabaseAnonKey: finalKey };
+}
+
+// Get credentials safely
+const { supabaseUrl, supabaseAnonKey } = getSupabaseCredentials();
 
 // Force cache refresh with timestamp
 const initTime = new Date().toISOString();
