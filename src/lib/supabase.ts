@@ -1,29 +1,34 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Get environment variables with fallbacks (for Vercel)
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://pakkuvcnhleqpcaxtruw.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
 
 // Force cache refresh with timestamp
 const initTime = new Date().toISOString();
-console.log('🔧 Initializing Supabase client... [v2 - ' + initTime + ']');
-console.log('📍 URL:', supabaseUrl || '❌ MISSING');
-console.log('🔑 Anon Key:', supabaseAnonKey ? `✅ Present (${supabaseAnonKey.substring(0, 20)}...)` : '❌ MISSING');
+console.log('🔧 Initializing Supabase client... [v3 - ' + initTime + ']');
+console.log('📍 URL Source:', import.meta.env.VITE_SUPABASE_URL ? 'ENV VAR ✅' : 'FALLBACK ⚠️');
+console.log('📍 URL Value:', supabaseUrl);
+console.log('🔑 Key Source:', import.meta.env.VITE_SUPABASE_ANON_KEY ? 'ENV VAR ✅' : 'FALLBACK ⚠️');
+console.log('🔑 Key Value:', supabaseAnonKey ? `${supabaseAnonKey.substring(0, 30)}...` : '❌ MISSING');
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('❌ CRITICAL ERROR: Missing Supabase environment variables!');
-  console.error('VITE_SUPABASE_URL:', supabaseUrl ? 'Set ✓' : 'Missing ✗');
-  console.error('VITE_SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Set ✓' : 'Missing ✗');
-  console.error('⚠️ Make sure your .env file exists and contains:');
-  console.error('   VITE_SUPABASE_URL=https://pakkuvcnhleqpcaxtruw.supabase.co');
-  console.error('   VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...');
-  console.error('');
-  console.error('💡 SOLUTION: Restart the dev server with: npm run dev');
-  
-  // Show alert to user
-  alert('⚠️ Configuration Error!\n\nSupabase environment variables are missing.\n\nPlease restart the dev server:\n1. Stop the server (Ctrl+C)\n2. Run: npm run dev\n3. Refresh this page');
-  
-  throw new Error('Missing Supabase environment variables. Please restart dev server.');
+// Validate credentials
+if (!supabaseUrl || supabaseUrl === 'undefined' || !supabaseUrl.includes('supabase.co')) {
+  console.error('❌ CRITICAL ERROR: Invalid Supabase URL!');
+  console.error('Current URL:', supabaseUrl);
+  alert('❌ Configuration Error: Invalid Supabase URL\n\nPlease check your environment variables.');
+  throw new Error('Invalid Supabase URL');
 }
+
+if (!supabaseAnonKey || supabaseAnonKey === 'undefined' || supabaseAnonKey.length < 50) {
+  console.error('❌ CRITICAL ERROR: Invalid Supabase API Key!');
+  console.error('Key length:', supabaseAnonKey?.length || 0);
+  alert('❌ Configuration Error: Invalid Supabase API Key\n\nPlease check your environment variables.');
+  throw new Error('Invalid Supabase API Key');
+}
+
+console.log('✅ All credentials validated');
+console.log('🌐 Creating Supabase client...');
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
@@ -32,15 +37,45 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   }
 });
 
-console.log('✅ Supabase client initialized successfully [v2]');
+console.log('✅ Supabase client initialized successfully [v3]');
+console.log('🔗 URL:', supabaseUrl);
+console.log('🔑 Key:', `${supabaseAnonKey.substring(0, 30)}...${supabaseAnonKey.substring(supabaseAnonKey.length - 5)}`);
 
 // Test connection immediately
+console.log('🧪 Testing Supabase connection...');
 supabase.auth.getSession().then(({ data, error }) => {
   if (error) {
     console.error('❌ Supabase connection test failed:', error.message);
-    console.error('⚠️ If you see "Invalid API key", please restart dev server');
+    console.error('📊 Error details:', {
+      status: error.status,
+      message: error.message,
+      name: error.name
+    });
+    
+    if (error.message.includes('Invalid API key')) {
+      console.error('⚠️ INVALID API KEY ERROR!');
+      console.error('🔍 This means:');
+      console.error('   1. The API key is wrong');
+      console.error('   2. The Supabase project is PAUSED');
+      console.error('   3. The project URL is wrong');
+      console.error('');
+      console.error('✅ SOLUTION:');
+      console.error('   Go to https://supabase.com/dashboard');
+      console.error('   Check if your project is paused and RESUME it');
+      
+      alert('❌ Supabase Connection Failed!\n\n' + 
+            'Error: Invalid API key\n\n' +
+            'Possible causes:\n' +
+            '1. Your Supabase project is PAUSED\n' +
+            '2. The API key is incorrect\n\n' +
+            'Please:\n' +
+            '1. Go to https://supabase.com/dashboard\n' +
+            '2. Check if project "pakkuvcnhleqpcaxtruw" is paused\n' +
+            '3. Click RESUME if needed');
+    }
   } else {
-    console.log('✅ Supabase connection test successful [v2]');
-    console.log('📱 Current session:', data.session ? 'Logged in ✅' : 'Not logged in');
+    console.log('✅ Supabase connection test successful [v3]');
+    console.log('📱 Current session:', data.session ? 'Logged in ✅' : 'Not logged in ⭕');
+    console.log('🎯 Backend ready!');
   }
 });

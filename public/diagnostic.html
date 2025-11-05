@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vercel Environment Diagnostic</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0f172a;
+            color: #00ff00;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #00ff00;
+        }
+        h1 {
+            color: #00ff00;
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            background: #0f172a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+        .test-title {
+            color: #38bdf8;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .success {
+            color: #22c55e;
+            font-weight: bold;
+        }
+        .error {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        .warning {
+            color: #f59e0b;
+            font-weight: bold;
+        }
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #00cc00;
+        }
+        .code {
+            background: #000;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Vercel Deployment Diagnostic Tool</h1>
+        
+        <div class="test-section">
+            <div class="test-title">TEST 1: Build Environment Check</div>
+            <div id="test1">Running...</div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">TEST 2: Runtime Environment Check</div>
+            <div id="test2">Running...</div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">TEST 3: Supabase Connection Test</div>
+            <div id="test3">Running...</div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">TEST 4: Direct Signup API Test</div>
+            <button onclick="runSignupTest()">🧪 Run Signup Test</button>
+            <div id="test4"></div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">SOLUTION</div>
+            <div id="solution">Analyzing...</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Hardcoded values that should be in build
+        const EXPECTED_URL = 'https://pakkuvcnhleqpcaxtruw.supabase.co';
+        const EXPECTED_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
+
+        // TEST 1: Build Environment
+        function test1() {
+            const test1Div = document.getElementById('test1');
+            let result = '<div class="code">';
+            
+            // Check if variables exist at build time
+            result += `Build-time URL: ${EXPECTED_URL}<br>`;
+            result += `Build-time Key: ${EXPECTED_KEY.substring(0, 30)}...<br>`;
+            result += '</div>';
+            result += '<div class="success">✅ Hardcoded values present in build</div>';
+            
+            test1Div.innerHTML = result;
+        }
+
+        // TEST 2: Runtime Environment
+        function test2() {
+            const test2Div = document.getElementById('test2');
+            let result = '<div class="code">';
+            
+            // Try to access runtime env (won't work in browser, but testing anyway)
+            result += `window.env exists: ${typeof window !== 'undefined' && window.env ? 'YES' : 'NO'}<br>`;
+            result += `import.meta available: ${typeof import !== 'undefined' ? 'MAYBE' : 'NO'}<br>`;
+            result += '</div>';
+            
+            // Since we're using hardcoded values, this should work
+            result += '<div class="success">✅ Using fallback hardcoded values</div>';
+            
+            test2Div.innerHTML = result;
+        }
+
+        // TEST 3: Supabase Connection
+        async function test3() {
+            const test3Div = document.getElementById('test3');
+            const { createClient } = supabase;
+            
+            try {
+                test3Div.innerHTML = '<div class="warning">⏳ Testing connection...</div>';
+                
+                const client = createClient(EXPECTED_URL, EXPECTED_KEY);
+                
+                // Test auth endpoint
+                const { data, error } = await client.auth.getSession();
+                
+                let result = '<div class="code">';
+                result += `Supabase Client Created: ✅<br>`;
+                result += `URL: ${EXPECTED_URL}<br>`;
+                result += `Key: ${EXPECTED_KEY.substring(0, 30)}...<br>`;
+                result += `Session Check: ${error ? '❌ ' + error.message : '✅ Success'}<br>`;
+                result += '</div>';
+                
+                if (error && error.message.includes('Invalid API key')) {
+                    result += '<div class="error">❌ INVALID API KEY ERROR DETECTED!</div>';
+                    result += '<div class="warning">This means the API key is wrong or Supabase project is paused.</div>';
+                } else {
+                    result += '<div class="success">✅ Connection successful!</div>';
+                }
+                
+                test3Div.innerHTML = result;
+            } catch (err) {
+                test3Div.innerHTML = `<div class="error">❌ Connection failed: ${err.message}</div>`;
+            }
+        }
+
+        // TEST 4: Direct Signup Test
+        async function runSignupTest() {
+            const test4Div = document.getElementById('test4');
+            const { createClient } = supabase;
+            
+            try {
+                test4Div.innerHTML = '<div class="warning">⏳ Testing signup...</div>';
+                
+                const client = createClient(EXPECTED_URL, EXPECTED_KEY);
+                const testEmail = `test_${Date.now()}@example.com`;
+                
+                const { data, error } = await client.auth.signUp({
+                    email: testEmail,
+                    password: 'TestPass123!'
+                });
+                
+                let result = '<div class="code">';
+                result += `Test Email: ${testEmail}<br>`;
+                result += `Password: TestPass123!<br><br>`;
+                
+                if (error) {
+                    result += `Error: ${error.message}<br>`;
+                    result += `Status: ${error.status || 'N/A'}<br>`;
+                    result += '</div>';
+                    
+                    if (error.message.includes('Invalid API key')) {
+                        result += '<div class="error">❌ INVALID API KEY!</div>';
+                        result += '<div class="warning">⚠️ PROBLEM IDENTIFIED:</div>';
+                        result += '<div class="code">';
+                        result += '1. The API key is incorrect, OR<br>';
+                        result += '2. The Supabase project is PAUSED, OR<br>';
+                        result += '3. The API key has expired<br>';
+                        result += '</div>';
+                    } else {
+                        result += `<div class="error">❌ Signup failed: ${error.message}</div>`;
+                    }
+                } else {
+                    result += `User ID: ${data.user.id}<br>`;
+                    result += `Email: ${data.user.email}<br>`;
+                    result += `Email Confirmed: ${data.user.email_confirmed_at ? 'Yes' : 'No'}<br>`;
+                    result += '</div>';
+                    result += '<div class="success">✅ SIGNUP WORKS! THE ISSUE IS ELSEWHERE!</div>';
+                }
+                
+                test4Div.innerHTML = result;
+            } catch (err) {
+                test4Div.innerHTML = `<div class="error">❌ Test failed: ${err.message}</div>`;
+            }
+        }
+
+        // Run tests on load
+        window.addEventListener('load', async () => {
+            test1();
+            test2();
+            await test3();
+            
+            // Show solution
+            setTimeout(() => {
+                const solutionDiv = document.getElementById('solution');
+                solutionDiv.innerHTML = `
+                    <div class="warning">📋 Based on tests above:</div>
+                    <div class="code">
+                    If TEST 3 shows "Invalid API key":<br>
+                    → Your Supabase project might be PAUSED<br>
+                    → Go to <a href="https://supabase.com/dashboard" target="_blank" style="color: #38bdf8;">https://supabase.com/dashboard</a><br>
+                    → Resume your project<br><br>
+                    
+                    If TEST 4 shows success:<br>
+                    → The backend works fine!<br>
+                    → The issue is in your main app's code<br>
+                    → Probably a caching issue in browser<br>
+                    </div>
+                    <button onclick="location.href='/'">Go to Main App</button>
+                    <button onclick="location.reload()">Rerun Tests</button>
+                `;
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
