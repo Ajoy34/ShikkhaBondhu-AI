@@ -33,6 +33,11 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
     }, 500);
   };
 
+  const handleLoginSuccess = () => {
+    // Navigate to dashboard after successful login
+    setActiveSection('dashboard');
+  };
+
   const features = [
     {
       icon: <MessageCircle className="w-8 h-8" />,
@@ -234,6 +239,7 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         onSuccess={handleAuthSuccess}
+        onLoginSuccess={handleLoginSuccess}
       />
     </section>
   );

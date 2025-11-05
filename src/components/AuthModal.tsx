@@ -6,9 +6,10 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  onLoginSuccess?: () => void; // Optional callback to navigate to dashboard
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLoginSuccess }) => {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -104,10 +105,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
             console.log('✅ REAL-TIME LOGIN SUCCESS! User logged in instantly.');
             setSuccess('✅ স্বাগতম! (Welcome!) Account created and logged in successfully!');
             
-            // Close modal and refresh after 1 second
+            // Close modal and redirect to dashboard after 1 second
             setTimeout(() => {
               onClose();
-              window.location.reload();
+              if (onLoginSuccess) {
+                onLoginSuccess();
+              } else {
+                window.location.reload();
+              }
             }, 1000);
           } else {
             // No session - unusual case
@@ -191,12 +196,16 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
 
       setSuccess('সফলভাবে লগইন হয়েছে! (Successfully logged in!)');
       
-      // Close modal and reload page to show logged-in state
+      // Close modal and redirect to dashboard
       setTimeout(() => {
         onSuccess();
         onClose();
-        // Force a page reload to update the UI with logged-in state
-        window.location.reload();
+        // Navigate to dashboard if callback provided, otherwise reload
+        if (onLoginSuccess) {
+          onLoginSuccess();
+        } else {
+          window.location.reload();
+        }
       }, 1000);
 
     } catch (err: any) {

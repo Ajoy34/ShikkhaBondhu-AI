@@ -43,6 +43,12 @@ const Header: React.FC<HeaderProps> = ({
     setShowAuthModal(false);
     if (onAuthChange) onAuthChange();
   };
+
+  const handleLoginSuccess = () => {
+    // Navigate to dashboard after successful login
+    setActiveSection('dashboard');
+  };
+
   return (
     <header className="bg-white/98 backdrop-blur-md shadow-md sticky top-0 z-50 border-b border-gray-200">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -198,6 +204,7 @@ const Header: React.FC<HeaderProps> = ({
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         onSuccess={handleAuthSuccess}
+        onLoginSuccess={handleLoginSuccess}
       />
     </header>
   );
