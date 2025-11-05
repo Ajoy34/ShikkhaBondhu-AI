@@ -88,6 +88,10 @@ function App() {
         setAuthUser(user);
         setIsLoggedIn(true);
         await loadUserProfile(user.id);
+        // If user just logged in, navigate to dashboard
+        if (activeSection === 'home') {
+          setActiveSection('dashboard');
+        }
       } else {
         setAuthUser(null);
         setIsLoggedIn(false);
