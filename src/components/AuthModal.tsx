@@ -191,10 +191,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
 
       setSuccess('সফলভাবে লগইন হয়েছে! (Successfully logged in!)');
       
-      // Close modal and refresh
+      // Close modal and reload page to show logged-in state
       setTimeout(() => {
         onSuccess();
         onClose();
+        // Force a page reload to update the UI with logged-in state
+        window.location.reload();
       }, 1000);
 
     } catch (err: any) {
