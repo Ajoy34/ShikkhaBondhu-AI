@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error Format Test</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    h1 {
+      color: #667eea;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .test-section {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+    button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      width: 100%;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #5568d3;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .error {
+      background: #fee;
+      border: 2px solid #f88;
+      color: #c00;
+    }
+    .success {
+      background: #efe;
+      border: 2px solid #8f8;
+      color: #060;
+    }
+    .info {
+      background: #eef;
+      border: 2px solid #88f;
+      color: #006;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      margin: 10px 0;
+      box-sizing: border-box;
+    }
+    label {
+      font-weight: 600;
+      color: #333;
+      display: block;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 Supabase Error Format Test</h1>
+    
+    <div class="test-section">
+      <h2>Test 1: Signup with Existing Email</h2>
+      <p>This will test what error format Supabase returns</p>
+      
+      <label>Email (use existing):</label>
+      <input type="email" id="email1" value="ajoyshutradhar53@gmail.com" />
+      
+      <label>Password:</label>
+      <input type="password" id="password1" value="test1234" />
+      
+      <button onclick="testExistingEmail()">🧪 Test Error Format</button>
+      
+      <div id="result1"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Test 2: Signup with New Email</h2>
+      <p>This should succeed (use random email)</p>
+      
+      <label>Email (use NEW email):</label>
+      <input type="email" id="email2" value="" placeholder="newuser@example.com" />
+      
+      <label>Password:</label>
+      <input type="password" id="password2" value="test1234" />
+      
+      <button onclick="testNewEmail()">🚀 Test Signup</button>
+      
+      <div id="result2"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    const SUPABASE_URL = 'https://pakkuvcnhleqpcaxtruw.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
+
+    window.testExistingEmail = async function() {
+      const email = document.getElementById('email1').value;
+      const password = document.getElementById('password1').value;
+      const resultDiv = document.getElementById('result1');
+      
+      resultDiv.innerHTML = '<div class="info">Testing... ⏳</div>';
+      
+      try {
+        const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+        
+        console.log('📋 Full Response:', response);
+        console.log('📋 Status:', response.status);
+        console.log('📋 Data:', data);
+        console.log('📋 Data keys:', Object.keys(data));
+        console.log('📋 Error message:', data.message || data.msg || data.error);
+        console.log('📋 Error code:', data.error_code || data.code);
+        
+        if (!response.ok) {
+          resultDiv.innerHTML = `
+            <div class="error">
+              <strong>❌ ERROR RESPONSE:</strong><br><br>
+              <strong>Status:</strong> ${response.status}<br>
+              <strong>Status Text:</strong> ${response.statusText}<br><br>
+              <strong>Full Response Body:</strong><br>
+              ${JSON.stringify(data, null, 2)}<br><br>
+              <strong>Message field:</strong> ${data.message || 'undefined'}<br>
+              <strong>Msg field:</strong> ${data.msg || 'undefined'}<br>
+              <strong>Error field:</strong> ${data.error || 'undefined'}<br>
+              <strong>Error_code field:</strong> ${data.error_code || 'undefined'}<br>
+              <strong>Code field:</strong> ${data.code || 'undefined'}<br><br>
+              <strong>✅ Check browser console for full details!</strong>
+            </div>
+          `;
+        } else {
+          resultDiv.innerHTML = `
+            <div class="success">
+              ✅ SUCCESS: ${JSON.stringify(data, null, 2)}
+            </div>
+          `;
+        }
+      } catch (error) {
+        console.error('Exception:', error);
+        resultDiv.innerHTML = `
+          <div class="error">
+            <strong>❌ EXCEPTION:</strong><br><br>
+            ${error.message}<br><br>
+            ${error.stack}
+          </div>
+        `;
+      }
+    };
+
+    window.testNewEmail = async function() {
+      const email = document.getElementById('email2').value;
+      const password = document.getElementById('password2').value;
+      const resultDiv = document.getElementById('result2');
+      
+      if (!email) {
+        resultDiv.innerHTML = '<div class="error">❌ Please enter an email</div>';
+        return;
+      }
+      
+      resultDiv.innerHTML = '<div class="info">Creating account... ⏳</div>';
+      
+      try {
+        const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+        
+        console.log('📋 Signup Response:', data);
+        
+        if (response.ok) {
+          resultDiv.innerHTML = `
+            <div class="success">
+              <strong>✅ SUCCESS!</strong><br><br>
+              User ID: ${data.user?.id}<br>
+              Email: ${data.user?.email}<br>
+              Created: ${data.user?.created_at}<br><br>
+              <strong>Full Response:</strong><br>
+              ${JSON.stringify(data, null, 2)}
+            </div>
+          `;
+        } else {
+          resultDiv.innerHTML = `
+            <div class="error">
+              <strong>❌ ERROR:</strong><br><br>
+              ${JSON.stringify(data, null, 2)}
+            </div>
+          `;
+        }
+      } catch (error) {
+        console.error('Exception:', error);
+        resultDiv.innerHTML = `
+          <div class="error">
+            <strong>❌ EXCEPTION:</strong><br><br>
+            ${error.message}
+          </div>
+        `;
+      }
+    };
+  </script>
+</body>
+</html>
