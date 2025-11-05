@@ -260,15 +260,22 @@ function App() {
         )}
 
         {/* Dashboard - show for 'home' when logged in OR 'dashboard' section */}
-        {((activeSection === 'home' || activeSection === 'dashboard') && isLoggedIn) && (
-          <Dashboard
-            user={user}
-            setSelectedChatbot={setSelectedChatbot}
-            setIsChatOpen={setIsChatOpen}
-            setActiveSection={setActiveSection}
-            updateUserPoints={updateUserPoints}
-          />
-        )}
+        {(() => {
+          console.log('🎨 Dashboard render check:', {
+            activeSection,
+            isLoggedIn,
+            shouldShow: (activeSection === 'home' || activeSection === 'dashboard') && isLoggedIn
+          });
+          return ((activeSection === 'home' || activeSection === 'dashboard') && isLoggedIn) && (
+            <Dashboard
+              user={user}
+              setSelectedChatbot={setSelectedChatbot}
+              setIsChatOpen={setIsChatOpen}
+              setActiveSection={setActiveSection}
+              updateUserPoints={updateUserPoints}
+            />
+          );
+        })()}
         
         {/* Protected Sections */}
         {activeSection !== 'home' && activeSection !== 'dashboard' && renderProtectedSection(activeSection)}
