@@ -314,8 +314,6 @@ function App() {
         {renderContent()}
       </main>
       <ReviewBar />
-      {/* This component will be visible on Vercel to debug env vars */}
-      <EnvVarCheck />
     </div>
   );
 }
