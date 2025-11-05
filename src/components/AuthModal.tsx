@@ -154,11 +154,16 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
       
       // Close modal and redirect to dashboard
       setTimeout(() => {
+        console.log('🔄 Closing modal and redirecting to dashboard...');
+        console.log('🔄 onLoginSuccess exists?', !!onLoginSuccess);
         onClose();
         onSuccess();
         // ALWAYS navigate to dashboard - don't reload
         if (onLoginSuccess) {
+          console.log('🎯 Calling onLoginSuccess to navigate to dashboard');
           onLoginSuccess();
+        } else {
+          console.log('⚠️ onLoginSuccess is not defined!');
         }
       }, 1000);
 
