@@ -46,6 +46,14 @@ function App() {
 
   // Check authentication on mount
   useEffect(() => {
+    // Emergency timeout - force app to load even if auth hangs
+    const emergencyTimeout = setTimeout(() => {
+      console.error('🚨 EMERGENCY: App loading timed out!');
+      console.error('Forcing app to load...');
+      setIsLoading(false);
+      setIsLoggedIn(false);
+    }, 15000); // 15 seconds absolute maximum
+    
     // Check if diagnostics should be shown via URL parameter
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('diagnostics') === 'true') {
@@ -66,7 +74,9 @@ function App() {
     
     window.addEventListener('keydown', handleKeyPress);
     
-    checkAuth();
+    checkAuth().finally(() => {
+      clearTimeout(emergencyTimeout);
+    });
 
     // Subscribe to auth changes
     const unsubscribe = onAuthStateChange(async (user) => {
@@ -83,6 +93,7 @@ function App() {
     });
 
     return () => {
+      clearTimeout(emergencyTimeout);
       window.removeEventListener('keydown', handleKeyPress);
       unsubscribe();
     };
@@ -92,7 +103,16 @@ function App() {
   const checkAuth = async () => {
     try {
       setIsLoading(true);
+      
+      // Add timeout to prevent infinite loading
+      const timeoutId = setTimeout(() => {
+        console.warn('⚠️ Auth check timed out, proceeding without authentication');
+        setIsLoggedIn(false);
+        setIsLoading(false);
+      }, 10000); // 10 second timeout
+      
       const user = await getCurrentUser();
+      clearTimeout(timeoutId);
       
       if (user) {
         setAuthUser(user);

@@ -41,35 +41,42 @@ console.log('🔑 Key:', `${supabaseAnonKey.substring(0, 30)}...${supabaseAnonKe
 
 // Test connection immediately (don't block app with alerts)
 console.log('🧪 Testing Supabase connection...');
-supabase.auth.getSession().then(({ data, error }) => {
-  if (error) {
-    console.error('❌ Supabase connection test failed:', error.message);
-    console.error('📊 Error details:', {
-      status: error.status,
-      message: error.message,
-      name: error.name
-    });
+
+// Add timeout to prevent hanging
+const connectionTimeout = setTimeout(() => {
+  console.warn('⚠️ Connection test timed out after 5 seconds');
+}, 5000);
+
+supabase.auth.getSession()
+  .then(({ data, error }) => {
+    clearTimeout(connectionTimeout);
     
-    if (error.message.includes('Invalid API key')) {
-      console.error('⚠️ INVALID API KEY ERROR!');
-      console.error('🔍 This means:');
-      console.error('   1. The API key is wrong');
-      console.error('   2. The Supabase project is PAUSED');
-      console.error('   3. The project URL is wrong');
-      console.error('');
-      console.error('✅ SOLUTION:');
-      console.error('   Go to https://supabase.com/dashboard');
-      console.error('   Check if your project is paused and RESUME it');
+    if (error) {
+      console.error('❌ Supabase connection test failed:', error.message);
+      console.error('📊 Error details:', {
+        status: error.status,
+        message: error.message,
+        name: error.name
+      });
       
-      // Don't show alert - it might block the app from loading
-      // User will see error in console
+      if (error.message.includes('Invalid API key')) {
+        console.error('⚠️ INVALID API KEY ERROR!');
+        console.error('🔍 This means:');
+        console.error('   1. The API key is wrong');
+        console.error('   2. The Supabase project is PAUSED');
+        console.error('   3. The project URL is wrong');
+        console.error('');
+        console.error('✅ SOLUTION:');
+        console.error('   Go to https://supabase.com/dashboard');
+        console.error('   Check if your project is paused and RESUME it');
+      }
+    } else {
+      console.log('✅ Supabase connection test successful [v3]');
+      console.log('📱 Current session:', data.session ? 'Logged in ✅' : 'Not logged in ⭕');
+      console.log('🎯 Backend ready!');
     }
-  } else {
-    console.log('✅ Supabase connection test successful [v3]');
-    console.log('📱 Current session:', data.session ? 'Logged in ✅' : 'Not logged in ⭕');
-    console.log('🎯 Backend ready!');
-  }
-}).catch(err => {
-  console.error('❌ Connection test crashed:', err);
-  // Don't block the app - just log it
-});
+  })
+  .catch(err => {
+    clearTimeout(connectionTimeout);
+    console.error('❌ Connection test crashed:', err);
+  });
