@@ -36,6 +36,7 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
   const handleLoginSuccess = () => {
     // Set logged in state and navigate to dashboard after successful login
     console.log('🌟 Hero.handleLoginSuccess called!');
+    console.log('🌟 setIsLoggedIn function:', typeof setIsLoggedIn);
     console.log('🌟 Setting isLoggedIn = true');
     setIsLoggedIn(true);
     console.log('🌟 Setting activeSection = dashboard');
