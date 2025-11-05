@@ -141,25 +141,27 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
       console.error('❌ Signup error:', err);
       console.error('❌ Error message:', err.message);
       console.error('❌ Error details:', err);
+      console.error('❌ Error type:', typeof err);
+      console.error('❌ Error keys:', Object.keys(err));
       
       // Show more detailed error message
-      let errorMessage = 'সাইন আপ ব্যর্থ হয়েছে (Sign up failed)';
+      let errorMessage = err.message || 'সাইন আপ ব্যর্থ হয়েছে (Sign up failed)';
       
-      if (err.message) {
-        errorMessage = err.message;
-      }
+      console.log('🔍 Checking error message:', errorMessage);
       
-      // Check for specific Supabase errors
-      if (err.message?.includes('relation') || err.message?.includes('does not exist')) {
+      // Check for specific errors FIRST (most specific to least specific)
+      if (err.message?.includes('User already registered') || err.message?.includes('already registered')) {
+        errorMessage = '⚠️ এই ইমেইল ইতিমধ্যে নিবন্ধিত (This email is already registered). Please login instead.';
+      } else if (err.message?.includes('already exists')) {
+        errorMessage = '⚠️ এই ইমেইল ইতিমধ্যে নিবন্ধিত (This email already exists). Please login instead.';
+      } else if (err.message?.includes('Invalid login credentials')) {
+        errorMessage = '❌ ভুল ইমেইল বা পাসওয়ার্ড (Invalid email or password)';
+      } else if (err.message?.includes('rate limit') || err.message?.includes('429')) {
+        errorMessage = '⚠️ Too many attempts. Please wait a few minutes and try again.';
+      } else if (err.message?.includes('relation') || err.message?.includes('does not exist')) {
         errorMessage = '⚠️ Database tables not created (This is OK - Authentication still works!)';
       } else if (err.message?.includes('Invalid API key') || err.message?.includes('JWT') || err.message?.includes('401')) {
         errorMessage = '⚠️ Supabase connection error. Please refresh the page and try again.';
-      } else if (err.message?.includes('rate limit') || err.message?.includes('429')) {
-        errorMessage = 'Too many attempts. Please wait a few minutes and try again.';
-      } else if (err.message?.includes('User already registered') || err.message?.includes('already exists')) {
-        errorMessage = 'এই ইমেইল ইতিমধ্যে নিবন্ধিত (This email is already registered). Please login instead.';
-      } else if (err.message?.includes('Invalid login credentials')) {
-        errorMessage = 'ভুল ইমেইল বা পাসওয়ার্ড (Invalid email or password)';
       }
       
       setError(errorMessage);
