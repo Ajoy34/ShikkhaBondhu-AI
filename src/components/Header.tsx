@@ -45,8 +45,10 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   const handleLoginSuccess = () => {
-    // Navigate to dashboard after successful login
+    // Set logged in state and navigate to dashboard after successful login
+    setIsLoggedIn(true);
     setActiveSection('dashboard');
+    if (onAuthChange) onAuthChange();
   };
 
   return (
