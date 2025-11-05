@@ -35,6 +35,9 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   }
 });
 
+// Also export the raw values for direct use
+export { supabaseUrl, supabaseAnonKey };
+
 console.log('✅ Supabase client initialized successfully [v3]');
 console.log('🔗 URL:', supabaseUrl);
 console.log('🔑 Key:', `${supabaseAnonKey.substring(0, 30)}...${supabaseAnonKey.substring(supabaseAnonKey.length - 5)}`);

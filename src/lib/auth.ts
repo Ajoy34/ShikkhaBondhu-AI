@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { supabase, supabaseUrl, supabaseAnonKey } from './supabase';
 import type { User } from '@supabase/supabase-js';
 
 export interface SignUpData {
@@ -51,14 +51,11 @@ export async function signUp(data: SignUpData) {
   console.log('🔵 Bypassing Supabase JS library. Using direct API call for signup.');
 
   try {
-    // Directly use the properties from the initialized supabase client
-    const supabaseUrl = supabase.supabaseUrl;
-    const supabaseKey = supabase.supabaseKey;
-
+    // Directly use the imported credentials, bypassing the client instance
     const response = await fetch(`${supabaseUrl}/auth/v1/signup`, {
       method: 'POST',
       headers: {
-        'apikey': supabaseKey,
+        'apikey': supabaseAnonKey,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
