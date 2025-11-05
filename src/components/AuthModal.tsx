@@ -145,10 +145,15 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
       console.error('❌ Error keys:', Object.keys(err));
       console.error('🔍 Full error object:', JSON.stringify(err, null, 2));
       
-      // Show more detailed error message
+      // Show RAW error message for debugging
       let errorMessage = err.message || 'সাইন আপ ব্যর্থ হয়েছে (Sign up failed)';
       
       console.log('🔍 Checking error message:', errorMessage);
+      console.log('🔍 Message includes "User already registered"?', errorMessage.includes('User already registered'));
+      console.log('🔍 Message includes "already registered"?', errorMessage.includes('already registered'));
+      
+      // TEMPORARY: Show raw error for debugging
+      setError(`DEBUG: ${errorMessage}`);
       
       // Check for specific errors FIRST (most specific to least specific)
       if (err.message?.includes('User already registered') || err.message?.includes('already registered')) {
