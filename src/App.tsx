@@ -3,8 +3,11 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import Dashboard from './components/Dashboard';
 import ChatSystem from './components/ChatSystem';
-import VoiceAssistant from './components/VoiceAssistant';
+import PointsToast from './components/PointsToast';
 import UserProfile from './components/UserProfile';
+import VoiceAssistant from './components/VoiceAssistant';
+import VolunteerSection from './components/VolunteerSection';
+import EnvVarCheck from './components/EnvVarCheck';
 import SOSButton from './components/SOSButton';
 import ReportSystem from './components/ReportSystem';
 import Library from './components/Library';
@@ -14,7 +17,6 @@ import SignupDiagnostics from './components/SignupDiagnostics';
 import SimpleSignupTest from './components/SimpleSignupTest';
 import { QuickTest } from './components/QuickTest';
 import { awardPoints, PointAction } from './utils/pointsSystem';
-import PointsToast from './components/PointsToast';
 import './styles/fonts.css';
 import { getCurrentUser, getUserProfile, onAuthStateChange } from './lib/auth';
 import type { User } from '@supabase/supabase-js';
@@ -221,32 +223,21 @@ function App() {
     }
   };
 
-  // Show loading state
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 font-bangla">লোড হচ্ছে...</p>
+  const renderContent = () => {
+    // Show loading state
+    if (isLoading) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600 mx-auto mb-4"></div>
+            <p className="text-gray-600 font-bangla">লোড হচ্ছে...</p>
+          </div>
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50">
-      <Header 
-        activeSection={activeSection} 
-        setActiveSection={setActiveSection}
-        setIsChatOpen={setIsChatOpen}
-        setSelectedChatbot={setSelectedChatbot}
-        user={user}
-        isLoggedIn={isLoggedIn}
-        setIsLoggedIn={setIsLoggedIn}
-        onAuthChange={checkAuth}
-      />
-      
-      <main className="relative">
+    return (
+      <>
         {/* Home Section */}
         {activeSection === 'home' && !isLoggedIn && (
           <Hero 
@@ -302,7 +293,29 @@ function App() {
             onClose={() => setPointsToast(null)}
           />
         )}
+      </>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50">
+      <Header 
+        activeSection={activeSection} 
+        setActiveSection={setActiveSection}
+        setIsChatOpen={setIsChatOpen}
+        setSelectedChatbot={setSelectedChatbot}
+        user={user}
+        isLoggedIn={isLoggedIn}
+        setIsLoggedIn={setIsLoggedIn}
+        onAuthChange={checkAuth}
+      />
+      
+      <main className="flex-grow">
+        {renderContent()}
       </main>
+      <ReviewBar />
+      {/* This component will be visible on Vercel to debug env vars */}
+      <EnvVarCheck />
     </div>
   );
 }
