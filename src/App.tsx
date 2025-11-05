@@ -84,15 +84,21 @@ function App() {
 
     // Subscribe to auth changes
     const unsubscribe = onAuthStateChange(async (user) => {
+      console.log('🔐 Auth state changed! User:', user?.email || 'null');
       if (user) {
+        console.log('🔐 User logged in, setting states...');
         setAuthUser(user);
         setIsLoggedIn(true);
         await loadUserProfile(user.id);
         // If user just logged in, navigate to dashboard
         if (activeSection === 'home') {
+          console.log('🔐 Navigating to dashboard from home');
           setActiveSection('dashboard');
+        } else {
+          console.log('🔐 Current section:', activeSection, '- not navigating');
         }
       } else {
+        console.log('🔐 User logged out');
         setAuthUser(null);
         setIsLoggedIn(false);
         setUserProfile(null);

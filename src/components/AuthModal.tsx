@@ -150,22 +150,15 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
 
       console.log('✅ Login successful:', result);
 
-      setSuccess('সফলভাবে লগইন হয়েছে! (Successfully logged in!)');
+      // IMMEDIATELY redirect to dashboard - no delays, no callbacks
+      setIsLoggedIn(true);
+      setActiveSection('dashboard');
       
-      // Close modal and redirect to dashboard
+      // Show success message briefly then close
+      setSuccess('সফলভাবে লগইন হয়েছে! (Successfully logged in!)');
       setTimeout(() => {
-        console.log('🔄 Closing modal and redirecting to dashboard...');
-        console.log('🔄 onLoginSuccess exists?', !!onLoginSuccess);
         onClose();
-        onSuccess();
-        // ALWAYS navigate to dashboard - don't reload
-        if (onLoginSuccess) {
-          console.log('🎯 Calling onLoginSuccess to navigate to dashboard');
-          onLoginSuccess();
-        } else {
-          console.log('⚠️ onLoginSuccess is not defined!');
-        }
-      }, 1000);
+      }, 500);
 
     } catch (err: any) {
       console.error('❌ Login error:', err);
