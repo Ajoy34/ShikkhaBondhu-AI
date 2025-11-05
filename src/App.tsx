@@ -15,6 +15,7 @@ import CreateAndEarn from './components/CreateAndEarn';
 import SignupDiagnostics from './components/SignupDiagnostics';
 import SimpleSignupTest from './components/SimpleSignupTest';
 import { QuickTest } from './components/QuickTest';
+import ReviewBar from './components/ReviewBar';
 import { awardPoints, PointAction } from './utils/pointsSystem';
 import './styles/fonts.css';
 import { getCurrentUser, getUserProfile, onAuthStateChange } from './lib/auth';
