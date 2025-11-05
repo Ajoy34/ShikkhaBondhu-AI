@@ -52,6 +52,13 @@ function App() {
     setIsLoading(false);
     setIsLoggedIn(false);
     
+    // Check if we should redirect to dashboard after login
+    const shouldRedirectToDashboard = sessionStorage.getItem('redirectToDashboard');
+    if (shouldRedirectToDashboard === 'true') {
+      sessionStorage.removeItem('redirectToDashboard');
+      setActiveSection('dashboard');
+    }
+    
     // Check if diagnostics should be shown via URL parameter
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('diagnostics') === 'true') {

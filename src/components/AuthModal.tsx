@@ -108,6 +108,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
             // Close modal and redirect to dashboard after 1 second
             setTimeout(() => {
               onClose();
+              // Store that we should go to dashboard after reload
+              sessionStorage.setItem('redirectToDashboard', 'true');
               if (onLoginSuccess) {
                 onLoginSuccess();
               } else {
@@ -200,6 +202,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
       setTimeout(() => {
         onSuccess();
         onClose();
+        // Store that we should go to dashboard after reload
+        sessionStorage.setItem('redirectToDashboard', 'true');
         // Navigate to dashboard if callback provided, otherwise reload
         if (onLoginSuccess) {
           onLoginSuccess();
