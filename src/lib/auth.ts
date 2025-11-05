@@ -145,15 +145,26 @@ export async function signUp(data: SignUpData) {
     return { user: authData.user, session: authData.session };
   } catch (error: any) {
     console.error('❌ Sign up error:', error);
+    console.error('❌ Error message:', error.message);
+    console.error('❌ Error status:', error.status);
+    console.error('❌ Error code:', error.code);
+    console.error('❌ Full error:', JSON.stringify(error, null, 2));
     
     // Provide helpful error messages
-    if (error.message?.includes('User already registered')) {
-      throw new Error('This email is already registered. Please login instead.');
-    } else if (error.message?.includes('Invalid email')) {
+    // Check for "User already registered" in multiple formats
+    const errorMsg = error.message?.toLowerCase() || '';
+    const errorStr = JSON.stringify(error).toLowerCase();
+    
+    if (errorMsg.includes('already registered') || 
+        errorMsg.includes('already been registered') ||
+        errorMsg.includes('user already') ||
+        errorStr.includes('already registered')) {
+      throw new Error('User already registered');
+    } else if (errorMsg.includes('invalid email')) {
       throw new Error('Please enter a valid email address.');
-    } else if (error.message?.includes('Password')) {
+    } else if (errorMsg.includes('password')) {
       throw new Error('Password must be at least 6 characters long.');
-    } else if (error.message?.includes('rate limit')) {
+    } else if (errorMsg.includes('rate limit')) {
       throw new Error('Too many attempts. Please try again in a few minutes.');
     }
     
