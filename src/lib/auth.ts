@@ -114,85 +114,48 @@ export async function signUp(data: SignUpData) {
  * Sign in with email and password
  */
 export async function signIn(data: SignInData) {
-  console.log('🔵 Starting login process for:', data.email);
-  console.log('🔵 Supabase URL:', supabase['supabaseUrl'] || 'Not available');
-  
+  console.log('🔵 Bypassing Supabase JS library. Using direct API call for login.');
+
   try {
-    console.log('🔵 Attempting authentication...');
-    const { data: authData, error } = await supabase.auth.signInWithPassword({
-      email: data.email,
-      password: data.password,
-    });
-
-    console.log('🔵 Login response:', {
-      user: authData?.user?.id,
-      session: authData?.session?.access_token ? 'exists' : 'none',
-      error: error
-    });
-
-    if (error) {
-      console.error('❌ Login error:', error);
-      console.error('❌ Error message:', error.message);
-      console.error('❌ Error status:', error.status);
-      
-      // Better error messages
-      if (error.message?.includes('Invalid API key')) {
-        throw new Error('⚠️ Configuration error: Please refresh the page and try again. If the issue persists, the dev server may need to be restarted.');
-      } else if (error.message?.includes('Invalid login credentials')) {
-        throw new Error('ভুল ইমেইল বা পাসওয়ার্ড (Invalid email or password). Please check and try again.');
-      } else {
-        throw error;
-      }
-    }
-    
-    if (!authData.user) {
-      console.error('❌ No user returned from login');
-      throw new Error('Sign in failed');
-    }
-
-    console.log('✅ Authentication successful!');
-    console.log('📧 User ID:', authData.user.id);
-    console.log('📧 Email:', authData.user.email);
-
-    // Try to update user profile (optional if table doesn't exist)
-    try {
-      console.log('🔵 Updating user profile...');
-      const { data: profile } = await supabase
-        .from('user_profiles')
-        .select('login_count')
-        .eq('id', authData.user.id)
-        .single();
-
-      await supabase
-        .from('user_profiles')
-        .update({
-          last_active_at: new Date().toISOString(),
-          login_count: (profile?.login_count || 0) + 1,
-        })
-        .eq('id', authData.user.id);
-
-      // Try to log activity
-      await logActivity(authData.user.id, 'login', {
-        method: 'email',
+    const response = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=password`, {
+      method: 'POST',
+      headers: {
+        'apikey': supabaseAnonKey,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
         email: data.email,
-      });
+        password: data.password,
+      })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.error('❌ Direct API login error:', result);
+      const errorMessage = result.error_description || result.msg || result.message || 'Login failed';
       
-      console.log('✅ Profile updated');
-    } catch (profileErr) {
-      console.warn('⚠️ Profile update skipped:', profileErr);
-      // Don't throw - user can still login
+      if (errorMessage.toLowerCase().includes('invalid login credentials')) {
+        throw new Error('Invalid login credentials');
+      }
+      throw new Error(errorMessage);
     }
 
-    console.log('🎉 Login completed successfully!');
-    return { user: authData.user, session: authData.session };
+    console.log('✅ Direct API Login Success:', result);
+
+    // Manually set the session to log the user in
+    await supabase.auth.setSession({
+      access_token: result.access_token,
+      refresh_token: result.refresh_token,
+    });
+
+    return { user: result.user, session: result };
+
   } catch (error: any) {
-    console.error('❌ Sign in error:', error);
+    console.error('❌ Sign in exception:', error);
     
-    // Provide helpful error messages
     if (error.message?.includes('Invalid login credentials')) {
       throw new Error('ভুল ইমেইল বা পাসওয়ার্ড (Invalid email or password)');
-    } else if (error.message?.includes('Email not confirmed')) {
-      throw new Error('Please verify your email first. Check your inbox.');
     }
     
     throw new Error(error.message || 'Failed to sign in');

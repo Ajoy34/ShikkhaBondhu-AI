@@ -157,7 +157,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
         errorMessage = '⚠️ Too many attempts. Please wait a few minutes and try again.';
       } else if (err.message?.includes('relation') || err.message?.includes('does not exist')) {
         errorMessage = '⚠️ Database tables not created (This is OK - Authentication still works!)';
-      } else if (err.message?.includes('Invalid API key') || err.message?.includes('JWT') || err.message?.includes('401')) {
+      } else if (err.message?.includes('Invalid API key') || err.message?.includes('JWT') || err.message?.includes('401') || err.message?.includes('Configuration error')) {
         errorMessage = '⚠️ Supabase connection error. Please refresh the page and try again.';
       }
       
