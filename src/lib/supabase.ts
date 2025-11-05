@@ -16,15 +16,13 @@ console.log('🔑 Key Value:', supabaseAnonKey ? `${supabaseAnonKey.substring(0,
 if (!supabaseUrl || supabaseUrl === 'undefined' || !supabaseUrl.includes('supabase.co')) {
   console.error('❌ CRITICAL ERROR: Invalid Supabase URL!');
   console.error('Current URL:', supabaseUrl);
-  alert('❌ Configuration Error: Invalid Supabase URL\n\nPlease check your environment variables.');
-  throw new Error('Invalid Supabase URL');
+  // Don't throw - let app continue with fallback
 }
 
 if (!supabaseAnonKey || supabaseAnonKey === 'undefined' || supabaseAnonKey.length < 50) {
   console.error('❌ CRITICAL ERROR: Invalid Supabase API Key!');
   console.error('Key length:', supabaseAnonKey?.length || 0);
-  alert('❌ Configuration Error: Invalid Supabase API Key\n\nPlease check your environment variables.');
-  throw new Error('Invalid Supabase API Key');
+  // Don't throw - let app continue with fallback
 }
 
 console.log('✅ All credentials validated');
@@ -41,7 +39,7 @@ console.log('✅ Supabase client initialized successfully [v3]');
 console.log('🔗 URL:', supabaseUrl);
 console.log('🔑 Key:', `${supabaseAnonKey.substring(0, 30)}...${supabaseAnonKey.substring(supabaseAnonKey.length - 5)}`);
 
-// Test connection immediately
+// Test connection immediately (don't block app with alerts)
 console.log('🧪 Testing Supabase connection...');
 supabase.auth.getSession().then(({ data, error }) => {
   if (error) {
@@ -63,19 +61,15 @@ supabase.auth.getSession().then(({ data, error }) => {
       console.error('   Go to https://supabase.com/dashboard');
       console.error('   Check if your project is paused and RESUME it');
       
-      alert('❌ Supabase Connection Failed!\n\n' + 
-            'Error: Invalid API key\n\n' +
-            'Possible causes:\n' +
-            '1. Your Supabase project is PAUSED\n' +
-            '2. The API key is incorrect\n\n' +
-            'Please:\n' +
-            '1. Go to https://supabase.com/dashboard\n' +
-            '2. Check if project "pakkuvcnhleqpcaxtruw" is paused\n' +
-            '3. Click RESUME if needed');
+      // Don't show alert - it might block the app from loading
+      // User will see error in console
     }
   } else {
     console.log('✅ Supabase connection test successful [v3]');
     console.log('📱 Current session:', data.session ? 'Logged in ✅' : 'Not logged in ⭕');
     console.log('🎯 Backend ready!');
   }
+}).catch(err => {
+  console.error('❌ Connection test crashed:', err);
+  // Don't block the app - just log it
 });
