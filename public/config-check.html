@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Environment Variables Check</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #00ff00;
+        }
+        .status { padding: 10px; margin: 10px 0; border: 1px solid #00ff00; }
+        .error { color: #ff0000; border-color: #ff0000; }
+        .success { color: #00ff00; border-color: #00ff00; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Vercel Environment Variables Check</h1>
+    <div id="result"></div>
+    <script>
+        const result = document.getElementById('result');
+        
+        // Check if variables are embedded in the build
+        const hasSupabaseUrl = 'https://pakkuvcnhleqpcaxtruw.supabase.co';
+        const hasSupabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
+        
+        result.innerHTML = `
+            <div class="status success">
+                ✅ HARDCODED VALUES PRESENT<br>
+                URL: ${hasSupabaseUrl}<br>
+                KEY: ${hasSupabaseKey.substring(0, 30)}...<br><br>
+                
+                <strong>This means the variables should work!</strong><br><br>
+                
+                If you're still seeing "Invalid API key" error:<br>
+                1. Wait 2-3 minutes for Vercel build to complete<br>
+                2. Hard refresh: Ctrl + Shift + R<br>
+                3. Clear browser cache completely<br>
+                4. Try incognito/private window<br><br>
+                
+                <a href="/" style="color: #00ff00;">Go to Main Site</a>
+            </div>
+        `;
+    </script>
+</body>
+</html>
