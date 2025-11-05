@@ -48,140 +48,65 @@ export interface UserProfile {
  * Sign up a new user with email and password
  */
 export async function signUp(data: SignUpData) {
-  console.log('🔵 Starting signup process for:', data.email);
-  
+  console.log('🔵 Bypassing Supabase JS library. Using direct API call for signup.');
+
   try {
-    // Create auth user first
-    console.log('🔵 Step 1: Creating auth user...');
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: data.email,
-      password: data.password,
-      options: {
-        data: {
-          full_name: data.fullName,
-          phone_number: data.phone,
-          district: data.district,
-        },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-        // Bypass email confirmation for testing (works if Supabase setting allows)
-        // To enable this: Supabase Dashboard → Authentication → Providers → Email
-        // Uncheck "Enable email confirmations"
+    // Directly use the properties from the initialized supabase client
+    const supabaseUrl = supabase.supabaseUrl;
+    const supabaseKey = supabase.supabaseKey;
+
+    const response = await fetch(`${supabaseUrl}/auth/v1/signup`, {
+      method: 'POST',
+      headers: {
+        'apikey': supabaseKey,
+        'Content-Type': 'application/json'
       },
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            full_name: data.fullName,
+            phone_number: data.phone,
+            district: data.district,
+          }
+        }
+      })
     });
 
-    console.log('🔵 Signup response:', { 
-      user: authData?.user?.id, 
-      session: authData?.session?.access_token ? 'exists' : 'none',
-      error: authError,
-      emailConfirmed: authData?.user?.email_confirmed_at ? 'Yes' : 'No (Email confirmation required)'
-    });
+    const result = await response.json();
 
-    if (authError) {
-      console.error('❌ Auth signup error:', authError);
-      console.error('❌ Error details:', JSON.stringify(authError, null, 2));
-      
-      // Supabase returns error in different formats
-      // Format 1: { message: "..." }
-      // Format 2: { msg: "...", error_code: "..." }
-      const errorMessage = authError.message || (authError as any).msg || 'Sign up failed';
-      const errorCode = (authError as any).error_code || (authError as any).code;
-      
-      console.log('🔍 Extracted error message:', errorMessage);
-      console.log('🔍 Extracted error code:', errorCode);
-      
-      // Check for specific error codes
-      if (errorCode === 'user_already_exists' || 
-          errorMessage.toLowerCase().includes('already registered') ||
-          errorMessage.toLowerCase().includes('user already')) {
+    if (!response.ok) {
+      console.error('❌ Direct API signup error:', result);
+      const errorMessage = result.msg || result.message || 'Sign up failed';
+      const errorCode = result.error_code || result.code;
+
+      if (errorCode === 'user_already_exists' || (errorMessage as string).toLowerCase().includes('user already registered')) {
         throw new Error('User already registered');
       }
-      
       throw new Error(errorMessage);
     }
     
-    if (!authData.user) {
-      console.error('❌ No user returned from signup');
-      throw new Error('User creation failed - no user returned');
-    }
-
-    console.log('✅ Step 1 complete: User created in auth.users');
-    console.log('📧 User ID:', authData.user.id);
-    console.log('📧 Email:', authData.user.email);
-    console.log('📧 Email confirmed:', authData.user.email_confirmed_at ? 'Yes' : 'No');
-
-    // Try to create user profile (may fail if table doesn't exist)
-    try {
-      console.log('🔵 Step 2: Creating user profile...');
-      const { error: profileError } = await supabase
-        .from('user_profiles')
-        .insert({
-          id: authData.user.id,
-          email: data.email,
-          full_name: data.fullName,
-          phone_number: data.phone,
-          district: data.district,
-        });
-
-      if (profileError) {
-        console.warn('⚠️ Profile creation error (ignoring):', profileError.message);
-        // Check if it's a table not found error
-        if (profileError.message?.includes('relation') || profileError.message?.includes('does not exist')) {
-          console.warn('⚠️ user_profiles table does not exist. User created in auth.users only.');
-          console.warn('📝 To enable full features, run SQL migration from SETUP-BACKEND-NOW.md');
-        }
-        // DON'T throw - authentication is successful even without profile table
-      } else {
-        console.log('✅ Step 2 complete: Profile created');
-      }
-    } catch (profileErr: any) {
-      console.warn('⚠️ Profile creation skipped:', profileErr.message);
-      // Don't throw - user is still created in auth.users
-    }
-
-    // Try to log activity (optional)
-    try {
-      await logActivity(authData.user.id, 'signup', {
-        method: 'email',
-        email: data.email,
+    console.log('✅ Direct API Signup Success:', result);
+    
+    // The 'result' from a direct API call should contain user and session objects,
+    // mimicking the JS library's response.
+    // We also need to update the local session for the user to be logged in.
+    if (result.access_token) {
+      await supabase.auth.setSession({
+        access_token: result.access_token,
+        refresh_token: result.refresh_token,
       });
-      console.log('✅ Activity logged');
-    } catch (activityErr) {
-      console.warn('⚠️ Activity logging skipped:', activityErr);
     }
+    
+    return { user: result.user, session: result };
 
-    // Try to send verification email (optional)
-    try {
-      await sendEmailVerification(data.email);
-      console.log('✅ Verification email sent');
-    } catch (emailErr) {
-      console.warn('⚠️ Email verification skipped:', emailErr);
-    }
-
-    console.log('🎉 Signup completed successfully!');
-    return { user: authData.user, session: authData.session };
   } catch (error: any) {
-    console.error('❌ Sign up error:', error);
-    console.error('❌ Error message:', error.message);
-    console.error('❌ Error status:', error.status);
-    console.error('❌ Error code:', error.code);
-    console.error('❌ Full error:', JSON.stringify(error, null, 2));
+    console.error('❌ Sign up exception:', error);
     
-    // Provide helpful error messages
-    // Check for "User already registered" in multiple formats
-    const errorMsg = error.message?.toLowerCase() || '';
-    const errorStr = JSON.stringify(error).toLowerCase();
-    
-    if (errorMsg.includes('already registered') || 
-        errorMsg.includes('already been registered') ||
-        errorMsg.includes('user already') ||
-        errorStr.includes('already registered')) {
+    // Re-throw with a consistent message
+    if (error.message?.includes('User already registered')) {
       throw new Error('User already registered');
-    } else if (errorMsg.includes('invalid email')) {
-      throw new Error('Please enter a valid email address.');
-    } else if (errorMsg.includes('password')) {
-      throw new Error('Password must be at least 6 characters long.');
-    } else if (errorMsg.includes('rate limit')) {
-      throw new Error('Too many attempts. Please try again in a few minutes.');
     }
     
     throw new Error(error.message || 'Failed to sign up');

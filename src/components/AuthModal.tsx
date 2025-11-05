@@ -145,21 +145,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
       console.error('❌ Error keys:', Object.keys(err));
       console.error('🔍 Full error object:', JSON.stringify(err, null, 2));
       
-      // Show RAW error message for debugging
+      // Show more detailed error message
       let errorMessage = err.message || 'সাইন আপ ব্যর্থ হয়েছে (Sign up failed)';
       
-      console.log('🔍 Checking error message:', errorMessage);
-      console.log('🔍 Message includes "User already registered"?', errorMessage.includes('User already registered'));
-      console.log('🔍 Message includes "already registered"?', errorMessage.includes('already registered'));
-      
-      // TEMPORARY: Show raw error for debugging
-      setError(`DEBUG: ${errorMessage}`);
-      
       // Check for specific errors FIRST (most specific to least specific)
-      if (err.message?.includes('User already registered') || err.message?.includes('already registered')) {
+      if (err.message?.includes('User already registered')) {
         errorMessage = '⚠️ এই ইমেইল ইতিমধ্যে নিবন্ধিত (This email is already registered). Please login instead.';
-      } else if (err.message?.includes('already exists')) {
-        errorMessage = '⚠️ এই ইমেইল ইতিমধ্যে নিবন্ধিত (This email already exists). Please login instead.';
       } else if (err.message?.includes('Invalid login credentials')) {
         errorMessage = '❌ ভুল ইমেইল বা পাসওয়ার্ড (Invalid email or password)';
       } else if (err.message?.includes('rate limit') || err.message?.includes('429')) {
