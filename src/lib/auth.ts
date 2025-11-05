@@ -78,9 +78,25 @@ export async function signUp(data: SignUpData) {
 
     if (authError) {
       console.error('❌ Auth signup error:', authError);
-      // Extract readable error message from Supabase error object
-      const errorMsg = authError.message || (authError as any).error_description || 'Sign up failed';
-      throw new Error(errorMsg);
+      console.error('❌ Error details:', JSON.stringify(authError, null, 2));
+      
+      // Supabase returns error in different formats
+      // Format 1: { message: "..." }
+      // Format 2: { msg: "...", error_code: "..." }
+      const errorMessage = authError.message || (authError as any).msg || 'Sign up failed';
+      const errorCode = (authError as any).error_code || (authError as any).code;
+      
+      console.log('🔍 Extracted error message:', errorMessage);
+      console.log('🔍 Extracted error code:', errorCode);
+      
+      // Check for specific error codes
+      if (errorCode === 'user_already_exists' || 
+          errorMessage.toLowerCase().includes('already registered') ||
+          errorMessage.toLowerCase().includes('user already')) {
+        throw new Error('User already registered');
+      }
+      
+      throw new Error(errorMessage);
     }
     
     if (!authData.user) {
