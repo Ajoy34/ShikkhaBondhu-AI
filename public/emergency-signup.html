@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Signup - Direct API Test</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        .success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .code {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 Emergency Signup</h1>
+        <p class="subtitle">Direct API Test - Bypassing All App Code</p>
+        
+        <div class="info">
+            <strong>✅ This page uses:</strong><br>
+            • Direct Supabase REST API calls<br>
+            • Hardcoded credentials (no env vars)<br>
+            • No app code - just raw HTTP<br>
+            <br>
+            <strong>If this works, your Supabase is fine!</strong>
+        </div>
+
+        <form id="signupForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" required placeholder="your@email.com">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password (min 6 characters)</label>
+                <input type="password" id="password" required placeholder="••••••••" minlength="6">
+            </div>
+
+            <button type="submit" id="submitBtn">🚀 Test Signup</button>
+        </form>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://pakkuvcnhleqpcaxtruw.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
+
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('result');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Disable button
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Testing...';
+
+            // Hide previous result
+            resultDiv.style.display = 'none';
+
+            try {
+                console.log('🔵 Sending direct API request to Supabase...');
+                console.log('📍 URL:', SUPABASE_URL);
+                console.log('🔑 Key:', SUPABASE_KEY.substring(0, 30) + '...');
+
+                const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+                
+                console.log('📨 Response status:', response.status);
+                console.log('📨 Response data:', data);
+
+                resultDiv.style.display = 'block';
+
+                if (response.ok && data.user) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <strong>✅ SUCCESS!</strong><br><br>
+                        <strong>Supabase IS Working Perfectly!</strong><br><br>
+                        Created user ID: <strong>${data.user.id}</strong><br>
+                        Email: <strong>${data.user.email}</strong><br><br>
+                        <div class="code">
+                            <strong>This proves:</strong><br>
+                            1. Your Supabase project is ACTIVE ✅<br>
+                            2. The API key is VALID ✅<br>
+                            3. Signup API works ✅<br><br>
+                            <strong>The problem is in your React app code!</strong><br>
+                            Not in Supabase or credentials.
+                        </div>
+                    `;
+                    
+                    // Auto-redirect after 5 seconds
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 5000);
+                } else {
+                    throw new Error(data.error_description || data.message || data.msg || 'Unknown error');
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <strong>❌ FAILED!</strong><br><br>
+                    Error: <strong>${error.message}</strong><br><br>
+                    <div class="code">
+                        ${error.message.toLowerCase().includes('invalid') || error.message.toLowerCase().includes('api key') ? 
+                        `<strong>🔴 Your Supabase project is PAUSED!</strong><br><br>
+                        Fix it:<br>
+                        1. Go to <a href="https://supabase.com/dashboard/project/pakkuvcnhleqpcaxtruw" target="_blank">Supabase Dashboard</a><br>
+                        2. Click RESUME button<br>
+                        3. Wait 30 seconds<br>
+                        4. Try again` : 
+                        `Status: ${error.message}<br><br>
+                        This is a different error.<br>
+                        Check browser console for details.`}
+                    </div>
+                `;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 Test Signup';
+            }
+        });
+
+        // Show credentials on load
+        console.log('='.repeat(60));
+        console.log('🚨 EMERGENCY SIGNUP PAGE LOADED');
+        console.log('='.repeat(60));
+        console.log('📍 Supabase URL:', SUPABASE_URL);
+        console.log('🔑 Supabase Key:', SUPABASE_KEY.substring(0, 40) + '...');
+        console.log('✅ Credentials are HARDCODED (not from env vars)');
+        console.log('='.repeat(60));
+    </script>
+</body>
+</html>
