@@ -48,21 +48,31 @@ function App() {
 
   // Check authentication on mount
   useEffect(() => {
-    // IMMEDIATELY show content - don't wait for auth
-    setIsLoading(false);
-    // DON'T set isLoggedIn to false - let auth check handle it
-    
     // Check if we should redirect to dashboard after login
     const shouldRedirectToDashboard = sessionStorage.getItem('redirectToDashboard');
     console.log('🚀 App mounted, checking redirect flag:', shouldRedirectToDashboard);
     if (shouldRedirectToDashboard === 'true') {
       console.log('🚀 Redirect flag found! Setting activeSection to dashboard');
       sessionStorage.removeItem('redirectToDashboard');
+      // Don't set isLoading false yet - wait for auth to load
       // Wait a bit for auth to load
       setTimeout(() => {
         console.log('🚀 Now setting activeSection = dashboard');
         setActiveSection('dashboard');
       }, 500);
+      
+      // Fallback: If auth doesn't load in 5 seconds, go back to home
+      setTimeout(() => {
+        console.log('⚠️ Auth took too long, checking if still not logged in...');
+        if (!isLoggedIn) {
+          console.log('⚠️ Still not logged in after 5s, redirecting to home');
+          setActiveSection('home');
+          setIsLoading(false);
+        }
+      }, 5000);
+    } else {
+      // Not redirecting, show content immediately
+      setIsLoading(false);
     }
     
     // Check if diagnostics should be shown via URL parameter
@@ -95,6 +105,7 @@ function App() {
         console.log('🔐 User logged in, setting states...');
         setAuthUser(user);
         setIsLoggedIn(true);
+        setIsLoading(false); // Stop loading when auth completes
         await loadUserProfile(user.id);
         // If user just logged in, navigate to dashboard
         if (activeSection === 'home') {
@@ -107,6 +118,7 @@ function App() {
         console.log('🔐 User logged out');
         setAuthUser(null);
         setIsLoggedIn(false);
+        setIsLoading(false); // Stop loading when auth check completes
         setUserProfile(null);
         setActiveSection('home');
       }
