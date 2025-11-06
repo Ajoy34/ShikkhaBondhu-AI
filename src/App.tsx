@@ -50,7 +50,7 @@ function App() {
   useEffect(() => {
     // IMMEDIATELY show content - don't wait for auth
     setIsLoading(false);
-    setIsLoggedIn(false);
+    // DON'T set isLoggedIn to false - let auth check handle it
     
     // Check if we should redirect to dashboard after login
     const shouldRedirectToDashboard = sessionStorage.getItem('redirectToDashboard');
