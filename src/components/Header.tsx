@@ -193,12 +193,13 @@ const Header: React.FC<HeaderProps> = ({
               </>
             ) : (
               <>
-                {/* Simple Sign In Button */}
+                {/* Prominent Sign In Button with Animation */}
                 <button
                   onClick={() => setShowAuthModal(true)}
-                  className="px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition-all"
+                  className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl animate-pulse"
+                  title="Click here to login and see your profile"
                 >
-                  Sign In
+                  🔐 Sign In / লগইন করুন
                 </button>
               </>
             )}
