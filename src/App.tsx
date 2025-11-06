@@ -54,9 +54,15 @@ function App() {
     
     // Check if we should redirect to dashboard after login
     const shouldRedirectToDashboard = sessionStorage.getItem('redirectToDashboard');
+    console.log('🚀 App mounted, checking redirect flag:', shouldRedirectToDashboard);
     if (shouldRedirectToDashboard === 'true') {
+      console.log('🚀 Redirect flag found! Setting activeSection to dashboard');
       sessionStorage.removeItem('redirectToDashboard');
-      setActiveSection('dashboard');
+      // Wait a bit for auth to load
+      setTimeout(() => {
+        console.log('🚀 Now setting activeSection = dashboard');
+        setActiveSection('dashboard');
+      }, 500);
     }
     
     // Check if diagnostics should be shown via URL parameter
