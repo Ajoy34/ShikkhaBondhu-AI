@@ -48,6 +48,7 @@ function App() {
 
   // Check authentication on mount
   useEffect(() => {
+    console.log('🔵 App mounted - checking authentication...');
     setIsLoading(true);
     
     // Check diagnostics
@@ -65,7 +66,12 @@ function App() {
     };
     
     window.addEventListener('keydown', handleKeyPress);
-    checkAuth();
+    
+    // Check auth immediately
+    checkAuth().catch(err => {
+      console.error('❌ checkAuth failed:', err);
+      setIsLoading(false);
+    });
 
     // Subscribe to auth changes
     const unsubscribe = onAuthStateChange(async (user) => {
