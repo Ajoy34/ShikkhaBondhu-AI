@@ -53,18 +53,18 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="bg-white/98 backdrop-blur-md shadow-md sticky top-0 z-50 border-b border-gray-200">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex justify-between items-center">
+      <div className="container mx-auto px-2 sm:px-4 lg:px-8 py-3 sm:py-4">
+        <div className="flex justify-between items-center gap-2">
           {/* Logo */}
           <button
             onClick={() => setActiveSection('home')}
-            className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+            className="flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity flex-shrink-0"
           >
-            <div className="bg-gradient-to-br from-indigo-600 to-purple-600 p-2.5 rounded-xl shadow-lg">
-              <Shield className="w-7 h-7 text-white" />
+            <div className="bg-gradient-to-br from-indigo-600 to-purple-600 p-2 sm:p-2.5 rounded-xl shadow-lg">
+              <Shield className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 font-inter">ShikkhaBondhu</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 font-inter">ShikkhaBondhu</h1>
               <p className="text-xs text-indigo-600 font-bangla -mt-0.5">শিক্ষা বন্ধু</p>
             </div>
           </button>
@@ -135,14 +135,14 @@ const Header: React.FC<HeaderProps> = ({
           )}
 
           {/* Right Side Actions */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             {isLoggedIn ? (
               <>
                 {/* Profile Button with Dropdown */}
                 <div className="relative">
                   <button
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg ${
+                    className={`flex items-center space-x-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg ${
                       activeSection === 'profile'
                         ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white'
                         : 'bg-green-50 text-green-700 hover:bg-green-100'
@@ -185,13 +185,13 @@ const Header: React.FC<HeaderProps> = ({
                 {/* Sign Up and Sign In Buttons - CLEAR AND VISIBLE */}
                 <button
                   onClick={() => setShowAuthModal(true)}
-                  className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm sm:text-base font-bold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 whitespace-nowrap"
                 >
                   Sign Up
                 </button>
                 <button
                   onClick={() => setShowAuthModal(true)}
-                  className="px-6 py-3 bg-white text-indigo-600 font-bold border-2 border-indigo-600 rounded-lg hover:bg-indigo-50 transition-all duration-200 shadow-md hover:shadow-lg"
+                  className="px-4 sm:px-6 py-2 sm:py-3 bg-white text-indigo-600 text-sm sm:text-base font-bold border-2 border-indigo-600 rounded-lg hover:bg-indigo-50 transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
                 >
                   Sign In
                 </button>

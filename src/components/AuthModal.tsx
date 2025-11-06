@@ -188,7 +188,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
 
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-center p-4 animate-fadeIn overflow-y-auto"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[99999] flex items-center justify-center p-4 animate-fadeIn overflow-y-auto"
       onClick={(e) => {
         // Close modal if clicking on backdrop
         if (e.target === e.currentTarget) {
@@ -196,33 +196,33 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
         }
       }}
     >
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-8 relative">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-8 relative animate-slideUp">
         {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-t-2xl relative sticky top-0 z-10">
+        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-t-2xl relative">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
+            className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
           <h2 className="text-2xl font-bold mb-2">
             {mode === 'login' ? 'লগইন করুন' : 'নিবন্ধন করুন'}
           </h2>
-          <p className="text-indigo-200">
+          <p className="text-indigo-200 text-sm">
             {mode === 'login' ? 'Welcome back! Log in to continue' : 'Create your account to get started'}
           </p>
         </div>
 
         {/* Content */}
-        <div className="p-6 max-h-[calc(90vh-120px)] overflow-y-auto">
+        <div className="p-6 max-h-[70vh] overflow-y-auto">
           {/* Error/Success Messages */}
           {error && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm animate-shake">
+            <div className="mb-4 p-4 bg-red-50 border-2 border-red-200 rounded-lg text-red-700 text-sm font-semibold animate-shake">
               {error}
             </div>
           )}
           {success && (
-            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm animate-pulse">
+            <div className="mb-4 p-4 bg-green-50 border-2 border-green-200 rounded-lg text-green-700 text-sm font-semibold animate-pulse">
               {success}
             </div>
           )}
