@@ -48,32 +48,8 @@ function App() {
 
   // Check authentication on mount
   useEffect(() => {
-    // Check if we should redirect to dashboard after login
-    const shouldRedirectToDashboard = sessionStorage.getItem('redirectToDashboard');
-    console.log('🚀 App mounted, checking redirect flag:', shouldRedirectToDashboard);
-    if (shouldRedirectToDashboard === 'true') {
-      console.log('🚀 Redirect flag found! Setting activeSection to dashboard');
-      sessionStorage.removeItem('redirectToDashboard');
-      // Don't set isLoading false yet - wait for auth to load
-      // Wait a bit for auth to load
-      setTimeout(() => {
-        console.log('🚀 Now setting activeSection = dashboard');
-        setActiveSection('dashboard');
-      }, 500);
-      
-      // Fallback: If auth doesn't load in 5 seconds, go back to home
-      setTimeout(() => {
-        console.log('⚠️ Auth took too long, checking if still not logged in...');
-        if (!isLoggedIn) {
-          console.log('⚠️ Still not logged in after 5s, redirecting to home');
-          setActiveSection('home');
-          setIsLoading(false);
-        }
-      }, 5000);
-    } else {
-      // Not redirecting, show content immediately
-      setIsLoading(false);
-    }
+    // Show loading initially
+    setIsLoading(true);
     
     // Check if diagnostics should be shown via URL parameter
     const urlParams = new URLSearchParams(window.location.search);
@@ -107,12 +83,19 @@ function App() {
         setIsLoggedIn(true);
         setIsLoading(false); // Stop loading when auth completes
         await loadUserProfile(user.id);
-        // If user just logged in, navigate to dashboard
-        if (activeSection === 'home') {
-          console.log('🔐 Navigating to dashboard from home');
+        
+        // Check if we should redirect to dashboard after login
+        const shouldRedirectToDashboard = sessionStorage.getItem('redirectToDashboard');
+        if (shouldRedirectToDashboard === 'true') {
+          console.log('🔐 Redirect flag found, navigating to dashboard');
+          sessionStorage.removeItem('redirectToDashboard');
+          setActiveSection('dashboard');
+        } else if (activeSection === 'home') {
+          // If on home page when user logs in, go to dashboard
+          console.log('🔐 On home page, navigating to dashboard');
           setActiveSection('dashboard');
         } else {
-          console.log('🔐 Current section:', activeSection, '- not navigating');
+          console.log('🔐 Current section:', activeSection);
         }
       } else {
         console.log('🔐 User logged out');
@@ -260,18 +243,6 @@ function App() {
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600 mx-auto mb-4"></div>
             <p className="text-gray-600 font-bangla">লোড হচ্ছে...</p>
-          </div>
-        </div>
-      );
-    }
-
-    // If redirecting to dashboard but not logged in yet, show loading
-    if (activeSection === 'dashboard' && !isLoggedIn) {
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600 mx-auto mb-4"></div>
-            <p className="text-gray-600 font-bangla">লগইন চেক করা হচ্ছে...</p>
           </div>
         </div>
       );
