@@ -160,10 +160,13 @@ function App() {
       
       if (profile) {
         console.log('✅ Profile found:', profile);
+        console.log('📋 Profile full_name:', profile.full_name);
         setUserProfile(profile);
-        // Update display user state
+        // Update display user state with full_name from profile
+        const displayName = profile.full_name || userEmail?.split('@')[0] || 'User';
+        console.log('👤 Setting display name to:', displayName);
         setUser({
-          name: profile.full_name || 'User',
+          name: displayName,
           email: profile.email,
           level: profile.level,
           points: profile.points,
@@ -174,8 +177,10 @@ function App() {
         });
       } else {
         // Profile doesn't exist, use email data
-        console.log('⚠️ Profile not found, using email-based name');
+        console.log('⚠️ Profile not found in database');
+        console.log('⚠️ This means the user_profiles table might not exist or trigger not set up');
         const userName = userEmail ? userEmail.split('@')[0] : 'User';
+        console.log('👤 Using fallback name from email:', userName);
         setUser(prev => ({
           ...prev,
           name: userName,
@@ -183,9 +188,10 @@ function App() {
         }));
       }
     } catch (error) {
-      console.error('Load profile error:', error);
+      console.error('❌ Load profile error:', error);
       // Fallback to email-based name
       const userName = userEmail ? userEmail.split('@')[0] : 'User';
+      console.log('👤 Using error fallback name from email:', userName);
       setUser(prev => ({
         ...prev,
         name: userName,
