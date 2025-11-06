@@ -182,16 +182,10 @@ const Header: React.FC<HeaderProps> = ({
               </>
             ) : (
               <>
-                {/* Sign Up and Sign In Buttons - CLEAR AND VISIBLE */}
+                {/* Simple Sign In Button */}
                 <button
                   onClick={() => setShowAuthModal(true)}
-                  className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm sm:text-base font-bold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 whitespace-nowrap"
-                >
-                  Sign Up
-                </button>
-                <button
-                  onClick={() => setShowAuthModal(true)}
-                  className="px-4 sm:px-6 py-2 sm:py-3 bg-white text-indigo-600 text-sm sm:text-base font-bold border-2 border-indigo-600 rounded-lg hover:bg-indigo-50 transition-all duration-200 shadow-md hover:shadow-lg whitespace-nowrap"
+                  className="px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition-all"
                 >
                   Sign In
                 </button>

@@ -221,17 +221,13 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
           </div>
         </div>
 
-        {/* CTA Section */}
-        <div className="text-center">
-          <button
-            onClick={() => setShowAuthModal(true)}
-            className="group relative inline-flex items-center space-x-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white px-12 py-5 rounded-2xl font-bold text-xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
-          >
-            <span>🚀 Get Started Free</span>
-            <Sparkles className="w-6 h-6 group-hover:rotate-12 transition-transform" />
-          </button>
-          <p className="mt-4 text-gray-600 font-bangla">
-            ✨ সম্পূর্ণ বিনামূল্যে শুরু করুন • কোন ক্রেডিট কার্ড প্রয়োজন নেই
+        {/* Simple Message - No Extra Button */}
+        <div className="text-center mt-8">
+          <p className="text-lg text-gray-700 font-semibold">
+            👆 Click any feature above to get started
+          </p>
+          <p className="text-gray-600 font-bangla mt-2">
+            যেকোনো একটি ফিচার ক্লিক করুন এবং শুরু করুন
           </p>
         </div>
       </div>
