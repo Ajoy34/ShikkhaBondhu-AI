@@ -70,18 +70,22 @@ function App() {
     // Subscribe to auth changes
     const unsubscribe = onAuthStateChange(async (user) => {
       if (user) {
+        console.log('🔔 Auth state changed - User logged in:', user.email);
         setAuthUser(user);
         setIsLoggedIn(true);
         // Update user display name immediately from email
+        const userName = user.email?.split('@')[0] || 'User';
+        console.log('👤 Setting user name to:', userName);
         setUser(prev => ({
           ...prev,
-          name: user.email?.split('@')[0] || 'User',
+          name: userName,
           email: user.email || prev.email
         }));
         // Load full profile with email as fallback
         await loadUserProfile(user.id, user.email || undefined);
         setIsLoading(false);
       } else {
+        console.log('🔔 Auth state changed - User logged out');
         setAuthUser(null);
         setIsLoggedIn(false);
         setIsLoading(false);
@@ -127,9 +131,11 @@ function App() {
         setAuthUser(user);
         setIsLoggedIn(true);
         // Update user display name immediately from email
+        const userName = user.email?.split('@')[0] || 'User';
+        console.log('👤 Setting user name to:', userName);
         setUser(prev => ({
           ...prev,
-          name: user.email?.split('@')[0] || 'User',
+          name: userName,
           email: user.email || prev.email
         }));
         // Load full profile with email as fallback

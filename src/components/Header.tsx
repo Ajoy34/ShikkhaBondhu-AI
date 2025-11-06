@@ -27,6 +27,11 @@ const Header: React.FC<HeaderProps> = ({
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
+  // Debug: Log user name changes
+  React.useEffect(() => {
+    console.log('📋 Header received user name:', user.name, 'isLoggedIn:', isLoggedIn);
+  }, [user.name, isLoggedIn]);
+
   const handleLogout = async () => {
     try {
       await signOut();
