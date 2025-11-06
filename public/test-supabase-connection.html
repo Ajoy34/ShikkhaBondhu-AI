@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Connection Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #bee5eb;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        pre {
+            background: #2d3748;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+        .code {
+            background: #2d3748;
+            color: #68d391;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        .solution-box {
+            background: #e3f2fd;
+            border-left: 5px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .solution-box h3 {
+            color: #1976d2;
+            margin-top: 0;
+        }
+        .solution-box ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .solution-box li {
+            margin: 8px 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Supabase Connection Diagnostic Tool</h1>
+        <p class="subtitle">Testing connection to your Supabase backend...</p>
+
+        <div class="test-section">
+            <h3>📋 Configuration</h3>
+            <div id="config-info"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🧪 Connection Tests</h3>
+            <button onclick="runTests()">▶️ Run All Tests</button>
+            <div id="test-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 Actions</h3>
+            <button onclick="testSignup()">Test Signup</button>
+            <button onclick="testLogin()">Test Login</button>
+            <button onclick="checkProjectStatus()">Check Project Status</button>
+            <div id="action-results"></div>
+        </div>
+
+        <div id="solution-section"></div>
+    </div>
+
+    <script>
+        // Hardcoded credentials from your project
+        const SUPABASE_URL = 'https://pakkuvcnhleqpcaxtruw.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
+
+        let supabase;
+
+        // Display configuration
+        document.getElementById('config-info').innerHTML = `
+            <div class="status info">
+                <strong>📍 URL:</strong> ${SUPABASE_URL}<br>
+                <strong>🔑 API Key:</strong> ${SUPABASE_ANON_KEY.substring(0, 30)}...${SUPABASE_ANON_KEY.substring(SUPABASE_ANON_KEY.length - 5)}<br>
+                <strong>⏰ Key Expiry:</strong> 2072-07-56 (Valid until 2072)<br>
+                <strong>🔐 Key Type:</strong> Anonymous (anon)
+            </div>
+        `;
+
+        async function runTests() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '<p>Running tests...</p>';
+            let results = '';
+
+            try {
+                // Test 1: Create Supabase client
+                results += '<h4>Test 1: Initialize Supabase Client</h4>';
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                results += '<div class="status success">✅ Client initialized successfully</div>';
+
+                // Test 2: Check session
+                results += '<h4>Test 2: Check Authentication Session</h4>';
+                const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+                
+                if (sessionError) {
+                    results += `<div class="status error">❌ Session Error: ${sessionError.message}</div>`;
+                    results += `<pre>${JSON.stringify(sessionError, null, 2)}</pre>`;
+                    
+                    if (sessionError.message.includes('Invalid API key') || sessionError.message.includes('401')) {
+                        showSolution('PAUSED_PROJECT');
+                    }
+                } else {
+                    results += '<div class="status success">✅ Session check successful</div>';
+                    results += `<div class="status info">Current session: ${sessionData.session ? 'Logged in' : 'Not logged in'}</div>`;
+                }
+
+                // Test 3: Try to fetch from a table (will fail if project is paused)
+                results += '<h4>Test 3: Database Connection</h4>';
+                const { data: tableData, error: tableError } = await supabase.from('user_profiles').select('count');
+                
+                if (tableError) {
+                    results += `<div class="status error">❌ Database Error: ${tableError.message}</div>`;
+                    if (tableError.message.includes('relation') || tableError.message.includes('does not exist')) {
+                        results += '<div class="status warning">⚠️ Table doesn\'t exist yet (this is OK for new projects)</div>';
+                    }
+                } else {
+                    results += '<div class="status success">✅ Database connection successful</div>';
+                }
+
+                // Test 4: Direct API call
+                results += '<h4>Test 4: Direct REST API Call</h4>';
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+
+                if (response.ok) {
+                    results += '<div class="status success">✅ REST API is accessible</div>';
+                } else {
+                    results += `<div class="status error">❌ REST API Error: ${response.status} ${response.statusText}</div>`;
+                    if (response.status === 401) {
+                        showSolution('INVALID_KEY');
+                    }
+                }
+
+            } catch (error) {
+                results += `<div class="status error">❌ Test crashed: ${error.message}</div>`;
+                results += `<pre>${error.stack}</pre>`;
+            }
+
+            resultsDiv.innerHTML = results;
+        }
+
+        async function testSignup() {
+            const resultsDiv = document.getElementById('action-results');
+            resultsDiv.innerHTML = '<p>Testing signup...</p>';
+
+            const testEmail = `test${Date.now()}@example.com`;
+            const testPassword = 'TestPassword123!';
+
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email: testEmail,
+                    password: testPassword,
+                    options: {
+                        data: {
+                            full_name: 'Test User'
+                        }
+                    }
+                });
+
+                if (error) {
+                    resultsDiv.innerHTML = `<div class="status error">❌ Signup Failed: ${error.message}</div>`;
+                    if (error.message.includes('Invalid API key')) {
+                        showSolution('PAUSED_PROJECT');
+                    }
+                } else {
+                    resultsDiv.innerHTML = `<div class="status success">✅ Signup Successful!<br>Email: ${testEmail}</div>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="status error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testLogin() {
+            const email = prompt('Enter email:');
+            const password = prompt('Enter password:');
+
+            if (!email || !password) return;
+
+            const resultsDiv = document.getElementById('action-results');
+            resultsDiv.innerHTML = '<p>Testing login...</p>';
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    resultsDiv.innerHTML = `<div class="status error">❌ Login Failed: ${error.message}</div>`;
+                } else {
+                    resultsDiv.innerHTML = `<div class="status success">✅ Login Successful!<br>User ID: ${data.user.id}</div>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="status error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function checkProjectStatus() {
+            const resultsDiv = document.getElementById('action-results');
+            resultsDiv.innerHTML = '<p>Checking project status...</p>';
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY
+                    }
+                });
+
+                let status = '';
+                if (response.status === 401) {
+                    status = `<div class="status error">❌ Project Status: PAUSED or INVALID KEY<br>Status Code: 401 Unauthorized</div>`;
+                    showSolution('PAUSED_PROJECT');
+                } else if (response.ok) {
+                    status = `<div class="status success">✅ Project Status: ACTIVE<br>Status Code: ${response.status}</div>`;
+                } else {
+                    status = `<div class="status warning">⚠️ Unknown Status<br>Status Code: ${response.status}</div>`;
+                }
+
+                resultsDiv.innerHTML = status;
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="status error">❌ Cannot connect: ${error.message}</div>`;
+            }
+        }
+
+        function showSolution(type) {
+            const solutionDiv = document.getElementById('solution-section');
+            
+            if (type === 'PAUSED_PROJECT') {
+                solutionDiv.innerHTML = `
+                    <div class="solution-box">
+                        <h3>🚨 SOLUTION: Your Supabase Project is PAUSED</h3>
+                        <p><strong>This is the most common issue!</strong> Supabase automatically pauses inactive projects.</p>
+                        
+                        <h4>📋 How to Fix:</h4>
+                        <ol>
+                            <li>Go to <a href="https://supabase.com/dashboard" target="_blank" style="color: #2196f3; font-weight: bold;">https://supabase.com/dashboard</a></li>
+                            <li>Login to your Supabase account</li>
+                            <li>Look for your project: <span class="code">pakkuvcnhleqpcaxtruw</span></li>
+                            <li>If you see a <strong>"PAUSED"</strong> status or <strong>"RESUME"</strong> button, click it</li>
+                            <li>Wait 30-60 seconds for the project to resume</li>
+                            <li>Come back here and click "Run All Tests" again</li>
+                        </ol>
+
+                        <h4>✅ Alternative: Create a NEW Supabase Project</h4>
+                        <ol>
+                            <li>Go to <a href="https://supabase.com/dashboard/new" target="_blank" style="color: #2196f3; font-weight: bold;">Create New Project</a></li>
+                            <li>Choose a name and password</li>
+                            <li>Wait for project to be created (2-3 minutes)</li>
+                            <li>Copy the new API URL and anon key</li>
+                            <li>Update your <span class="code">src/lib/supabase.ts</span> file with new credentials</li>
+                        </ol>
+                    </div>
+                `;
+            } else if (type === 'INVALID_KEY') {
+                solutionDiv.innerHTML = `
+                    <div class="solution-box">
+                        <h3>🔑 SOLUTION: Invalid API Key</h3>
+                        <p>Your API key is invalid or expired.</p>
+                        
+                        <h4>📋 How to Fix:</h4>
+                        <ol>
+                            <li>Go to <a href="https://supabase.com/dashboard" target="_blank" style="color: #2196f3; font-weight: bold;">Supabase Dashboard</a></li>
+                            <li>Open your project</li>
+                            <li>Click on "Settings" → "API"</li>
+                            <li>Copy the <strong>Project URL</strong> and <strong>anon public</strong> key</li>
+                            <li>Update your code with the new credentials</li>
+                        </ol>
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-run tests on load
+        window.onload = () => {
+            setTimeout(runTests, 500);
+        };
+    </script>
+</body>
+</html>
