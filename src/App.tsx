@@ -51,6 +51,28 @@ function App() {
     // Show loading initially
     setIsLoading(true);
     
+    // FIRST: Check for redirect flag immediately
+    const redirectDataStr = sessionStorage.getItem('redirectToDashboard');
+    console.log('🚀 Mount - Checking redirect flag:', redirectDataStr);
+    
+    if (redirectDataStr) {
+      try {
+        const redirectData = JSON.parse(redirectDataStr);
+        if (redirectData.redirect === true) {
+          console.log('🚀 ✅ REDIRECT FLAG FOUND ON MOUNT! Setting activeSection to dashboard NOW');
+          setActiveSection('dashboard');
+          sessionStorage.removeItem('redirectToDashboard');
+        }
+      } catch (e) {
+        // Fallback for old format
+        if (redirectDataStr === 'true') {
+          console.log('🚀 ✅ OLD FORMAT REDIRECT FLAG! Setting activeSection to dashboard NOW');
+          setActiveSection('dashboard');
+          sessionStorage.removeItem('redirectToDashboard');
+        }
+      }
+    }
+    
     // Check if diagnostics should be shown via URL parameter
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('diagnostics') === 'true') {
@@ -84,33 +106,13 @@ function App() {
         setIsLoading(false); // Stop loading when auth completes
         await loadUserProfile(user.id);
         
-        // Check if we should redirect to dashboard after login
-        const redirectDataStr = sessionStorage.getItem('redirectToDashboard');
-        console.log('🔐 Checking redirect flag:', redirectDataStr);
+        // Don't change activeSection here - let mount handle it
+        console.log('🔐 Current activeSection:', activeSection);
         
-        if (redirectDataStr) {
-          try {
-            const redirectData = JSON.parse(redirectDataStr);
-            if (redirectData.redirect === true) {
-              console.log('🔐 ✅ Redirect flag found! Navigating to dashboard...');
-              sessionStorage.removeItem('redirectToDashboard');
-              setActiveSection('dashboard');
-              console.log('🔐 ✅ Active section set to dashboard!');
-            }
-          } catch (e) {
-            // Fallback for old format
-            if (redirectDataStr === 'true') {
-              console.log('🔐 ✅ Old format redirect flag found! Navigating to dashboard...');
-              sessionStorage.removeItem('redirectToDashboard');
-              setActiveSection('dashboard');
-            }
-          }
-        } else if (activeSection === 'home') {
-          // If on home page when user logs in, go to dashboard
+        // Only navigate to dashboard if still on home and no redirect flag was set
+        if (activeSection === 'home' && !sessionStorage.getItem('redirectToDashboard')) {
           console.log('🔐 On home page, navigating to dashboard');
           setActiveSection('dashboard');
-        } else {
-          console.log('🔐 Current section:', activeSection);
         }
       } else {
         console.log('🔐 User logged out');
