@@ -44,12 +44,16 @@ const Header: React.FC<HeaderProps> = ({
     if (onAuthChange) onAuthChange();
   };
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = async () => {
     console.log('📍 Header: Login successful, navigating to dashboard');
-    setIsLoggedIn(true);
-    setActiveSection('dashboard');
     setShowAuthModal(false);
-    if (onAuthChange) onAuthChange();
+    // Let the auth listener handle state updates
+    if (onAuthChange) await onAuthChange();
+    // Then navigate
+    setTimeout(() => {
+      setIsLoggedIn(true);
+      setActiveSection('dashboard');
+    }, 300);
   };
 
   return (

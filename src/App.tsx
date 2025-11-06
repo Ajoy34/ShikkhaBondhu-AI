@@ -107,8 +107,9 @@ function App() {
       if (user) {
         setAuthUser(user);
         setIsLoggedIn(true);
-        setIsLoading(false);
         await loadUserProfile(user.id);
+        setIsLoading(false);
+        console.log('🔐 User profile loaded, ready to show dashboard');
       } else {
         setAuthUser(null);
         setIsLoggedIn(false);
