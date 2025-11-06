@@ -54,6 +54,11 @@ const Header: React.FC<HeaderProps> = ({
     setShowAuthModal(false);
     setIsLoggedIn(true);
     setActiveSection('dashboard');
+    // Trigger auth state refresh to load user name
+    if (onAuthChange) {
+      console.log('🔄 Triggering auth state refresh after login');
+      setTimeout(() => onAuthChange(), 500); // Small delay to ensure session is set
+    }
   };
 
   return (
