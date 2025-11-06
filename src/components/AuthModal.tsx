@@ -200,8 +200,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
 
   return (
     <div 
-      className="fixed top-0 left-0 right-0 bottom-0 bg-black/70 backdrop-blur-md z-[99999] flex items-center justify-center p-4"
-      style={{ position: 'fixed', overflow: 'auto' }}
+      className="fixed top-0 left-0 right-0 bottom-0 bg-black/50 z-[99999] flex items-center justify-center p-4"
+      style={{ position: 'fixed' }}
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose();
@@ -209,8 +209,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
       }}
     >
       <div 
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-md relative animate-slideUp"
-        style={{ maxHeight: '90vh', overflow: 'auto' }}
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-md relative"
+        style={{ maxHeight: '90vh', overflowY: 'auto', zIndex: 100000 }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
