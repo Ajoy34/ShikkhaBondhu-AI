@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Flow Test - ShikkhaBondhu</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-section h2 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status.pending { background: #ffeaa7; color: #d63031; }
+        .status.success { background: #55efc4; color: #00b894; }
+        .status.error { background: #fab1a0; color: #d63031; }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn:disabled {
+            background: #dfe6e9;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .log {
+            background: #2d3436;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+        .log-entry.error { color: #ff6b6b; }
+        .log-entry.success { color: #51cf66; }
+        .log-entry.info { color: #74b9ff; }
+        .credentials {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .credentials strong {
+            display: block;
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .credentials code {
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: #d63031;
+            font-weight: bold;
+        }
+        .step {
+            background: white;
+            border-left: 4px solid #667eea;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .step-number {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            margin-right: 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Login Flow Test</h1>
+        <p class="subtitle">ShikkhaBondhu AI - Dashboard Redirect Verification</p>
+
+        <div class="credentials">
+            <strong>📋 Test Credentials:</strong>
+            <div>Email: <code>test@example.com</code></div>
+            <div>Password: <code>password123</code></div>
+        </div>
+
+        <div class="test-section">
+            <h2>
+                <span class="step-number">1</span>
+                Session Storage Check
+                <span class="status" id="storage-status">Pending</span>
+            </h2>
+            <button class="btn" onclick="checkStorage()">Check Storage</button>
+            <div class="log" id="storage-log"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>
+                <span class="step-number">2</span>
+                Supabase Connection
+                <span class="status" id="connection-status">Pending</span>
+            </h2>
+            <button class="btn" onclick="testConnection()">Test Connection</button>
+            <div class="log" id="connection-log"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>
+                <span class="step-number">3</span>
+                Login Test
+                <span class="status" id="login-status">Pending</span>
+            </h2>
+            <button class="btn" onclick="testLogin()">Test Login</button>
+            <div class="log" id="login-log"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>
+                <span class="step-number">4</span>
+                Redirect Test
+                <span class="status" id="redirect-status">Pending</span>
+            </h2>
+            <div class="step">After login succeeds, the page should reload and redirect to dashboard</div>
+            <div class="step">Check the main app to see if you land on the Dashboard page</div>
+            <button class="btn" onclick="window.location.href='/'">Go to Main App</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/+esm';
+
+        const SUPABASE_URL = 'https://pakkuvcnhleqpcaxtruw.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
+
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: {
+                persistSession: true,
+                autoRefreshToken: true,
+            }
+        });
+
+        function log(elementId, message, type = 'info') {
+            const logEl = document.getElementById(elementId);
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            logEl.appendChild(entry);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function setStatus(statusId, status) {
+            const el = document.getElementById(statusId);
+            el.className = `status ${status}`;
+            el.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+        }
+
+        window.checkStorage = function() {
+            const logEl = 'storage-log';
+            document.getElementById(logEl).innerHTML = '';
+            
+            log(logEl, '🔍 Checking sessionStorage...', 'info');
+            const redirectFlag = sessionStorage.getItem('redirectToDashboard');
+            if (redirectFlag) {
+                log(logEl, `✅ Found redirect flag: ${redirectFlag}`, 'success');
+                try {
+                    const parsed = JSON.parse(redirectFlag);
+                    log(logEl, `📦 Parsed data: ${JSON.stringify(parsed)}`, 'success');
+                } catch (e) {
+                    log(logEl, `⚠️ Flag is string format: "${redirectFlag}"`, 'info');
+                }
+            } else {
+                log(logEl, '❌ No redirect flag found', 'error');
+            }
+
+            log(logEl, '🔍 Checking localStorage...', 'info');
+            let found = false;
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.includes('supabase')) {
+                    log(logEl, `✅ Found: ${key}`, 'success');
+                    found = true;
+                }
+            }
+            if (!found) {
+                log(logEl, '❌ No Supabase session in localStorage', 'error');
+            }
+
+            setStatus('storage-status', found ? 'success' : 'error');
+        };
+
+        window.testConnection = async function() {
+            const logEl = 'connection-log';
+            document.getElementById(logEl).innerHTML = '';
+            
+            log(logEl, '🌐 Testing Supabase connection...', 'info');
+            log(logEl, `📍 URL: ${SUPABASE_URL}`, 'info');
+            
+            try {
+                const { data, error } = await supabase.auth.getSession();
+                
+                if (error) {
+                    log(logEl, `❌ Connection error: ${error.message}`, 'error');
+                    setStatus('connection-status', 'error');
+                    return;
+                }
+                
+                log(logEl, '✅ Connection successful!', 'success');
+                
+                if (data.session) {
+                    log(logEl, `✅ Active session found!`, 'success');
+                    log(logEl, `👤 User: ${data.session.user.email}`, 'success');
+                    setStatus('connection-status', 'success');
+                } else {
+                    log(logEl, '⭕ No active session', 'info');
+                    setStatus('connection-status', 'success');
+                }
+            } catch (err) {
+                log(logEl, `❌ Exception: ${err.message}`, 'error');
+                setStatus('connection-status', 'error');
+            }
+        };
+
+        window.testLogin = async function() {
+            const logEl = 'login-log';
+            document.getElementById(logEl).innerHTML = '';
+            
+            const email = 'test@example.com';
+            const password = 'password123';
+            
+            log(logEl, '🔐 Starting login test...', 'info');
+            log(logEl, `📧 Email: ${email}`, 'info');
+            
+            try {
+                // Direct API call like the real app
+                log(logEl, '📡 Making direct API call...', 'info');
+                
+                const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_KEY,
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                    }),
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    log(logEl, `❌ Login failed: ${result.error_description || result.message}`, 'error');
+                    setStatus('login-status', 'error');
+                    return;
+                }
+
+                log(logEl, '✅ Login successful!', 'success');
+                log(logEl, `👤 User: ${result.user.email}`, 'success');
+                
+                // Set session
+                log(logEl, '💾 Setting session...', 'info');
+                const { error: sessionError } = await supabase.auth.setSession({
+                    access_token: result.access_token,
+                    refresh_token: result.refresh_token,
+                });
+
+                if (sessionError) {
+                    log(logEl, `❌ Session error: ${sessionError.message}`, 'error');
+                    setStatus('login-status', 'error');
+                    return;
+                }
+
+                log(logEl, '✅ Session set successfully!', 'success');
+                
+                // Store redirect flag
+                const redirectData = {
+                    redirect: true,
+                    timestamp: Date.now()
+                };
+                sessionStorage.setItem('redirectToDashboard', JSON.stringify(redirectData));
+                log(logEl, `✅ Stored redirect flag: ${JSON.stringify(redirectData)}`, 'success');
+                
+                setStatus('login-status', 'success');
+                setStatus('redirect-status', 'pending');
+                
+                log(logEl, '⏳ Waiting 2 seconds before redirect...', 'info');
+                setTimeout(() => {
+                    log(logEl, '🔄 Redirecting to main app...', 'success');
+                    window.location.href = '/?t=' + Date.now();
+                }, 2000);
+                
+            } catch (err) {
+                log(logEl, `❌ Exception: ${err.message}`, 'error');
+                setStatus('login-status', 'error');
+            }
+        };
+
+        // Auto-check on load
+        window.addEventListener('load', () => {
+            checkStorage();
+            testConnection();
+        });
+    </script>
+</body>
+</html>
