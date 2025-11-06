@@ -78,7 +78,8 @@ function App() {
           name: user.email?.split('@')[0] || 'User',
           email: user.email || prev.email
         }));
-        await loadUserProfile(user.id);
+        // Load full profile with email as fallback
+        await loadUserProfile(user.id, user.email || undefined);
         setIsLoading(false);
       } else {
         setAuthUser(null);
@@ -124,7 +125,7 @@ function App() {
       if (user) {
         setAuthUser(user);
         setIsLoggedIn(true);
-        await loadUserProfile(user.id);
+        await loadUserProfile(user.id, user.email || undefined);
       } else {
         setIsLoggedIn(false);
       }
@@ -137,11 +138,13 @@ function App() {
   };
 
   // Load user profile from Supabase
-  const loadUserProfile = async (userId: string) => {
+  const loadUserProfile = async (userId: string, userEmail?: string) => {
     try {
+      console.log('🔍 Loading profile for user:', userId, userEmail);
       const profile = await getUserProfile(userId);
       
       if (profile) {
+        console.log('✅ Profile found:', profile);
         setUserProfile(profile);
         // Update display user state
         setUser({
@@ -155,26 +158,24 @@ function App() {
           joinedDate: profile.created_at
         });
       } else {
-        // Profile doesn't exist, use authUser data
-        console.log('📝 Profile not found, using auth user data');
-        if (authUser) {
-          setUser(prev => ({
-            ...prev,
-            name: authUser.email?.split('@')[0] || 'User',
-            email: authUser.email || prev.email
-          }));
-        }
+        // Profile doesn't exist, use email data
+        console.log('⚠️ Profile not found, using email-based name');
+        const userName = userEmail ? userEmail.split('@')[0] : 'User';
+        setUser(prev => ({
+          ...prev,
+          name: userName,
+          email: userEmail || prev.email
+        }));
       }
     } catch (error) {
       console.error('Load profile error:', error);
-      // Fallback to auth user data
-      if (authUser) {
-        setUser(prev => ({
-          ...prev,
-          name: authUser.email?.split('@')[0] || 'User',
-          email: authUser.email || prev.email
-        }));
-      }
+      // Fallback to email-based name
+      const userName = userEmail ? userEmail.split('@')[0] : 'User';
+      setUser(prev => ({
+        ...prev,
+        name: userName,
+        email: userEmail || prev.email
+      }));
     }
   };
 
