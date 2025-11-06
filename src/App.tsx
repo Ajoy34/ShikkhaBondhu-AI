@@ -72,6 +72,12 @@ function App() {
       if (user) {
         setAuthUser(user);
         setIsLoggedIn(true);
+        // Update user display name immediately from email
+        setUser(prev => ({
+          ...prev,
+          name: user.email?.split('@')[0] || 'User',
+          email: user.email || prev.email
+        }));
         await loadUserProfile(user.id);
         setIsLoading(false);
       } else {
@@ -79,6 +85,17 @@ function App() {
         setIsLoggedIn(false);
         setIsLoading(false);
         setUserProfile(null);
+        // Reset to guest user
+        setUser({
+          name: 'Guest User',
+          email: 'guest@example.com',
+          level: 1,
+          points: 0,
+          badges: [],
+          impactScore: 0,
+          contributionRating: 0,
+          joinedDate: new Date().toISOString()
+        });
         setActiveSection('home');
       }
     });
@@ -137,9 +154,27 @@ function App() {
           contributionRating: 0, // Can be calculated from activity
           joinedDate: profile.created_at
         });
+      } else {
+        // Profile doesn't exist, use authUser data
+        console.log('📝 Profile not found, using auth user data');
+        if (authUser) {
+          setUser(prev => ({
+            ...prev,
+            name: authUser.email?.split('@')[0] || 'User',
+            email: authUser.email || prev.email
+          }));
+        }
       }
     } catch (error) {
       console.error('Load profile error:', error);
+      // Fallback to auth user data
+      if (authUser) {
+        setUser(prev => ({
+          ...prev,
+          name: authUser.email?.split('@')[0] || 'User',
+          email: authUser.email || prev.email
+        }));
+      }
     }
   };
 
