@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Database Tables</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #bee5eb;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .instructions {
+            background: #e3f2fd;
+            border-left: 5px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .instructions h3 {
+            color: #1976d2;
+            margin-top: 0;
+        }
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin: 8px 0;
+            color: #333;
+        }
+        pre {
+            background: #2d3748;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 12px;
+            max-height: 400px;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗄️ Create Database Tables</h1>
+        <p style="color: #666; font-size: 18px;">Your Supabase project needs the <strong>user_profiles</strong> table to work!</p>
+
+        <div class="status warning">
+            ⚠️ <strong>Current Status:</strong> 0 Tables in Database<br>
+            This is why you're getting "Invalid API key" errors!
+        </div>
+
+        <div class="instructions">
+            <h3>📋 What You Need To Do:</h3>
+            <p><strong>Follow these steps to create the database table:</strong></p>
+            
+            <div class="step">
+                <h3>Step 1: Go to Supabase SQL Editor</h3>
+                <ol>
+                    <li>Open: <a href="https://supabase.com/dashboard/project/pakkuvcnhleqpcaxtruw/sql/new" target="_blank" style="color: #2196f3; font-weight: bold;">https://supabase.com/dashboard/project/pakkuvcnhleqpcaxtruw/sql/new</a></li>
+                    <li>This will open the SQL Editor for your project</li>
+                </ol>
+            </div>
+
+            <div class="step">
+                <h3>Step 2: Copy the SQL Code</h3>
+                <p>Click the button below to copy the SQL code to your clipboard:</p>
+                <button onclick="copySQLToClipboard()" id="copyBtn">📋 Copy SQL Code</button>
+                <div id="copyStatus"></div>
+            </div>
+
+            <div class="step">
+                <h3>Step 3: Paste and Run</h3>
+                <ol>
+                    <li>In the Supabase SQL Editor, <strong>paste the SQL code</strong> you just copied</li>
+                    <li>Click the <strong>"Run"</strong> button (or press Ctrl+Enter)</li>
+                    <li>Wait for the success message: ✅ "Success. No rows returned"</li>
+                    <li>You're done! The table is created!</li>
+                </ol>
+            </div>
+
+            <div class="step">
+                <h3>Step 4: Test Your Application</h3>
+                <ol>
+                    <li>Go back to your website</li>
+                    <li>Click <strong>"Sign In"</strong> button</li>
+                    <li>Click <strong>"Sign Up"</strong> tab</li>
+                    <li>Create a new account with your <strong>full name</strong></li>
+                    <li>Your name will appear instead of "Guest User"! 🎉</li>
+                </ol>
+            </div>
+        </div>
+
+        <h3>📄 SQL Code Preview:</h3>
+        <p>Here's the code that will be copied (you don't need to read this, just copy and paste):</p>
+        <pre id="sqlCode">-- Create user_profiles table
+-- This is the ESSENTIAL table needed for authentication to work
+
+CREATE TABLE IF NOT EXISTS public.user_profiles (
+  id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  email text UNIQUE NOT NULL,
+  full_name text,
+  phone_number text,
+  avatar_url text,
+  
+  -- Gamification
+  points integer DEFAULT 0,
+  level integer DEFAULT 1,
+  impact_score integer DEFAULT 0,
+  badges jsonb DEFAULT '[]'::jsonb,
+  
+  -- Activity tracking
+  total_chat_messages integer DEFAULT 0,
+  total_courses_completed integer DEFAULT 0,
+  total_campaigns_created integer DEFAULT 0,
+  
+  -- Additional statistics
+  courses_created integer DEFAULT 0,
+  books_published integer DEFAULT 0,
+  people_helped integer DEFAULT 0,
+  rating numeric(3,1) DEFAULT 0.0,
+  
+  -- Metadata
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+-- Enable Row Level Security
+ALTER TABLE public.user_profiles ENABLE ROW LEVEL SECURITY;
+
+-- Allow users to read their own profile
+CREATE POLICY "Users can read own profile"
+  ON public.user_profiles FOR SELECT
+  USING (auth.uid() = id);
+
+-- Allow users to update their own profile
+CREATE POLICY "Users can update own profile"
+  ON public.user_profiles FOR UPDATE
+  USING (auth.uid() = id);
+
+-- Allow users to insert their own profile
+CREATE POLICY "Users can insert own profile"
+  ON public.user_profiles FOR INSERT
+  WITH CHECK (auth.uid() = id);
+
+-- Auto-create profile when user signs up
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.user_profiles (id, email, full_name, created_at)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email),
+    NEW.created_at
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger to auto-create profile
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_new_user();
+
+-- Grant permissions
+GRANT USAGE ON SCHEMA public TO anon, authenticated;
+GRANT ALL ON public.user_profiles TO authenticated;
+GRANT SELECT ON public.user_profiles TO anon;</pre>
+
+        <div class="status info">
+            💡 <strong>What This Does:</strong><br>
+            • Creates the <code>user_profiles</code> table to store user data<br>
+            • Sets up security policies (Row Level Security)<br>
+            • Creates a trigger to automatically create a profile when someone signs up<br>
+            • Grants necessary permissions<br>
+            <br>
+            After this, signup and login will work perfectly! ✅
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 10px;">
+            <h3 style="margin-top: 0;">🚀 Quick Links:</h3>
+            <ul style="font-size: 16px;">
+                <li><a href="https://supabase.com/dashboard/project/pakkuvcnhleqpcaxtruw/sql/new" target="_blank" style="color: #2196f3; font-weight: bold;">➡️ Open SQL Editor</a></li>
+                <li><a href="https://supabase.com/dashboard/project/pakkuvcnhleqpcaxtruw/editor" target="_blank" style="color: #2196f3; font-weight: bold;">➡️ View Tables (after creating)</a></li>
+                <li><a href="https://supabase.com/dashboard/project/pakkuvcnhleqpcaxtruw" target="_blank" style="color: #2196f3; font-weight: bold;">➡️ Project Dashboard</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function copySQLToClipboard() {
+            const sqlCode = document.getElementById('sqlCode').textContent;
+            navigator.clipboard.writeText(sqlCode).then(() => {
+                const status = document.getElementById('copyStatus');
+                status.innerHTML = '<div class="status success">✅ SQL Code Copied to Clipboard!</div>';
+                
+                const btn = document.getElementById('copyBtn');
+                btn.textContent = '✅ Copied!';
+                btn.style.background = '#28a745';
+                
+                setTimeout(() => {
+                    btn.textContent = '📋 Copy SQL Code';
+                    btn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                }, 2000);
+            }).catch(err => {
+                const status = document.getElementById('copyStatus');
+                status.innerHTML = '<div class="status error">❌ Copy failed. Please copy manually from the preview below.</div>';
+            });
+        }
+    </script>
+</body>
+</html>
