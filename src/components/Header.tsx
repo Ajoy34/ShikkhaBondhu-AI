@@ -187,18 +187,18 @@ const Header: React.FC<HeaderProps> = ({
               </>
             ) : (
               <>
-                {/* Sign In / Sign Up Buttons */}
-                <button
-                  onClick={() => setShowAuthModal(true)}
-                  className="px-5 py-2.5 text-indigo-600 font-semibold hover:bg-indigo-50 rounded-xl transition-all duration-200"
-                >
-                  <span className="font-bangla">লগইন</span> / Sign In
-                </button>
+                {/* Sign Up / Sign In Buttons */}
                 <button
                   onClick={() => setShowAuthModal(true)}
                   className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg"
                 >
-                  <span className="font-bangla">নিবন্ধন</span> / Sign Up
+                  Sign Up <span className="font-bangla">/ নিবন্ধন</span>
+                </button>
+                <button
+                  onClick={() => setShowAuthModal(true)}
+                  className="px-5 py-2.5 text-indigo-600 font-semibold hover:bg-indigo-50 rounded-xl transition-all duration-200"
+                >
+                  Sign In <span className="font-bangla">/ লগইন</span>
                 </button>
               </>
             )}
