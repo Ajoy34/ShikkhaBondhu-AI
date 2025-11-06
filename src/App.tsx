@@ -85,11 +85,26 @@ function App() {
         await loadUserProfile(user.id);
         
         // Check if we should redirect to dashboard after login
-        const shouldRedirectToDashboard = sessionStorage.getItem('redirectToDashboard');
-        if (shouldRedirectToDashboard === 'true') {
-          console.log('🔐 Redirect flag found, navigating to dashboard');
-          sessionStorage.removeItem('redirectToDashboard');
-          setActiveSection('dashboard');
+        const redirectDataStr = sessionStorage.getItem('redirectToDashboard');
+        console.log('🔐 Checking redirect flag:', redirectDataStr);
+        
+        if (redirectDataStr) {
+          try {
+            const redirectData = JSON.parse(redirectDataStr);
+            if (redirectData.redirect === true) {
+              console.log('🔐 ✅ Redirect flag found! Navigating to dashboard...');
+              sessionStorage.removeItem('redirectToDashboard');
+              setActiveSection('dashboard');
+              console.log('🔐 ✅ Active section set to dashboard!');
+            }
+          } catch (e) {
+            // Fallback for old format
+            if (redirectDataStr === 'true') {
+              console.log('🔐 ✅ Old format redirect flag found! Navigating to dashboard...');
+              sessionStorage.removeItem('redirectToDashboard');
+              setActiveSection('dashboard');
+            }
+          }
         } else if (activeSection === 'home') {
           // If on home page when user logs in, go to dashboard
           console.log('🔐 On home page, navigating to dashboard');
