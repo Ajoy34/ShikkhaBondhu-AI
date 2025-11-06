@@ -111,44 +111,75 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, setUser, authUser, user
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
-        {/* Debug Info Panel with Login Button */}
+        {/* Floating Login Button - Only shows for guests */}
         {user.name === 'Guest User' && (
-          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-4 border-yellow-400 rounded-xl p-6 mb-6 shadow-lg">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <h3 className="font-bold text-yellow-800 mb-3 text-xl flex items-center gap-2">
-                  🔍 Debug Info - You Are NOT Logged In!
-                </h3>
-                <div className="text-sm text-yellow-900 space-y-1 mb-4">
-                  <p><strong>User Name:</strong> {user.name}</p>
-                  <p><strong>User Email:</strong> {user.email}</p>
-                  <p><strong>Auth User ID:</strong> {authUser?.id || 'Not logged in'}</p>
-                  <p><strong>Auth User Email:</strong> {authUser?.email || 'N/A'}</p>
-                  <p><strong>Profile Loaded:</strong> {userProfile ? 'Yes' : 'No'}</p>
-                  {userProfile && (
-                    <>
-                      <p><strong>Profile Full Name:</strong> {userProfile.full_name || 'Not set'}</p>
-                      <p><strong>Profile Email:</strong> {userProfile.email}</p>
-                    </>
-                  )}
-                </div>
-                <div className="bg-yellow-100 border-l-4 border-yellow-600 p-4 rounded">
-                  <p className="font-bold text-yellow-800 mb-2">⚠️ ACTION REQUIRED:</p>
-                  <p className="text-yellow-900">
-                    You are viewing this page as a <strong>Guest</strong>. To see your real profile with your name and data:
-                  </p>
-                  <ol className="list-decimal list-inside mt-2 text-yellow-900 space-y-1">
-                    <li>Click the <strong className="text-indigo-600">"Sign In"</strong> button at the top right of the page</li>
-                    <li>Login with your email and password</li>
-                    <li>Your profile will automatically update with your real name and data</li>
-                  </ol>
-                </div>
+          <div className="fixed bottom-8 right-8 z-50">
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="bg-gradient-to-r from-red-600 to-pink-600 text-white px-8 py-4 rounded-full shadow-2xl hover:shadow-3xl transition-all transform hover:scale-110 animate-bounce font-bold text-lg flex items-center gap-3"
+              title="Scroll to top and click Sign In button"
+            >
+              <span className="text-2xl">👆</span>
+              <div className="text-left">
+                <div>Click Sign In Button</div>
+                <div className="text-xs opacity-90">At Top Right Corner ↗️</div>
               </div>
-            </div>
+            </button>
           </div>
         )}
 
-        {/* Profile Header */}
+        {/* Debug Info Panel with Login Button */}
+        {user.name === 'Guest User' && (
+          <>
+            {/* BIG BANNER - IMPOSSIBLE TO MISS */}
+            <div className="bg-gradient-to-r from-red-500 via-pink-500 to-purple-500 text-white p-8 rounded-2xl mb-6 shadow-2xl animate-pulse">
+              <div className="text-center">
+                <div className="text-6xl mb-4">🚨</div>
+                <h2 className="text-4xl font-bold mb-4">YOU ARE NOT LOGGED IN!</h2>
+                <p className="text-2xl mb-6">আপনি লগইন করেননি!</p>
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 mb-6">
+                  <p className="text-xl mb-4">To see your REAL profile with your NAME:</p>
+                  <ol className="text-left text-lg space-y-2 max-w-2xl mx-auto">
+                    <li>1️⃣ Look at the <strong>TOP RIGHT corner</strong> of this page</li>
+                    <li>2️⃣ Click the button that says <strong>"🔐 Sign In / লগইন করুন"</strong></li>
+                    <li>3️⃣ Enter your email and password, then click Login</li>
+                    <li>4️⃣ Your name will appear automatically!</li>
+                  </ol>
+                </div>
+                <div className="text-sm opacity-90">
+                  Don't have an account? Click "Sign Up" in the modal to create one!
+                </div>
+              </div>
+            </div>
+
+            {/* Detailed Debug Info */}
+            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border-4 border-yellow-400 rounded-xl p-6 mb-6 shadow-lg">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <h3 className="font-bold text-yellow-800 mb-3 text-xl flex items-center gap-2">
+                    🔍 Technical Debug Info
+                  </h3>
+                  <div className="text-sm text-yellow-900 space-y-1 mb-4">
+                    <p><strong>User Name:</strong> {user.name}</p>
+                    <p><strong>User Email:</strong> {user.email}</p>
+                    <p><strong>Auth User ID:</strong> {authUser?.id || 'Not logged in'}</p>
+                    <p><strong>Auth User Email:</strong> {authUser?.email || 'N/A'}</p>
+                    <p><strong>Profile Loaded:</strong> {userProfile ? 'Yes' : 'No'}</p>
+                    {userProfile && (
+                      <>
+                        <p><strong>Profile Full Name:</strong> {userProfile.full_name || 'Not set'}</p>
+                        <p><strong>Profile Email:</strong> {userProfile.email}</p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Profile Header (only show for logged in users) */}
+        {user.name !== 'Guest User' && (
         <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl p-8 text-white mb-8">
           <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
             {/* Profile Picture */}
@@ -357,7 +388,9 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, setUser, authUser, user
             </div>
           </div>
         </div>
+        )}
 
+        {/* Stats and Activity Grid - Always show */}
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-8">
