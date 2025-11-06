@@ -42,6 +42,18 @@ export interface UserProfile {
   total_campaigns_created: number;
   created_at: string;
   updated_at: string;
+  // Additional statistics fields
+  courses_created?: number;
+  books_published?: number;
+  campaigns_created?: number;
+  people_helped?: number;
+  rating?: number;
+  total_problems?: number;
+  last_year_problems?: number;
+  last_month_problems?: number;
+  max_streak?: number;
+  current_year_streak?: number;
+  current_month_streak?: number;
 }
 
 /**

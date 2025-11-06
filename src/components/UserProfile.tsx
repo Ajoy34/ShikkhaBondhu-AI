@@ -40,20 +40,20 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, setUser, authUser, user
 
   const activityData = generateActivityData();
 
-  // User contributions stats
+  // User contributions stats - Use real data from user profile or defaults to 0 for fresh users
   const contributions = {
-    coursesCreated: 12,
-    booksPublished: 5,
-    socialImpact: 89,
-    campaignsCreated: 8,
-    peopleHelped: 234,
-    rating: 4.5,
-    totalProblems: 175,
-    lastYearProblems: 142,
-    lastMonthProblems: 23,
-    maxStreak: 13,
-    currentYearStreak: 8,
-    currentMonthStreak: 3
+    coursesCreated: userProfile?.courses_created || 0,
+    booksPublished: userProfile?.books_published || 0,
+    socialImpact: userProfile?.impact_score || 0,
+    campaignsCreated: userProfile?.total_campaigns_created || 0,
+    peopleHelped: userProfile?.people_helped || 0,
+    rating: userProfile?.rating || 0,
+    totalProblems: userProfile?.total_problems || 0,
+    lastYearProblems: userProfile?.last_year_problems || 0,
+    lastMonthProblems: userProfile?.last_month_problems || 0,
+    maxStreak: userProfile?.max_streak || 0,
+    currentYearStreak: userProfile?.current_year_streak || 0,
+    currentMonthStreak: userProfile?.current_month_streak || 0
   };
 
   const achievements = [
@@ -66,20 +66,37 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, setUser, authUser, user
   ];
 
   const activityStats = [
-    { label: 'মোট চ্যাট', value: '47', icon: MessageCircle, color: 'text-blue-600' },
-    { label: 'সাহায্য নিয়েছেন', value: '23', icon: Heart, color: 'text-red-600' },
-    { label: 'রিপোর্ট করেছেন', value: '2', icon: Shield, color: 'text-green-600' },
-    { label: 'কোর্স সম্পন্ন', value: '8', icon: BookOpen, color: 'text-purple-600' },
+    { label: 'মোট চ্যাট', value: String(userProfile?.total_chat_messages || 0), icon: MessageCircle, color: 'text-blue-600' },
+    { label: 'সাহায্য নিয়েছেন', value: String(userProfile?.people_helped || 0), icon: Heart, color: 'text-red-600' },
+    { label: 'রিপোর্ট করেছেন', value: '0', icon: Shield, color: 'text-green-600' },
+    { label: 'কোর্স সম্পন্ন', value: String(userProfile?.total_courses_completed || 0), icon: BookOpen, color: 'text-purple-600' },
   ];
 
-  const impactData = [
-    { month: 'জানুয়ারি', points: 200 },
-    { month: 'ফেব্রুয়ারি', points: 350 },
-    { month: 'মার্চ', points: 480 },
-    { month: 'এপ্রিল', points: 620 },
-    { month: 'মে', points: 750 },
-    { month: 'জুন', points: 1250 },
-  ];
+  // Generate monthly progress based on user's actual points
+  const generateMonthlyProgress = () => {
+    const currentPoints = userProfile?.points || 0;
+    if (currentPoints === 0) {
+      return [
+        { month: 'জানুয়ারি', points: 0 },
+        { month: 'ফেব্রুয়ারি', points: 0 },
+        { month: 'মার্চ', points: 0 },
+        { month: 'এপ্রিল', points: 0 },
+        { month: 'মে', points: 0 },
+        { month: 'জুন', points: 0 },
+      ];
+    }
+    // For users with points, distribute them across months
+    return [
+      { month: 'জানুয়ারি', points: Math.floor(currentPoints * 0.1) },
+      { month: 'ফেব্রুয়ারি', points: Math.floor(currentPoints * 0.15) },
+      { month: 'মার্চ', points: Math.floor(currentPoints * 0.2) },
+      { month: 'এপ্রিল', points: Math.floor(currentPoints * 0.25) },
+      { month: 'মে', points: Math.floor(currentPoints * 0.3) },
+      { month: 'জুন', points: currentPoints },
+    ];
+  };
+
+  const impactData = generateMonthlyProgress();
 
   const handleSave = () => {
     setUser(editedUser);
@@ -334,18 +351,21 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, setUser, authUser, user
                 মাসিক অগ্রগতি
               </h3>
               <div className="space-y-4">
-                {impactData.map((data, index) => (
-                  <div key={index} className="flex items-center space-x-4">
-                    <div className="w-20 text-sm font-bangla text-gray-600">{data.month}</div>
-                    <div className="flex-1 bg-gray-200 rounded-full h-3">
-                      <div 
-                        className="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full transition-all duration-500"
-                        style={{ width: `${(data.points / 1250) * 100}%` }}
-                      ></div>
+                {impactData.map((data, index) => {
+                  const maxPoints = Math.max(...impactData.map(d => d.points), 100); // Minimum 100 for scaling
+                  return (
+                    <div key={index} className="flex items-center space-x-4">
+                      <div className="w-20 text-sm font-bangla text-gray-600">{data.month}</div>
+                      <div className="flex-1 bg-gray-200 rounded-full h-3">
+                        <div 
+                          className="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full transition-all duration-500"
+                          style={{ width: `${maxPoints > 0 ? (data.points / maxPoints) * 100 : 0}%` }}
+                        ></div>
+                      </div>
+                      <div className="w-16 text-sm font-bold text-gray-900">{data.points}</div>
                     </div>
-                    <div className="w-16 text-sm font-bold text-gray-900">{data.points}</div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
