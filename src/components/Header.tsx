@@ -155,7 +155,13 @@ const Header: React.FC<HeaderProps> = ({
                   >
                     <User className="w-5 h-5" />
                     <div className="hidden md:block text-left">
-                      <div className="text-xs font-medium leading-tight">{user.name}</div>
+                      <div className="text-xs font-medium leading-tight">
+                        {user.name}
+                        {/* Debug indicator */}
+                        {user.name === 'Guest User' && (
+                          <span className="ml-1 text-red-500" title="Not logged in or profile not loaded">⚠️</span>
+                        )}
+                      </div>
                       <div className="text-xs opacity-90">⭐ {user.contributionRating}/5</div>
                     </div>
                   </button>

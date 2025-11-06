@@ -111,6 +111,32 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, setUser, authUser, user
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
+        {/* Debug Info Panel - Remove this after testing */}
+        {user.name === 'Guest User' && (
+          <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-4 mb-6">
+            <h3 className="font-bold text-yellow-800 mb-2">🔍 Debug Info:</h3>
+            <div className="text-sm text-yellow-900 space-y-1">
+              <p><strong>User Name:</strong> {user.name}</p>
+              <p><strong>User Email:</strong> {user.email}</p>
+              <p><strong>Auth User ID:</strong> {authUser?.id || 'Not logged in'}</p>
+              <p><strong>Auth User Email:</strong> {authUser?.email || 'N/A'}</p>
+              <p><strong>Profile Loaded:</strong> {userProfile ? 'Yes' : 'No'}</p>
+              {userProfile && (
+                <>
+                  <p><strong>Profile Full Name:</strong> {userProfile.full_name || 'Not set'}</p>
+                  <p><strong>Profile Email:</strong> {userProfile.email}</p>
+                </>
+              )}
+              <p className="mt-2 text-yellow-700">
+                ⚠️ If you see "Guest User", either:<br/>
+                1. You're not logged in (click "Sign In" button)<br/>
+                2. Or your profile hasn't loaded from database<br/>
+                3. Open Console (F12) to see detailed logs
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Profile Header */}
         <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl p-8 text-white mb-8">
           <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
