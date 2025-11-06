@@ -123,10 +123,19 @@ function App() {
       clearTimeout(timeoutId);
       
       if (user) {
+        console.log('✅ User session found:', user.email);
         setAuthUser(user);
         setIsLoggedIn(true);
+        // Update user display name immediately from email
+        setUser(prev => ({
+          ...prev,
+          name: user.email?.split('@')[0] || 'User',
+          email: user.email || prev.email
+        }));
+        // Load full profile with email as fallback
         await loadUserProfile(user.id, user.email || undefined);
       } else {
+        console.log('❌ No user session found');
         setIsLoggedIn(false);
       }
     } catch (error) {
