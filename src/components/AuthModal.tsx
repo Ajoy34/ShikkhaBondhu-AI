@@ -201,12 +201,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
 
   const modalContent = (
     <div 
-      className="fixed top-0 left-0 right-0 bottom-0 bg-black/50 flex items-center justify-center p-4"
+      className="fixed top-0 left-0 right-0 bottom-0 bg-black/40 flex items-start justify-end p-0"
       style={{ 
         position: 'fixed',
         zIndex: 999999,
         margin: 0,
-        padding: '16px'
+        padding: 0
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget) {
@@ -215,33 +215,37 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
       }}
     >
       <div 
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-md"
+        className="bg-white h-full w-full max-w-md shadow-2xl overflow-y-auto"
         style={{ 
-          maxHeight: '90vh', 
+          width: '100%',
+          maxWidth: '450px',
+          height: '100vh',
           overflowY: 'auto',
           zIndex: 1000000,
-          position: 'relative'
+          position: 'relative',
+          animation: 'slideInRight 0.3s ease-out'
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-t-2xl relative">
+        <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white p-8 relative">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-lg transition-colors"
+            className="absolute top-6 right-6 p-2 hover:bg-white/20 rounded-full transition-colors"
+            aria-label="Close"
           >
-            <X className="w-5 h-5" />
+            <X className="w-6 h-6" />
           </button>
-          <h2 className="text-2xl font-bold mb-2">
+          <h2 className="text-3xl font-black mb-2 mt-2">
             {mode === 'login' ? 'লগইন করুন' : 'নিবন্ধন করুন'}
           </h2>
-          <p className="text-indigo-200 text-sm">
+          <p className="text-white/90 text-base">
             {mode === 'login' ? 'Welcome back! Log in to continue' : 'Create your account to get started'}
           </p>
         </div>
 
         {/* Content */}
-        <div className="p-6 max-h-[70vh] overflow-y-auto">
+        <div className="p-8">
           {/* Error/Success Messages */}
           {error && (
             <div className="mb-4 p-4 bg-red-50 border-2 border-red-200 rounded-lg text-red-700 text-sm font-semibold animate-shake">
@@ -256,44 +260,44 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
 
           {/* Login Form */}
           {mode === 'login' && (
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleLogin} className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-bold text-gray-700 mb-2">
                   ইমেইল (Email) *
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-indigo-400 w-5 h-5" />
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="your@email.com"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full pl-12 pr-4 py-4 text-base border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-bold text-gray-700 mb-2">
                   পাসওয়ার্ড (Password) *
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-indigo-400 w-5 h-5" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
                     placeholder="••••••••"
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full pl-12 pr-14 py-4 text-base border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-indigo-600 transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -303,11 +307,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mt-6"
               >
                 {isLoading ? (
                   <>
-                    <Loader className="w-5 h-5 animate-spin mr-2" />
+                    <Loader className="w-6 h-6 animate-spin mr-2" />
                     লগইন হচ্ছে...
                   </>
                 ) : (
