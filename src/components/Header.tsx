@@ -44,16 +44,11 @@ const Header: React.FC<HeaderProps> = ({
     if (onAuthChange) onAuthChange();
   };
 
-  const handleLoginSuccess = async () => {
-    console.log('📍 Header: Login successful, navigating to dashboard');
+  const handleLoginSuccess = () => {
+    console.log('Header: Login success - going to dashboard');
     setShowAuthModal(false);
-    // Let the auth listener handle state updates
-    if (onAuthChange) await onAuthChange();
-    // Then navigate
-    setTimeout(() => {
-      setIsLoggedIn(true);
-      setActiveSection('dashboard');
-    }, 300);
+    setIsLoggedIn(true);
+    setActiveSection('dashboard');
   };
 
   return (
@@ -187,18 +182,18 @@ const Header: React.FC<HeaderProps> = ({
               </>
             ) : (
               <>
-                {/* Sign Up / Sign In Buttons */}
+                {/* Sign Up and Sign In Buttons - CLEAR AND VISIBLE */}
                 <button
                   onClick={() => setShowAuthModal(true)}
-                  className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg"
+                  className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
-                  Sign Up <span className="font-bangla">/ নিবন্ধন</span>
+                  Sign Up
                 </button>
                 <button
                   onClick={() => setShowAuthModal(true)}
-                  className="px-5 py-2.5 text-indigo-600 font-semibold hover:bg-indigo-50 rounded-xl transition-all duration-200"
+                  className="px-6 py-3 bg-white text-indigo-600 font-bold border-2 border-indigo-600 rounded-lg hover:bg-indigo-50 transition-all duration-200 shadow-md hover:shadow-lg"
                 >
-                  Sign In <span className="font-bangla">/ লগইন</span>
+                  Sign In
                 </button>
               </>
             )}

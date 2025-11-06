@@ -33,16 +33,11 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
     }, 500);
   };
 
-  const handleLoginSuccess = async () => {
-    console.log('🌟 Hero: Login successful, navigating to dashboard');
+  const handleLoginSuccess = () => {
+    console.log('Hero: Login success - going to dashboard');
     setShowAuthModal(false);
-    // Let the auth listener handle state updates
-    if (onAuthSuccess) await onAuthSuccess();
-    // Then navigate
-    setTimeout(() => {
-      setIsLoggedIn(true);
-      setActiveSection('dashboard');
-    }, 300);
+    setIsLoggedIn(true);
+    setActiveSection('dashboard');
   };
 
   const features = [

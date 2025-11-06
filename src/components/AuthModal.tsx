@@ -151,13 +151,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
       console.log('✅ Login successful:', result);
       setSuccess('সফলভাবে লগইন হয়েছে! (Successfully logged in!)');
       
-      // Simply close modal and call success callback
-      setTimeout(() => {
-        onClose();
-        if (onLoginSuccess) {
-          onLoginSuccess();
-        }
-      }, 500);
+      // Close modal immediately and trigger callback
+      onClose();
+      if (onLoginSuccess) {
+        onLoginSuccess();
+      }
 
     } catch (err: any) {
       console.error('❌ Login error:', err);

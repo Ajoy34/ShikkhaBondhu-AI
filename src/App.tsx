@@ -48,47 +48,15 @@ function App() {
 
   // Check authentication on mount
   useEffect(() => {
-    // Show loading initially
     setIsLoading(true);
     
-    // FIRST: Check for redirect flag immediately
-    const redirectDataStr = sessionStorage.getItem('redirectToDashboard');
-    console.log('🚀 Mount - Checking redirect flag:', redirectDataStr);
-    
-    if (redirectDataStr) {
-      try {
-        const redirectData = JSON.parse(redirectDataStr);
-        if (redirectData.redirect === true) {
-          console.log('🚀 ✅ REDIRECT FLAG FOUND ON MOUNT! Setting activeSection to dashboard NOW');
-          console.log('🚀 🎯 IMMEDIATE NAVIGATION TO DASHBOARD!');
-          setActiveSection('dashboard');
-          sessionStorage.removeItem('redirectToDashboard');
-          
-          // Add visual confirmation
-          document.title = '✅ Dashboard - ShikkhaBondhu';
-        }
-      } catch (e) {
-        // Fallback for old format
-        if (redirectDataStr === 'true') {
-          console.log('🚀 ✅ OLD FORMAT REDIRECT FLAG! Setting activeSection to dashboard NOW');
-          setActiveSection('dashboard');
-          sessionStorage.removeItem('redirectToDashboard');
-          document.title = '✅ Dashboard - ShikkhaBondhu';
-        }
-      }
-    }
-    
-    // Check if diagnostics should be shown via URL parameter
+    // Check diagnostics
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('diagnostics') === 'true') {
       setShowDiagnostics(true);
     }
-    if (urlParams.get('test') === 'signup') {
-      // Show simple signup test
-      window.location.href = '/?test=signup';
-    }
     
-    // Keyboard shortcut: Ctrl+Shift+D to open diagnostics
+    // Keyboard shortcut
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.shiftKey && e.key === 'D') {
         e.preventDefault();
@@ -97,19 +65,15 @@ function App() {
     };
     
     window.addEventListener('keydown', handleKeyPress);
-    
-    // Check auth in background - don't block UI
     checkAuth();
 
     // Subscribe to auth changes
     const unsubscribe = onAuthStateChange(async (user) => {
-      console.log('🔐 Auth state changed! User:', user?.email || 'null');
       if (user) {
         setAuthUser(user);
         setIsLoggedIn(true);
         await loadUserProfile(user.id);
         setIsLoading(false);
-        console.log('🔐 User profile loaded, ready to show dashboard');
       } else {
         setAuthUser(null);
         setIsLoggedIn(false);
@@ -272,23 +236,16 @@ function App() {
           />
         )}
 
-        {/* Dashboard - show for 'home' when logged in OR 'dashboard' section */}
-        {(() => {
-          console.log('🎨 Dashboard render check:', {
-            activeSection,
-            isLoggedIn,
-            shouldShow: (activeSection === 'home' || activeSection === 'dashboard') && isLoggedIn
-          });
-          return ((activeSection === 'home' || activeSection === 'dashboard') && isLoggedIn) && (
-            <Dashboard
-              user={user}
-              setSelectedChatbot={setSelectedChatbot}
-              setIsChatOpen={setIsChatOpen}
-              setActiveSection={setActiveSection}
-              updateUserPoints={updateUserPoints}
-            />
-          );
-        })()}
+        {/* Dashboard - show when logged in and on home or dashboard section */}
+        {isLoggedIn && (activeSection === 'home' || activeSection === 'dashboard') && (
+          <Dashboard
+            user={user}
+            setSelectedChatbot={setSelectedChatbot}
+            setIsChatOpen={setIsChatOpen}
+            setActiveSection={setActiveSection}
+            updateUserPoints={updateUserPoints}
+          />
+        )}
         
         {/* Protected Sections */}
         {activeSection !== 'home' && activeSection !== 'dashboard' && renderProtectedSection(activeSection)}
