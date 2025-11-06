@@ -188,7 +188,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
 
   return (
     <div 
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[99999] flex items-center justify-center p-4 animate-fadeIn overflow-y-auto"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 animate-fadeIn"
+      style={{ overflowY: 'auto' }}
       onClick={(e) => {
         // Close modal if clicking on backdrop
         if (e.target === e.currentTarget) {
@@ -196,7 +197,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
         }
       }}
     >
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-8 relative animate-slideUp">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-auto relative animate-slideUp" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-t-2xl relative">
           <button
