@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Setup - ShikkhaBondhu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .status {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .steps {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .steps ol {
+            padding-left: 25px;
+        }
+        .steps li {
+            margin: 12px 0;
+            line-height: 1.6;
+            color: #333;
+        }
+        .steps code {
+            background: #2d3748;
+            color: #68d391;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .steps a {
+            color: #667eea;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .steps a:hover {
+            text-decoration: underline;
+        }
+        pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 15px 0;
+        }
+        .highlight {
+            background: #fef3c7;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        #progress {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗄️ Database Setup for ShikkhaBondhu</h1>
+        <p class="subtitle">Create the user_profiles table to enable login and signup</p>
+
+        <div class="section">
+            <h3>📋 What This Does</h3>
+            <p>This tool will create the <code>user_profiles</code> table in your Supabase database. This table is required for:</p>
+            <ul style="margin-left: 30px; margin-top: 10px; line-height: 1.8;">
+                <li>✅ User authentication (login/signup)</li>
+                <li>✅ Storing user full names</li>
+                <li>✅ Tracking user points and levels</li>
+                <li>✅ Managing user preferences</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>🚀 Quick Setup</h3>
+            <div class="steps">
+                <p><strong>Choose one of these methods:</strong></p>
+                
+                <h4 style="margin-top: 20px; color: #667eea;">Method 1: Automatic Setup (Recommended)</h4>
+                <ol>
+                    <li>Click the button below to automatically create the table</li>
+                    <li>Wait for the success message</li>
+                    <li>Try logging in on your site</li>
+                </ol>
+                <button onclick="autoSetup()" id="autoBtn">🚀 Automatic Setup</button>
+                
+                <h4 style="margin-top: 30px; color: #667eea;">Method 2: Manual Setup (via Supabase Dashboard)</h4>
+                <ol>
+                    <li>Go to <a href="https://supabase.com/dashboard/project/pakkuvcnhleqpcaxtruw/editor" target="_blank">Supabase SQL Editor</a></li>
+                    <li>Click on <strong>"New Query"</strong></li>
+                    <li>Copy the SQL code below and paste it</li>
+                    <li>Click <span class="highlight">RUN</span> button</li>
+                </ol>
+                <button onclick="copySql()">📋 Copy SQL Code</button>
+            </div>
+        </div>
+
+        <div id="progress">
+            <div class="spinner"></div>
+            <p>Setting up database...</p>
+        </div>
+
+        <div id="result"></div>
+
+        <div class="section">
+            <h3>💾 SQL Code</h3>
+            <p style="margin-bottom: 15px;">This is what will be created in your database:</p>
+            <pre id="sqlCode">-- Create user_profiles table
+CREATE TABLE IF NOT EXISTS user_profiles (
+  id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  email text UNIQUE NOT NULL,
+  full_name text,
+  phone_number text,
+  avatar_url text,
+  date_of_birth date,
+  gender text,
+  district text,
+  occupation text,
+  bio text,
+  
+  -- Verification
+  email_verified boolean DEFAULT false,
+  phone_verified boolean DEFAULT false,
+  
+  -- Gamification
+  points integer DEFAULT 0,
+  level integer DEFAULT 1,
+  impact_score integer DEFAULT 0,
+  badges jsonb DEFAULT '[]'::jsonb,
+  achievements jsonb DEFAULT '[]'::jsonb,
+  
+  -- Preferences
+  language text DEFAULT 'bn',
+  notification_preferences jsonb DEFAULT '{"email": true, "push": true}'::jsonb,
+  theme text DEFAULT 'light',
+  
+  -- Activity tracking
+  last_active_at timestamptz DEFAULT now(),
+  login_count integer DEFAULT 0,
+  total_chat_messages integer DEFAULT 0,
+  total_courses_completed integer DEFAULT 0,
+  total_campaigns_created integer DEFAULT 0,
+  
+  -- Statistics (for user profile display)
+  courses_created integer DEFAULT 0,
+  books_published integer DEFAULT 0,
+  campaigns_created integer DEFAULT 0,
+  people_helped integer DEFAULT 0,
+  rating numeric(3,2) DEFAULT 0,
+  total_problems integer DEFAULT 0,
+  last_year_problems integer DEFAULT 0,
+  last_month_problems integer DEFAULT 0,
+  max_streak integer DEFAULT 0,
+  current_year_streak integer DEFAULT 0,
+  current_month_streak integer DEFAULT 0,
+  
+  -- Metadata
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+-- Create trigger function to automatically create profile
+CREATE OR REPLACE FUNCTION handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO user_profiles (id, email, full_name)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email)
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create trigger on auth.users (if not exists)
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION handle_new_user();
+
+-- Enable Row Level Security
+ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+
+-- Create policies
+CREATE POLICY "Users can view own profile" 
+  ON user_profiles FOR SELECT 
+  USING (auth.uid() = id);
+
+CREATE POLICY "Users can update own profile" 
+  ON user_profiles FOR UPDATE 
+  USING (auth.uid() = id);</pre>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://pakkuvcnhleqpcaxtruw.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha2t1dmNuaGxlcXBjYXh0cnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxODA2OTksImV4cCI6MjA3Mjc1NjY5OX0.5MQrH7miN_tWIkOOUrb8mU7MZIYI4NP2SdALcqcZHdk';
+
+        function copySql() {
+            const sql = document.getElementById('sqlCode').textContent;
+            navigator.clipboard.writeText(sql).then(() => {
+                showResult('success', '✅ SQL code copied! Now paste it in Supabase SQL Editor and click RUN.');
+            }).catch(err => {
+                showResult('error', '❌ Failed to copy: ' + err.message);
+            });
+        }
+
+        async function autoSetup() {
+            const btn = document.getElementById('autoBtn');
+            const progress = document.getElementById('progress');
+            const result = document.getElementById('result');
+            
+            btn.disabled = true;
+            progress.style.display = 'block';
+            result.innerHTML = '';
+
+            try {
+                const sql = document.getElementById('sqlCode').textContent;
+                
+                // Execute SQL via REST API
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/exec_sql`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ query: sql })
+                });
+
+                progress.style.display = 'none';
+
+                if (response.ok || response.status === 404) {
+                    // 404 means the function doesn't exist, which is OK
+                    // We'll show manual instructions
+                    showResult('warning', 
+                        '⚠️ Automatic setup requires manual step first.<br><br>' +
+                        '<strong>Please use Method 2 (Manual Setup):</strong><br>' +
+                        '1. Click "📋 Copy SQL Code" button above<br>' +
+                        '2. Go to <a href="https://supabase.com/dashboard/project/pakkuvcnhleqpcaxtruw/editor" target="_blank">Supabase SQL Editor</a><br>' +
+                        '3. Paste the SQL and click RUN<br><br>' +
+                        'This only needs to be done once!'
+                    );
+                } else {
+                    const data = await response.json();
+                    throw new Error(data.message || 'Setup failed');
+                }
+            } catch (error) {
+                progress.style.display = 'none';
+                showResult('warning', 
+                    '⚠️ Please use Manual Setup method:<br><br>' +
+                    '1. Click "📋 Copy SQL Code" button<br>' +
+                    '2. Open <a href="https://supabase.com/dashboard/project/pakkuvcnhleqpcaxtruw/editor" target="_blank">Supabase SQL Editor</a><br>' +
+                    '3. Paste and click RUN<br><br>' +
+                    '<small>Error: ' + error.message + '</small>'
+                );
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        function showResult(type, message) {
+            const result = document.getElementById('result');
+            result.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+    </script>
+</body>
+</html>
