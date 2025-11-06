@@ -25,6 +25,18 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
     district: ''
   });
 
+  // Lock body scroll when modal is open
+  React.useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   // Clear errors when modal opens or mode changes
   React.useEffect(() => {
     if (isOpen) {
@@ -188,16 +200,19 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
 
   return (
     <div 
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 animate-fadeIn"
-      style={{ overflowY: 'auto' }}
+      className="fixed top-0 left-0 right-0 bottom-0 bg-black/70 backdrop-blur-md z-[99999] flex items-center justify-center p-4"
+      style={{ position: 'fixed', overflow: 'auto' }}
       onClick={(e) => {
-        // Close modal if clicking on backdrop
         if (e.target === e.currentTarget) {
           onClose();
         }
       }}
     >
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-auto relative animate-slideUp" onClick={(e) => e.stopPropagation()}>
+      <div 
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-md relative animate-slideUp"
+        style={{ maxHeight: '90vh', overflow: 'auto' }}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-t-2xl relative">
           <button

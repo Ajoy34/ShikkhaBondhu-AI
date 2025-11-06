@@ -105,7 +105,7 @@ const Hero: React.FC<HeroProps> = ({ setIsChatOpen, setIsLoggedIn, setActiveSect
   ];
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center py-20 overflow-hidden">
+    <section className="relative min-h-screen flex flex-col items-center justify-center py-20">
       {/* Animated Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-purple-50">
         <div className="absolute inset-0 opacity-30">
