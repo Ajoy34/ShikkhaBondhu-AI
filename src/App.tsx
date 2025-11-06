@@ -60,8 +60,12 @@ function App() {
         const redirectData = JSON.parse(redirectDataStr);
         if (redirectData.redirect === true) {
           console.log('🚀 ✅ REDIRECT FLAG FOUND ON MOUNT! Setting activeSection to dashboard NOW');
+          console.log('🚀 🎯 IMMEDIATE NAVIGATION TO DASHBOARD!');
           setActiveSection('dashboard');
           sessionStorage.removeItem('redirectToDashboard');
+          
+          // Add visual confirmation
+          document.title = '✅ Dashboard - ShikkhaBondhu';
         }
       } catch (e) {
         // Fallback for old format
@@ -69,6 +73,7 @@ function App() {
           console.log('🚀 ✅ OLD FORMAT REDIRECT FLAG! Setting activeSection to dashboard NOW');
           setActiveSection('dashboard');
           sessionStorage.removeItem('redirectToDashboard');
+          document.title = '✅ Dashboard - ShikkhaBondhu';
         }
       }
     }
@@ -100,25 +105,14 @@ function App() {
     const unsubscribe = onAuthStateChange(async (user) => {
       console.log('🔐 Auth state changed! User:', user?.email || 'null');
       if (user) {
-        console.log('🔐 User logged in, setting states...');
         setAuthUser(user);
         setIsLoggedIn(true);
-        setIsLoading(false); // Stop loading when auth completes
+        setIsLoading(false);
         await loadUserProfile(user.id);
-        
-        // Don't change activeSection here - let mount handle it
-        console.log('🔐 Current activeSection:', activeSection);
-        
-        // Only navigate to dashboard if still on home and no redirect flag was set
-        if (activeSection === 'home' && !sessionStorage.getItem('redirectToDashboard')) {
-          console.log('🔐 On home page, navigating to dashboard');
-          setActiveSection('dashboard');
-        }
       } else {
-        console.log('🔐 User logged out');
         setAuthUser(null);
         setIsLoggedIn(false);
-        setIsLoading(false); // Stop loading when auth check completes
+        setIsLoading(false);
         setUserProfile(null);
         setActiveSection('home');
       }

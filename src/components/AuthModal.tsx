@@ -149,22 +149,15 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
       });
 
       console.log('✅ Login successful:', result);
-
       setSuccess('সফলভাবে লগইন হয়েছে! (Successfully logged in!)');
       
-      // Store redirect flag with timestamp to force redirect
-      const redirectData = {
-        redirect: true,
-        timestamp: Date.now()
-      };
-      sessionStorage.setItem('redirectToDashboard', JSON.stringify(redirectData));
-      console.log('🔄 Stored redirect flag:', redirectData);
-      
+      // Simply close modal and call success callback
       setTimeout(() => {
-        console.log('🔄 Reloading page to show dashboard...');
-        // Add timestamp to force cache refresh
-        window.location.href = window.location.pathname + '?t=' + Date.now();
-      }, 1000);
+        onClose();
+        if (onLoginSuccess) {
+          onLoginSuccess();
+        }
+      }, 500);
 
     } catch (err: any) {
       console.error('❌ Login error:', err);

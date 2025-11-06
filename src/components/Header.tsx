@@ -45,14 +45,10 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   const handleLoginSuccess = () => {
-    // Set logged in state and navigate to dashboard after successful login
-    console.log('📍 Header.handleLoginSuccess called!');
-    console.log('📍 setIsLoggedIn function:', typeof setIsLoggedIn);
-    console.log('📍 Setting isLoggedIn = true');
+    console.log('📍 Header: Login successful, navigating to dashboard');
     setIsLoggedIn(true);
-    console.log('📍 Setting activeSection = dashboard');
     setActiveSection('dashboard');
-    console.log('📍 Calling onAuthChange');
+    setShowAuthModal(false);
     if (onAuthChange) onAuthChange();
   };
 
