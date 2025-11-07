@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   AlertCircle, Phone, Building, MapPin, FileText,
   Clock, CheckCircle, Search, Filter, Plus, X,
-  PhoneCall, MessageCircle, Shield, User, Calendar
+  PhoneCall, MessageCircle, Shield, User, Calendar, ArrowLeft
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { awardPoints, PointAction } from '../utils/pointsSystem';
@@ -51,9 +51,10 @@ interface ReportProgress {
 interface ReportSystemProps {
   user?: any;
   updateUserPoints?: (points: number) => void;
+  onBackToDashboard?: () => void;
 }
 
-const ReportSystem: React.FC<ReportSystemProps> = ({ user, updateUserPoints }) => {
+const ReportSystem: React.FC<ReportSystemProps> = ({ user, updateUserPoints, onBackToDashboard }) => {
   const [activeView, setActiveView] = useState<'report' | 'track' | 'organizations'>('report');
   const [showOrgRegistration, setShowOrgRegistration] = useState(false);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -248,6 +249,18 @@ const ReportSystem: React.FC<ReportSystemProps> = ({ user, updateUserPoints }) =
   return (
     <div className="py-16">
       <div className="container mx-auto px-4">
+        {/* Back to Dashboard Button */}
+        {onBackToDashboard && (
+          <button
+            onClick={onBackToDashboard}
+            className="flex items-center space-x-2 text-indigo-600 hover:text-indigo-700 mb-6 font-semibold transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back to Dashboard</span>
+            <span className="font-bangla">ড্যাশবোর্ডে ফিরুন</span>
+          </button>
+        )}
+
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 flex items-center justify-center">
             <Shield className="w-10 h-10 text-red-600 mr-3" />

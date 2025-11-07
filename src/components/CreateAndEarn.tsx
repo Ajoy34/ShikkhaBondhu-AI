@@ -37,7 +37,11 @@ interface BookChapter {
   content: string;
 }
 
-export default function CreateAndEarn() {
+interface CreateAndEarnProps {
+  onBackToDashboard?: () => void;
+}
+
+export default function CreateAndEarn({ onBackToDashboard }: CreateAndEarnProps) {
   const [contentType, setContentType] = useState<ContentType>(null);
   const [step, setStep] = useState<Step>('select');
 
@@ -234,7 +238,7 @@ export default function CreateAndEarn() {
               Create Another {contentType === 'course' ? 'Course' : 'Book'}
             </button>
             <button
-              onClick={() => {/* View dashboard */}}
+              onClick={onBackToDashboard}
               className="w-full bg-gray-100 text-gray-700 py-4 rounded-xl font-bold text-lg hover:bg-gray-200 transition-all duration-300"
             >
               View My Dashboard
@@ -718,6 +722,18 @@ export default function CreateAndEarn() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6">
       <div className="max-w-6xl mx-auto">
+        {/* Back to Dashboard Button */}
+        {onBackToDashboard && (
+          <button
+            onClick={onBackToDashboard}
+            className="flex items-center space-x-2 text-indigo-600 hover:text-indigo-700 mb-6 font-semibold transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back to Dashboard</span>
+            <span className="font-bangla">ড্যাশবোর্ডে ফিরুন</span>
+          </button>
+        )}
+
         {/* Header */}
         <div className="text-center mb-16 animate-fadeInUp">
           <div className="inline-flex items-center space-x-2 bg-white/80 backdrop-blur-sm border-2 border-indigo-200 px-6 py-3 rounded-full mb-6 shadow-lg">

@@ -272,13 +272,13 @@ function App() {
       case 'profile':
         return <UserProfile user={user} setUser={setUser} authUser={authUser} userProfile={userProfile} />;
       case 'library':
-        return <Library user={user} />;
+        return <Library user={user} onBackToDashboard={() => setActiveSection('dashboard')} />;
       case 'report':
-        return <ReportSystem user={user} updateUserPoints={updateUserPoints} />;
+        return <ReportSystem user={user} updateUserPoints={updateUserPoints} onBackToDashboard={() => setActiveSection('dashboard')} />;
       case 'factcheck':
-        return <FactCheck />;
+        return <FactCheck onBackToDashboard={() => setActiveSection('dashboard')} />;
       case 'createandearn':
-        return <CreateAndEarn />;
+        return <CreateAndEarn onBackToDashboard={() => setActiveSection('dashboard')} />;
       default:
         return null;
     }

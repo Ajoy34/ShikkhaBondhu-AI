@@ -1,11 +1,12 @@
 ﻿import React, { useState } from 'react';
-import { TrendingUp, Users, Star, BookOpen, Video, Play, Filter, Clock, Award, Search } from 'lucide-react';
+import { TrendingUp, Users, Star, BookOpen, Video, Play, Filter, Clock, Award, Search, ArrowLeft } from 'lucide-react';
 
 interface LibraryProps {
   user: any;
+  onBackToDashboard?: () => void;
 }
 
-const Library: React.FC<LibraryProps> = ({ user }) => {
+const Library: React.FC<LibraryProps> = ({ user, onBackToDashboard }) => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedType, setSelectedType] = useState<'courses' | 'books'>('courses');
 
@@ -187,6 +188,18 @@ const Library: React.FC<LibraryProps> = ({ user }) => {
     <section className="py-8 bg-gradient-to-br from-gray-50 via-white to-indigo-50 min-h-screen">
       <div className="container mx-auto px-4 max-w-7xl">
         
+        {/* Back to Dashboard Button */}
+        {onBackToDashboard && (
+          <button
+            onClick={onBackToDashboard}
+            className="flex items-center space-x-2 text-indigo-600 hover:text-indigo-700 mb-6 font-semibold transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back to Dashboard</span>
+            <span className="font-bangla">ড্যাশবোর্ডে ফিরুন</span>
+          </button>
+        )}
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-2">
