@@ -19,6 +19,184 @@ export interface FactCheckResult {
 }
 
 /**
+ * Try to fetch Facebook content using multiple methods
+ */
+async function fetchFacebookContent(url: string): Promise<string> {
+  console.log('📘 Attempting to fetch Facebook content...');
+  
+  try {
+    // Method 1: Try Facebook's oEmbed API (works for public posts)
+    const postId = extractFacebookPostId(url);
+    if (postId) {
+      try {
+        const oEmbedUrl = `https://www.facebook.com/plugins/post/oembed.json/?url=${encodeURIComponent(url)}`;
+        const response = await fetch(oEmbedUrl);
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('✅ Got Facebook oEmbed data:', data);
+          
+          return `Facebook Post Content:
+
+Author: ${data.author_name || 'Unknown'}
+Post URL: ${data.author_url || url}
+
+Content extracted from oEmbed:
+${data.html ? stripHtmlTags(data.html) : 'Content not available'}
+
+Note: This is a public Facebook post. The above content was extracted via Facebook's official API.`;
+        }
+      } catch (oEmbedError) {
+        console.warn('⚠️ oEmbed method failed:', oEmbedError);
+      }
+    }
+
+    // Method 2: Try to get Open Graph meta tags via proxy
+    try {
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+      const response = await fetch(proxyUrl);
+      
+      if (response.ok) {
+        const html = await response.text();
+        const metaTags = extractMetaTags(html);
+        
+        if (metaTags.title || metaTags.description) {
+          console.log('✅ Extracted Open Graph meta tags');
+          
+          return `Facebook Post Metadata:
+
+Title: ${metaTags.title || 'N/A'}
+Description: ${metaTags.description || 'N/A'}
+Site: ${metaTags.siteName || 'Facebook'}
+Type: ${metaTags.type || 'Social Media Post'}
+
+Image: ${metaTags.image ? 'Yes (image detected)' : 'No'}
+
+Note: This content was extracted from Facebook's meta tags. For full analysis, please provide the actual post text.`;
+        }
+      }
+    } catch (metaError) {
+      console.warn('⚠️ Meta tags extraction failed:', metaError);
+    }
+
+    // Method 3: Fallback - provide helpful guidance
+    return `Facebook Post Analysis Request
+
+URL: ${url}
+
+⚠️ Facebook Content Access Limitation:
+Due to Facebook's privacy settings and authentication requirements, the full content cannot be automatically accessed.
+
+📋 To get an accurate fact-check, please provide:
+1. The main text/claim from the post
+2. Any images or videos description
+3. When was it posted (if important)
+4. Who shared it (if relevant)
+
+💡 Quick Tip:
+- Take a screenshot and describe the content
+- Copy the post text and paste it in a new fact-check
+- Check if the post is public (must be viewable without login)
+
+The AI will still analyze patterns and provide guidance based on:
+✓ Common Facebook misinformation tactics
+✓ URL patterns and sharing behavior
+✓ Similar debunked claims from fact-checkers`;
+
+  } catch (error) {
+    console.error('❌ All Facebook content fetch methods failed:', error);
+    return `Unable to access Facebook post content.
+
+URL: ${url}
+
+Please copy and paste the post text here for fact-checking.`;
+  }
+}
+
+/**
+ * Extract Facebook post ID from URL
+ */
+function extractFacebookPostId(url: string): string | null {
+  const patterns = [
+    /facebook\.com\/.*\/posts\/(\d+)/,
+    /facebook\.com\/.*\/photos\/.*\/(\d+)/,
+    /facebook\.com\/photo\.php\?fbid=(\d+)/,
+    /facebook\.com\/permalink\.php\?story_fbid=(\d+)/,
+    /facebook\.com\/.*\/videos\/(\d+)/,
+    /fb\.watch\/([a-zA-Z0-9_-]+)/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) {
+      return match[1];
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Extract Open Graph and meta tags from HTML
+ */
+function extractMetaTags(html: string): {
+  title?: string;
+  description?: string;
+  image?: string;
+  siteName?: string;
+  type?: string;
+} {
+  const metaTags: any = {};
+
+  // Extract og:title
+  const titleMatch = html.match(/<meta[^>]*property=["']og:title["'][^>]*content=["']([^"']*)["']/i);
+  if (titleMatch) metaTags.title = decodeHtmlEntities(titleMatch[1]);
+
+  // Extract og:description
+  const descMatch = html.match(/<meta[^>]*property=["']og:description["'][^>]*content=["']([^"']*)["']/i);
+  if (descMatch) metaTags.description = decodeHtmlEntities(descMatch[1]);
+
+  // Extract og:image
+  const imageMatch = html.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']*)["']/i);
+  if (imageMatch) metaTags.image = imageMatch[1];
+
+  // Extract og:site_name
+  const siteMatch = html.match(/<meta[^>]*property=["']og:site_name["'][^>]*content=["']([^"']*)["']/i);
+  if (siteMatch) metaTags.siteName = siteMatch[1];
+
+  // Extract og:type
+  const typeMatch = html.match(/<meta[^>]*property=["']og:type["'][^>]*content=["']([^"']*)["']/i);
+  if (typeMatch) metaTags.type = typeMatch[1];
+
+  return metaTags;
+}
+
+/**
+ * Strip HTML tags from text
+ */
+function stripHtmlTags(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Decode HTML entities
+ */
+function decodeHtmlEntities(text: string): string {
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+}
+
+/**
  * Fetch content from URL using a CORS proxy
  */
 async function fetchURLContent(url: string): Promise<string> {
@@ -27,13 +205,19 @@ async function fetchURLContent(url: string): Promise<string> {
     
     // Special handling for social media URLs
     const urlLower = url.toLowerCase();
-    const isFacebook = urlLower.includes('facebook.com') || urlLower.includes('fb.com');
+    const isFacebook = urlLower.includes('facebook.com') || urlLower.includes('fb.com') || urlLower.includes('fb.watch');
     const isTwitter = urlLower.includes('twitter.com') || urlLower.includes('x.com');
     const isInstagram = urlLower.includes('instagram.com');
     
-    if (isFacebook || isTwitter || isInstagram) {
+    // Try Facebook-specific methods first
+    if (isFacebook) {
+      console.log('📘 Facebook URL detected - using specialized methods');
+      return await fetchFacebookContent(url);
+    }
+    
+    if (isTwitter || isInstagram) {
       console.log('⚠️ Social media URL detected - limited content access');
-      let platform = isFacebook ? 'Facebook' : isTwitter ? 'Twitter/X' : 'Instagram';
+      let platform = isTwitter ? 'Twitter/X' : 'Instagram';
       return `This is a ${platform} post. Due to privacy and authentication requirements, full content cannot be accessed directly. 
 
 URL: ${url}
