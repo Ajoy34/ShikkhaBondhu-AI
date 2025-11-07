@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🗄️ Database Setup - REQUIRED!</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+    .header p {
+      font-size: 1.2em;
+      opacity: 0.95;
+    }
+    .content {
+      padding: 40px;
+    }
+    .warning {
+      background: #fff3cd;
+      border-left: 6px solid #ffc107;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 8px;
+    }
+    .warning h3 {
+      color: #856404;
+      margin-bottom: 10px;
+      font-size: 1.3em;
+    }
+    .warning p {
+      color: #856404;
+      line-height: 1.6;
+    }
+    .steps {
+      counter-reset: step-counter;
+    }
+    .step {
+      margin-bottom: 30px;
+      padding-left: 60px;
+      position: relative;
+    }
+    .step::before {
+      counter-increment: step-counter;
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+    .step h3 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 1.3em;
+    }
+    .step p {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+    .url {
+      background: #e8f5e9;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      color: #2e7d32;
+      margin: 10px 0;
+      word-break: break-all;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .url:hover {
+      background: #c8e6c9;
+    }
+    .sql-box {
+      background: #f5f5f5;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      position: relative;
+    }
+    .sql-box pre {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      color: #333;
+      line-height: 1.4;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+    }
+    .copy-btn:active {
+      transform: translateY(0);
+    }
+    .success {
+      background: #d4edda;
+      border-left: 6px solid #28a745;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+    .success h4 {
+      color: #155724;
+      margin-bottom: 10px;
+    }
+    .success p {
+      color: #155724;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      margin: 30px 0;
+    }
+    .btn {
+      flex: 1;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      text-align: center;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+    .btn-secondary {
+      background: #28a745;
+      color: white;
+    }
+    .btn-secondary:hover {
+      background: #218838;
+      transform: translateY(-2px);
+    }
+    .highlight {
+      background: yellow;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🗄️ Database Setup Guide</h1>
+      <p>CRITICAL: You MUST complete this before login will work!</p>
+    </div>
+
+    <div class="content">
+      <div class="warning">
+        <h3>⚠️ Why You're Seeing This</h3>
+        <p><strong>Your database table doesn't exist yet!</strong></p>
+        <p>Without the <code>user_profiles</code> table, your login will fail and your name won't show. This is a ONE-TIME setup that takes 2 minutes.</p>
+      </div>
+
+      <div class="action-buttons">
+        <a href="https://supabase.com/dashboard/project/pakkuvcnhleqpcaxtruw/editor" target="_blank" class="btn btn-primary">
+          🚀 Open Supabase Dashboard
+        </a>
+        <button onclick="runDiagnostic()" class="btn btn-secondary">
+          🔍 Test My Database
+        </button>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <h3>Go to Supabase SQL Editor</h3>
+          <p>Click the button above or manually go to:</p>
+          <div class="url" onclick="copyUrl()">
+            https://supabase.com/dashboard/project/pakkuvcnhleqpcaxtruw/editor
+          </div>
+          <p>On the left sidebar, click <span class="highlight">SQL Editor</span></p>
+        </div>
+
+        <div class="step">
+          <h3>Create a New Query</h3>
+          <p>Click the <span class="highlight">+ New Query</span> button at the top right</p>
+        </div>
+
+        <div class="step">
+          <h3>Copy and Paste the SQL</h3>
+          <p>Click the "Copy SQL" button below, then paste it into the editor:</p>
+          
+          <div class="sql-box">
+            <button class="copy-btn" onclick="copySQL()">📋 Copy SQL</button>
+            <pre id="sqlCode">-- Create user_profiles table
+CREATE TABLE IF NOT EXISTS public.user_profiles (
+  id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  email text UNIQUE NOT NULL,
+  full_name text,
+  phone_number text,
+  avatar_url text,
+  date_of_birth date,
+  gender text,
+  district text,
+  occupation text,
+  bio text,
+  email_verified boolean DEFAULT false,
+  phone_verified boolean DEFAULT false,
+  points integer DEFAULT 0,
+  level integer DEFAULT 1,
+  impact_score integer DEFAULT 0,
+  badges jsonb DEFAULT '[]'::jsonb,
+  achievements jsonb DEFAULT '[]'::jsonb,
+  language text DEFAULT 'bn',
+  notification_preferences jsonb DEFAULT '{}'::jsonb,
+  theme text DEFAULT 'light',
+  last_active_at timestamptz DEFAULT now(),
+  login_count integer DEFAULT 0,
+  total_chat_messages integer DEFAULT 0,
+  total_courses_completed integer DEFAULT 0,
+  total_campaigns_created integer DEFAULT 0,
+  courses_created integer DEFAULT 0,
+  books_published integer DEFAULT 0,
+  campaigns_created integer DEFAULT 0,
+  people_helped integer DEFAULT 0,
+  rating numeric(3,2) DEFAULT 0,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+-- Create trigger function
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  INSERT INTO public.user_profiles (id, email, full_name)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'full_name', split_part(NEW.email, '@', 1))
+  );
+  RETURN NEW;
+END;
+$$;
+
+-- Create trigger
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION public.handle_new_user();
+
+-- Grant permissions
+GRANT EXECUTE ON FUNCTION public.handle_new_user() TO anon, authenticated;</pre>
+          </div>
+        </div>
+
+        <div class="step">
+          <h3>Run the SQL</h3>
+          <p>Click the <span class="highlight">Run</span> button (or press Ctrl+Enter)</p>
+        </div>
+
+        <div class="step">
+          <h3>Verify Success</h3>
+          <div class="success">
+            <h4>✅ You should see:</h4>
+            <p><strong>"Success. No rows returned"</strong></p>
+          </div>
+          <p>If you see this message, your database is ready! 🎉</p>
+        </div>
+
+        <div class="step">
+          <h3>Test Everything</h3>
+          <p>Click the "Test My Database" button above to verify everything works!</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function copyUrl() {
+      const url = 'https://supabase.com/dashboard/project/pakkuvcnhleqpcaxtruw/editor';
+      navigator.clipboard.writeText(url).then(() => {
+        alert('✅ URL copied to clipboard!');
+      });
+    }
+
+    function copySQL() {
+      const sql = document.getElementById('sqlCode').textContent;
+      navigator.clipboard.writeText(sql).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => {
+          btn.textContent = '📋 Copy SQL';
+        }, 2000);
+      });
+    }
+
+    function runDiagnostic() {
+      window.open('/test-everything.html', '_blank');
+    }
+  </script>
+</body>
+</html>
