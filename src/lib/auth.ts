@@ -180,32 +180,26 @@ export async function signIn(data: SignInData) {
 
     console.log('✅ Direct API Login Success:', result);
 
-    // Manually store the session tokens in localStorage
-    // This is what Supabase client would do internally
-    console.log('🔄 Storing session tokens in localStorage...');
-    const sessionData = {
+    // Store the FULL session object that Supabase expects
+    console.log('🔄 Storing session in localStorage...');
+    const session = {
       access_token: result.access_token,
-      refresh_token: result.refresh_token,
-      expires_at: result.expires_at,
+      token_type: result.token_type || 'bearer',
       expires_in: result.expires_in,
-      token_type: result.token_type,
+      expires_at: result.expires_at,
+      refresh_token: result.refresh_token,
       user: result.user
     };
     
-    localStorage.setItem('sb-pakkuvcnhleqpcaxtruw-auth-token', JSON.stringify(sessionData));
-    console.log('✅ Session tokens stored in localStorage');
+    // Store in the exact format Supabase expects
+    localStorage.setItem('sb-pakkuvcnhleqpcaxtruw-auth-token', JSON.stringify(session));
+    console.log('✅ Session stored successfully');
+    console.log('🔄 Reloading page to apply session...');
     
-    // Force Supabase to recognize the new session by calling setSession with the tokens
-    // But we need to wait a moment for localStorage to be ready
-    console.log('🔄 Notifying Supabase client of new session...');
-    setTimeout(async () => {
-      try {
-        await supabase.auth.refreshSession({ refresh_token: result.refresh_token });
-        console.log('✅ Supabase session refreshed successfully');
-      } catch (error) {
-        console.error('⚠️ Session refresh failed:', error);
-        // Not critical, the session is already in localStorage
-      }
+    // Reload the page to let Supabase client pick up the session naturally
+    // This is the cleanest way to ensure proper session initialization
+    setTimeout(() => {
+      window.location.reload();
     }, 100);
 
     return { user: result.user, session: result };
