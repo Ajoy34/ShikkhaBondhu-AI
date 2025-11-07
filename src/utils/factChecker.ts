@@ -26,90 +26,146 @@ async function fetchFacebookContent(url: string): Promise<string> {
   
   try {
     // Method 1: Try Facebook's oEmbed API (works for public posts)
-    const postId = extractFacebookPostId(url);
-    if (postId) {
-      try {
-        const oEmbedUrl = `https://www.facebook.com/plugins/post/oembed.json/?url=${encodeURIComponent(url)}`;
-        const response = await fetch(oEmbedUrl);
-        
-        if (response.ok) {
-          const data = await response.json();
-          console.log('✅ Got Facebook oEmbed data:', data);
-          
-          return `Facebook Post Content:
-
-Author: ${data.author_name || 'Unknown'}
-Post URL: ${data.author_url || url}
-
-Content extracted from oEmbed:
-${data.html ? stripHtmlTags(data.html) : 'Content not available'}
-
-Note: This is a public Facebook post. The above content was extracted via Facebook's official API.`;
-        }
-      } catch (oEmbedError) {
-        console.warn('⚠️ oEmbed method failed:', oEmbedError);
-      }
-    }
-
-    // Method 2: Try to get Open Graph meta tags via proxy
+    // This is the most reliable method for public Facebook content
     try {
-      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-      const response = await fetch(proxyUrl);
+      console.log('🔵 Trying Facebook oEmbed API...');
+      const oEmbedUrl = `https://www.facebook.com/plugins/post/oembed.json/?url=${encodeURIComponent(url)}&maxwidth=500`;
+      const response = await fetch(oEmbedUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
       
       if (response.ok) {
-        const html = await response.text();
-        const metaTags = extractMetaTags(html);
+        const data = await response.json();
+        console.log('✅ Got Facebook oEmbed data:', data);
         
-        if (metaTags.title || metaTags.description) {
-          console.log('✅ Extracted Open Graph meta tags');
+        // Extract text content from HTML
+        let textContent = '';
+        if (data.html) {
+          textContent = stripHtmlTags(data.html);
+        }
+        
+        return `Facebook Post Content (via Official API):
+
+Author: ${data.author_name || 'Unknown'}
+Author URL: ${data.author_url || 'N/A'}
+Provider: ${data.provider_name || 'Facebook'}
+
+Content Preview:
+${textContent || 'Content not available in preview'}
+
+Width: ${data.width || 'N/A'}
+Height: ${data.height || 'N/A'}
+
+Note: This is a public Facebook post. Content was extracted via Facebook's official oEmbed API.
+The AI will analyze based on the preview content and known misinformation patterns.`;
+      } else {
+        console.warn('⚠️ oEmbed API returned:', response.status, response.statusText);
+      }
+    } catch (oEmbedError: any) {
+      console.warn('⚠️ oEmbed method failed:', oEmbedError.message);
+    }
+
+    // Method 2: Try multiple CORS proxies with better error handling
+    const proxies = [
+      `https://corsproxy.io/?${encodeURIComponent(url)}`,
+      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+      `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(url)}`,
+    ];
+
+    for (const proxyUrl of proxies) {
+      try {
+        console.log('🔵 Trying proxy:', proxyUrl.split('?')[0]);
+        const response = await fetch(proxyUrl, {
+          method: 'GET',
+          headers: {
+            'Accept': 'text/html',
+          },
+          signal: AbortSignal.timeout(10000), // 10 second timeout
+        });
+        
+        if (response.ok) {
+          const html = await response.text();
+          const metaTags = extractMetaTags(html);
           
-          return `Facebook Post Metadata:
+          if (metaTags.title || metaTags.description) {
+            console.log('✅ Extracted Open Graph meta tags via proxy');
+            
+            return `Facebook Post Metadata:
 
 Title: ${metaTags.title || 'N/A'}
 Description: ${metaTags.description || 'N/A'}
 Site: ${metaTags.siteName || 'Facebook'}
 Type: ${metaTags.type || 'Social Media Post'}
+Image: ${metaTags.image ? 'Yes (image attached)' : 'No'}
 
-Image: ${metaTags.image ? 'Yes (image detected)' : 'No'}
+URL: ${url}
 
-Note: This content was extracted from Facebook's meta tags. For full analysis, please provide the actual post text.`;
+Note: Metadata extracted from Facebook's Open Graph tags. 
+For complete fact-checking, please provide the full post text or main claims.`;
+          }
         }
+      } catch (proxyError: any) {
+        console.warn('⚠️ Proxy failed:', proxyError.message);
+        continue;
       }
-    } catch (metaError) {
-      console.warn('⚠️ Meta tags extraction failed:', metaError);
     }
 
-    // Method 3: Fallback - provide helpful guidance
+    // Method 3: Extract post ID and provide guidance
+    const postId = extractFacebookPostId(url);
+    
     return `Facebook Post Analysis Request
 
 URL: ${url}
+${postId ? `Post ID: ${postId}` : ''}
 
 ⚠️ Facebook Content Access Limitation:
-Due to Facebook's privacy settings and authentication requirements, the full content cannot be automatically accessed.
+Due to Facebook's privacy settings and CORS restrictions, the full content cannot be automatically accessed.
 
-📋 To get an accurate fact-check, please provide:
-1. The main text/claim from the post
-2. Any images or videos description
-3. When was it posted (if important)
-4. Who shared it (if relevant)
-
-💡 Quick Tip:
-- Take a screenshot and describe the content
-- Copy the post text and paste it in a new fact-check
-- Check if the post is public (must be viewable without login)
-
-The AI will still analyze patterns and provide guidance based on:
-✓ Common Facebook misinformation tactics
+🎯 What the AI can analyze WITHOUT the content:
 ✓ URL patterns and sharing behavior
-✓ Similar debunked claims from fact-checkers`;
+✓ Common Facebook misinformation tactics
+✓ Similar claims that have been debunked
+✓ Red flags in post structure
 
-  } catch (error) {
+📋 For ACCURATE fact-checking, please provide:
+1. 📝 The main text/claim from the post (copy-paste)
+2. 🖼️ Description of any images or videos
+3. 📅 When it was posted (if time-sensitive)
+4. 👤 Who shared it (public figure, page, etc.)
+5. 💬 Number of shares/reactions (if viral)
+
+💡 Pro Tips:
+• Take a screenshot and describe the content
+• Copy the entire post text
+• Note if it's from a verified page
+• Check if similar posts are spreading
+
+🔍 The AI will analyze based on:
+✓ Common misinformation patterns on Facebook
+✓ Bangladesh-specific fake news trends
+✓ Fact-checking databases and verified sources
+✓ Scientific consensus and official statements
+
+📱 Alternative: Use Facebook's "Report False News" feature if this is harmful misinformation.`;
+
+  } catch (error: any) {
     console.error('❌ All Facebook content fetch methods failed:', error);
-    return `Unable to access Facebook post content.
+    return `Unable to access Facebook post content automatically.
 
 URL: ${url}
 
-Please copy and paste the post text here for fact-checking.`;
+Reason: ${error.message || 'Network or privacy restrictions'}
+
+🔄 Next Steps:
+1. Verify the post is PUBLIC (not private/friends-only)
+2. Copy the post text manually
+3. Paste it here for AI analysis
+4. Include any important context
+
+The AI can still help identify misinformation patterns!`;
   }
 }
 
@@ -231,27 +287,35 @@ Note: ${platform} posts often require login to view. The AI will analyze based o
 
     // Try multiple CORS proxies for regular websites
     const proxies = [
-      `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
       `https://corsproxy.io/?${encodeURIComponent(url)}`,
+      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+      `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(url)}`,
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
     ];
 
     let content = '';
+    let successfulProxy = '';
     for (const proxyUrl of proxies) {
       try {
+        console.log('🔵 Trying proxy:', proxyUrl.split('?')[0]);
         const response = await fetch(proxyUrl, {
           method: 'GET',
           headers: {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
           },
+          signal: AbortSignal.timeout(15000), // 15 second timeout per proxy
         });
 
         if (response.ok) {
           content = await response.text();
-          console.log('✅ Content fetched successfully via proxy');
+          successfulProxy = proxyUrl.split('?')[0];
+          console.log('✅ Content fetched successfully via:', successfulProxy);
           break;
+        } else {
+          console.warn(`⚠️ Proxy returned ${response.status}: ${response.statusText}`);
         }
-      } catch (proxyError) {
-        console.warn('⚠️ Proxy failed, trying next...', proxyError);
+      } catch (proxyError: any) {
+        console.warn('⚠️ Proxy failed:', proxyError.message);
         continue;
       }
     }
