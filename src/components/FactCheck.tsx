@@ -363,6 +363,27 @@ export default function FactCheck({ onBackToDashboard }: FactCheckProps) {
           </button>
         </div>
 
+        {/* Pro Tip for Social Media */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-6 mb-8">
+          <div className="flex items-start space-x-3">
+            <div className="bg-blue-600 text-white p-2 rounded-lg">
+              <Facebook className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900 mb-1">💡 Pro Tip: Fact-Checking Social Media Posts</h3>
+              <p className="text-sm text-gray-700 mb-2">
+                <span className="font-bangla font-semibold">সোশ্যাল মিডিয়া পোস্ট যাচাই করার টিপস:</span>
+              </p>
+              <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
+                <li>Facebook/Instagram posts may require login - AI will provide guidance</li>
+                <li>For best results with social media: Copy the post text and paste it along with the URL</li>
+                <li className="font-bangla">পোস্টের লেখা কপি করে URL এর সাথে দিলে ভালো ফলাফল পাবেন</li>
+                <li>News articles and blogs work best - full content analysis possible!</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
         {/* Features */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-2xl p-6 shadow-lg">
