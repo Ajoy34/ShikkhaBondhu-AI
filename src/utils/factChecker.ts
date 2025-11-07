@@ -29,7 +29,7 @@ async function fetchFacebookContent(url: string): Promise<string> {
     // This is the most reliable method for public Facebook content
     try {
       console.log('🔵 Trying Facebook oEmbed API...');
-      const oEmbedUrl = `https://www.facebook.com/plugins/post/oembed.json/?url=${encodeURIComponent(url)}&maxwidth=500`;
+      const oEmbedUrl = `https://www.facebook.com/plugins/post/oembed.json/?url=${encodeURIComponent(url)}&maxwidth=500&omitscript=true`;
       const response = await fetch(oEmbedUrl, {
         method: 'GET',
         headers: {
@@ -60,7 +60,7 @@ Width: ${data.width || 'N/A'}
 Height: ${data.height || 'N/A'}
 
 Note: This is a public Facebook post. Content was extracted via Facebook's official oEmbed API.
-The AI will analyze based on the preview content and known misinformation patterns.`;
+The AI will analyze this content for accuracy and misinformation.`;
       } else {
         console.warn('⚠️ oEmbed API returned:', response.status, response.statusText);
       }
@@ -68,7 +68,51 @@ The AI will analyze based on the preview content and known misinformation patter
       console.warn('⚠️ oEmbed method failed:', oEmbedError.message);
     }
 
-    // Method 2: Try multiple CORS proxies with better error handling
+    // Method 2: Try to load Facebook's mobile version (lighter, less restricted)
+    try {
+      console.log('🔵 Trying Facebook mobile version...');
+      const mobileUrl = url.replace('www.facebook.com', 'm.facebook.com').replace('facebook.com', 'm.facebook.com');
+      const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(mobileUrl)}`;
+      
+      const response = await fetch(proxyUrl, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36',
+          'Accept': 'text/html',
+        },
+        signal: AbortSignal.timeout(15000),
+      });
+      
+      if (response.ok) {
+        const html = await response.text();
+        const metaTags = extractMetaTags(html);
+        
+        // Try to extract post content from mobile HTML
+        let postContent = '';
+        const contentMatch = html.match(/<div[^>]*data-ft[^>]*>(.*?)<\/div>/s);
+        if (contentMatch) {
+          postContent = stripHtmlTags(contentMatch[1]);
+        }
+        
+        if (metaTags.title || metaTags.description || postContent) {
+          console.log('✅ Extracted content from Facebook mobile');
+          
+          return `Facebook Post Content (Mobile Version):
+
+${postContent ? `Post Text:\n${postContent.substring(0, 500)}\n\n` : ''}Title: ${metaTags.title || 'N/A'}
+Description: ${metaTags.description || 'N/A'}
+Image: ${metaTags.image ? 'Yes (image attached)' : 'No'}
+
+URL: ${url}
+
+Note: Content extracted from Facebook's mobile site. The AI will analyze this for fact-checking.`;
+        }
+      }
+    } catch (mobileError: any) {
+      console.warn('⚠️ Mobile version failed:', mobileError.message);
+    }
+
+    // Method 3: Try multiple CORS proxies with desktop site
     const proxies = [
       `https://corsproxy.io/?${encodeURIComponent(url)}`,
       `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
@@ -82,8 +126,9 @@ The AI will analyze based on the preview content and known misinformation patter
           method: 'GET',
           headers: {
             'Accept': 'text/html',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
           },
-          signal: AbortSignal.timeout(10000), // 10 second timeout
+          signal: AbortSignal.timeout(15000),
         });
         
         if (response.ok) {
@@ -104,7 +149,7 @@ Image: ${metaTags.image ? 'Yes (image attached)' : 'No'}
 URL: ${url}
 
 Note: Metadata extracted from Facebook's Open Graph tags. 
-For complete fact-checking, please provide the full post text or main claims.`;
+The AI can analyze this and cross-reference with fact-checking databases.`;
           }
         }
       } catch (proxyError: any) {
@@ -113,7 +158,7 @@ For complete fact-checking, please provide the full post text or main claims.`;
       }
     }
 
-    // Method 3: Extract post ID and provide guidance
+    // Method 4: Ask user to provide content (most reliable for private posts)
     const postId = extractFacebookPostId(url);
     
     return `Facebook Post Analysis Request
@@ -121,35 +166,39 @@ For complete fact-checking, please provide the full post text or main claims.`;
 URL: ${url}
 ${postId ? `Post ID: ${postId}` : ''}
 
-⚠️ Facebook Content Access Limitation:
-Due to Facebook's privacy settings and CORS restrictions, the full content cannot be automatically accessed.
+📱 The post appears to be accessible, but automated fetching was blocked.
 
-🎯 What the AI can analyze WITHOUT the content:
+🎯 Two Options for Accurate Fact-Checking:
+
+OPTION 1 - Quick Check (Copy the text):
+📝 Copy the main claim/text from the Facebook post
+📝 Paste it in a new fact-check along with this URL
+📝 AI will analyze with full context
+
+OPTION 2 - What AI Can Analyze Now:
 ✓ URL patterns and sharing behavior
-✓ Common Facebook misinformation tactics
-✓ Similar claims that have been debunked
+✓ Common Facebook misinformation tactics  
+✓ Similar claims from fact-checking databases
 ✓ Red flags in post structure
 
-📋 For ACCURATE fact-checking, please provide:
-1. 📝 The main text/claim from the post (copy-paste)
-2. 🖼️ Description of any images or videos
-3. 📅 When it was posted (if time-sensitive)
-4. 👤 Who shared it (public figure, page, etc.)
-5. 💬 Number of shares/reactions (if viral)
+� Why Google Shows It But We Can't:
+• Google has special access to Facebook data
+• CORS (browser security) blocks direct access
+• Facebook requires authentication for API access
+• Mobile/desktop versions have different restrictions
 
-💡 Pro Tips:
-• Take a screenshot and describe the content
-• Copy the entire post text
-• Note if it's from a verified page
-• Check if similar posts are spreading
+📋 For BEST results, please provide:
+1. 📝 Main text or claim from the post
+2. 🖼️ Description of images/videos (if any)
+3. 👤 Who posted it (page, person, group)
+4. 📅 How old is the post
+5. 💬 Share count (if viral)
 
-🔍 The AI will analyze based on:
-✓ Common misinformation patterns on Facebook
-✓ Bangladesh-specific fake news trends
-✓ Fact-checking databases and verified sources
-✓ Scientific consensus and official statements
-
-📱 Alternative: Use Facebook's "Report False News" feature if this is harmful misinformation.`;
+The AI will still provide analysis based on:
+✓ Common misinformation patterns
+✓ Fact-checking databases
+✓ Scientific consensus
+✓ Bangladesh-specific fake news trends`;
 
   } catch (error: any) {
     console.error('❌ All Facebook content fetch methods failed:', error);
@@ -157,15 +206,15 @@ Due to Facebook's privacy settings and CORS restrictions, the full content canno
 
 URL: ${url}
 
-Reason: ${error.message || 'Network or privacy restrictions'}
+The post is publicly visible (you can see it in Google), but browser security prevents automated access.
 
 🔄 Next Steps:
-1. Verify the post is PUBLIC (not private/friends-only)
-2. Copy the post text manually
-3. Paste it here for AI analysis
-4. Include any important context
+1. ✅ Verify the post is PUBLIC
+2. 📝 Copy the post text manually
+3. 📋 Paste it here along with the URL
+4. 🤖 AI will provide complete fact-check
 
-The AI can still help identify misinformation patterns!`;
+This is normal - even public Facebook content has access restrictions for security.`;
   }
 }
 
