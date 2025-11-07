@@ -195,11 +195,18 @@ export async function signIn(data: SignInData) {
     localStorage.setItem('sb-pakkuvcnhleqpcaxtruw-auth-token', JSON.stringify(sessionData));
     console.log('✅ Session tokens stored in localStorage');
     
-    // Trigger a storage event to notify other tabs/windows
-    window.dispatchEvent(new StorageEvent('storage', {
-      key: 'sb-pakkuvcnhleqpcaxtruw-auth-token',
-      newValue: JSON.stringify(sessionData)
-    }));
+    // Force Supabase to recognize the new session by calling setSession with the tokens
+    // But we need to wait a moment for localStorage to be ready
+    console.log('🔄 Notifying Supabase client of new session...');
+    setTimeout(async () => {
+      try {
+        await supabase.auth.refreshSession({ refresh_token: result.refresh_token });
+        console.log('✅ Supabase session refreshed successfully');
+      } catch (error) {
+        console.error('⚠️ Session refresh failed:', error);
+        // Not critical, the session is already in localStorage
+      }
+    }, 100);
 
     return { user: result.user, session: result };
 
