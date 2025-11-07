@@ -113,21 +113,20 @@ export async function signUp(data: SignUpData) {
     
     console.log('✅ Direct API Signup Success:', result);
     
-    // The 'result' from a direct API call should contain user and session objects,
-    // mimicking the JS library's response.
-    // We also need to update the local session for the user to be logged in.
+    // Manually store the session tokens in localStorage
     if (result.access_token) {
-      console.log('🔄 Setting session after signup...');
-      const { error: sessionError } = await supabase.auth.setSession({
+      console.log('🔄 Storing session tokens after signup...');
+      const sessionData = {
         access_token: result.access_token,
         refresh_token: result.refresh_token,
-      });
+        expires_at: result.expires_at,
+        expires_in: result.expires_in,
+        token_type: result.token_type,
+        user: result.user
+      };
       
-      if (sessionError) {
-        console.error('❌ Session set error:', sessionError);
-      } else {
-        console.log('✅ Session set successfully after signup');
-      }
+      localStorage.setItem('sb-pakkuvcnhleqpcaxtruw-auth-token', JSON.stringify(sessionData));
+      console.log('✅ Session tokens stored after signup');
     }
     
     return { user: result.user, session: result };
@@ -181,23 +180,26 @@ export async function signIn(data: SignInData) {
 
     console.log('✅ Direct API Login Success:', result);
 
-    // Manually set the session to log the user in
-    console.log('🔄 Setting session in Supabase client...');
-    const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+    // Manually store the session tokens in localStorage
+    // This is what Supabase client would do internally
+    console.log('🔄 Storing session tokens in localStorage...');
+    const sessionData = {
       access_token: result.access_token,
       refresh_token: result.refresh_token,
-    });
-
-    if (sessionError) {
-      console.error('❌ Session set error:', sessionError);
-      throw new Error(`Failed to set session: ${sessionError.message}`);
-    }
-
-    console.log('✅ Session set successfully:', sessionData);
+      expires_at: result.expires_at,
+      expires_in: result.expires_in,
+      token_type: result.token_type,
+      user: result.user
+    };
     
-    // Verify session was saved
-    const { data: { session: verifySession } } = await supabase.auth.getSession();
-    console.log('🔍 Verifying session after set:', verifySession ? '✅ Session exists' : '❌ No session');
+    localStorage.setItem('sb-pakkuvcnhleqpcaxtruw-auth-token', JSON.stringify(sessionData));
+    console.log('✅ Session tokens stored in localStorage');
+    
+    // Trigger a storage event to notify other tabs/windows
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'sb-pakkuvcnhleqpcaxtruw-auth-token',
+      newValue: JSON.stringify(sessionData)
+    }));
 
     return { user: result.user, session: result };
 
