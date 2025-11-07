@@ -189,40 +189,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, setUser, authUser, user
           </div>
         )}
 
-        {/* Database not set up warning - Only show if logged in but no profile */}
-        {authUser && !userProfile && user.name !== 'Guest User' && (
-          <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-8 rounded-2xl mb-6 shadow-xl">
-            <div className="text-center">
-              <div className="text-6xl mb-4">🗄️</div>
-              <h2 className="text-3xl font-bold mb-4">Database Setup Required!</h2>
-              <p className="text-xl mb-6">Your database table needs to be created</p>
-              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 mb-6">
-                <p className="text-lg mb-4">✅ You are logged in successfully!</p>
-                <p className="text-lg mb-4">⚠️ But the database table doesn't exist yet</p>
-                <p className="text-base opacity-90">This is a ONE-TIME setup (takes 2 minutes)</p>
-              </div>
-              <div className="flex gap-4 justify-center">
-                <a 
-                  href="/database-setup-guide.html" 
-                  target="_blank"
-                  className="bg-white text-orange-600 px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition-all shadow-lg"
-                >
-                  📖 Open Setup Guide
-                </a>
-                <a 
-                  href="https://supabase.com/dashboard/project/pakkuvcnhleqpcaxtruw/editor" 
-                  target="_blank"
-                  className="bg-green-500 text-white px-8 py-3 rounded-full font-bold hover:bg-green-600 transition-all shadow-lg"
-                >
-                  🚀 Go to Supabase
-                </a>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Profile Header (only show for logged in users with loaded profile) */}
-        {(user.name !== 'Guest User' || authUser) && userProfile && (
+        {/* Profile Header - show for logged in users OR users with non-Guest names */}
+        {(authUser || user.name !== 'Guest User') && (
         <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl p-8 text-white mb-8">
           <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
             {/* Profile Picture */}
