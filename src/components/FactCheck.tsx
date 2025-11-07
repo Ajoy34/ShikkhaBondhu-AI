@@ -1,17 +1,6 @@
 import { useState } from 'react';
-import { Search, AlertTriangle, CheckCircle, XCircle, Share2, Facebook, Twitter, Link as LinkIcon, Clock, TrendingUp, Users, Shield, ExternalLink, Copy, ArrowLeft } from 'lucide-react';
-
-interface FactCheckResult {
-  url: string;
-  status: 'verified' | 'fake' | 'misleading' | 'unverified';
-  confidence: number;
-  title: string;
-  summary: string;
-  sources: string[];
-  sharedCount: number;
-  lastChecked: string;
-  warning?: string;
-}
+import { Search, AlertTriangle, CheckCircle, XCircle, Share2, Facebook, Twitter, Link as LinkIcon, Clock, TrendingUp, Users, Shield, ExternalLink, Copy, ArrowLeft, Loader2 } from 'lucide-react';
+import { factCheckWithGemini, isValidURL, type FactCheckResult } from '../utils/factChecker';
 
 interface FactCheckProps {
   onBackToDashboard?: () => void;
@@ -22,35 +11,39 @@ export default function FactCheck({ onBackToDashboard }: FactCheckProps) {
   const [isChecking, setIsChecking] = useState(false);
   const [result, setResult] = useState<FactCheckResult | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleCheck = async () => {
-    if (!url.trim()) return;
+    if (!url.trim()) {
+      setError('Please enter a URL to fact-check');
+      return;
+    }
 
+    // Validate URL format
+    if (!isValidURL(url)) {
+      setError('Please enter a valid URL (must start with http:// or https://)');
+      return;
+    }
+
+    setError(null);
     setIsChecking(true);
     
-    // Simulate API call - Replace with actual fact-checking API
-    setTimeout(() => {
-      const mockResult: FactCheckResult = {
-        url: url,
-        status: Math.random() > 0.5 ? 'verified' : 'fake',
-        confidence: Math.floor(Math.random() * 30) + 70,
-        title: 'COVID-19 Vaccine Safety Information',
-        summary: 'This content has been fact-checked against multiple reliable sources. The information provided contains both accurate and misleading elements.',
-        sources: [
-          'World Health Organization (WHO)',
-          'Centers for Disease Control (CDC)',
-          'Bangladesh Health Ministry',
-          'Reuters Fact Check'
-        ],
-        sharedCount: Math.floor(Math.random() * 10000) + 1000,
-        lastChecked: new Date().toLocaleString(),
-        warning: Math.random() > 0.5 ? 'This content contains unverified claims' : undefined
-      };
-
-      setResult(mockResult);
+    try {
+      console.log('🔍 Starting fact-check for:', url);
+      
+      // Call the real fact-checking function powered by Gemini AI
+      const factCheckResult = await factCheckWithGemini(url);
+      
+      console.log('✅ Fact-check complete:', factCheckResult);
+      
+      setResult(factCheckResult);
       setShowResult(true);
+    } catch (err: any) {
+      console.error('❌ Fact-check error:', err);
+      setError(err.message || 'An error occurred while fact-checking. Please try again.');
+    } finally {
       setIsChecking(false);
-    }, 2000);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -162,6 +155,49 @@ export default function FactCheck({ onBackToDashboard }: FactCheckProps) {
 
               <h3 className="text-xl font-bold text-gray-900 mb-3">Analysis Summary</h3>
               <p className="text-gray-600 leading-relaxed mb-6">{result.summary}</p>
+
+              {/* Detailed Analysis */}
+              {result.detailedAnalysis && result.detailedAnalysis !== result.summary && (
+                <>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Detailed Analysis</h3>
+                  <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-4 mb-6">
+                    <p className="text-gray-700 leading-relaxed">{result.detailedAnalysis}</p>
+                  </div>
+                </>
+              )}
+
+              {/* Claim Breakdown */}
+              {result.claimBreakdown && result.claimBreakdown.length > 0 && (
+                <>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Claim-by-Claim Analysis</h3>
+                  <div className="space-y-4 mb-6">
+                    {result.claimBreakdown.map((claim, index) => (
+                      <div key={index} className="bg-gray-50 border-2 border-gray-200 rounded-xl p-4">
+                        <div className="flex items-start space-x-3 mb-2">
+                          {claim.verdict === 'true' && <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />}
+                          {claim.verdict === 'false' && <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />}
+                          {claim.verdict === 'partially-true' && <AlertTriangle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />}
+                          {claim.verdict === 'unverified' && <AlertTriangle className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />}
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-1">
+                              <span className={`px-2 py-0.5 text-xs font-bold rounded-full ${
+                                claim.verdict === 'true' ? 'bg-green-100 text-green-700' :
+                                claim.verdict === 'false' ? 'bg-red-100 text-red-700' :
+                                claim.verdict === 'partially-true' ? 'bg-orange-100 text-orange-700' :
+                                'bg-gray-100 text-gray-700'
+                              }`}>
+                                {claim.verdict.toUpperCase().replace('-', ' ')}
+                              </span>
+                            </div>
+                            <p className="font-semibold text-gray-900 mb-1">{claim.claim}</p>
+                            <p className="text-sm text-gray-600">{claim.explanation}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
 
               {/* Stats */}
               <div className="grid grid-cols-3 gap-4 mb-6">
@@ -287,11 +323,23 @@ export default function FactCheck({ onBackToDashboard }: FactCheckProps) {
               <input
                 type="url"
                 value={url}
-                onChange={(e) => setUrl(e.target.value)}
+                onChange={(e) => {
+                  setUrl(e.target.value);
+                  setError(null); // Clear error when user types
+                }}
                 placeholder="https://facebook.com/... or any social media link"
                 className="w-full px-6 py-4 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all duration-300 text-lg"
-                onKeyPress={(e) => e.key === 'Enter' && handleCheck()}
+                onKeyPress={(e) => e.key === 'Enter' && !isChecking && handleCheck()}
+                disabled={isChecking}
               />
+              
+              {/* Error Message */}
+              {error && (
+                <div className="mt-3 flex items-start space-x-2 text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
+                  <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm font-medium">{error}</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -302,8 +350,9 @@ export default function FactCheck({ onBackToDashboard }: FactCheckProps) {
           >
             {isChecking ? (
               <>
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                <span>Analyzing...</span>
+                <Loader2 className="w-6 h-6 animate-spin" />
+                <span>Analyzing with AI...</span>
+                <span className="font-bangla">বিশ্লেষণ করা হচ্ছে...</span>
               </>
             ) : (
               <>
