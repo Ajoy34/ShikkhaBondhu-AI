@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, User, MessageCircle, Search, Code, Video, BookOpen, LogOut, Menu, X } from 'lucide-react';
+import { Shield, User, MessageCircle, Search, Code, Video, BookOpen, LogOut } from 'lucide-react';
 import { signOut } from '../lib/auth';
 import AuthModal from './AuthModal';
 
@@ -26,7 +26,6 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   // Debug: Log user name changes
   React.useEffect(() => {
@@ -78,94 +77,14 @@ const Header: React.FC<HeaderProps> = ({
             <div className="bg-gradient-to-br from-indigo-600 to-purple-600 p-2 sm:p-2.5 rounded-xl shadow-lg">
               <Shield className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <h1 className="text-xl sm:text-2xl font-bold text-gray-900 font-inter">ShikkhaBondhu</h1>
               <p className="text-xs text-indigo-600 font-bangla -mt-0.5">শিক্ষা বন্ধু</p>
             </div>
           </button>
 
-          {/* Center Navigation - Desktop Only */}
-          {isLoggedIn && (
-            <div className="hidden lg:flex items-center gap-2 flex-1 justify-center mx-8">
-              {/* AI Chat */}
-              <button
-                onClick={() => {
-                  if (setSelectedChatbot) setSelectedChatbot('general');
-                  setTimeout(() => setIsChatOpen(true), 100);
-                }}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-colors"
-              >
-                <MessageCircle className="w-4 h-4 text-blue-600" />
-                <span className="text-xs font-semibold text-blue-700">AI Chat & Learn</span>
-              </button>
-
-              {/* Report & SOS */}
-              <button
-                onClick={() => setActiveSection('report')}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 hover:bg-red-100 border border-red-200 transition-colors"
-              >
-                <Shield className="w-4 h-4 text-red-600" />
-                <span className="text-xs font-semibold text-red-700">Report & SOS</span>
-              </button>
-
-              {/* Fact Check */}
-              <button
-                onClick={() => setActiveSection('factcheck')}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-50 hover:bg-green-100 border border-green-200 transition-colors"
-              >
-                <Search className="w-4 h-4 text-green-600" />
-                <span className="text-xs font-semibold text-green-700">Fact Check</span>
-              </button>
-
-              {/* AI Lab */}
-              <button
-                disabled
-                className="relative flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-50 border border-purple-200 opacity-60 cursor-not-allowed"
-              >
-                <div className="absolute -top-2 -right-2 bg-orange-400 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
-                  🚀
-                </div>
-                <Code className="w-4 h-4 text-purple-600" />
-                <span className="text-xs font-semibold text-purple-700">AI Lab</span>
-              </button>
-
-              {/* Create & Earn */}
-              <button
-                onClick={() => setActiveSection('createandearn')}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-pink-50 hover:bg-pink-100 border border-pink-200 transition-colors"
-              >
-                <Video className="w-4 h-4 text-pink-600" />
-                <span className="text-xs font-semibold text-pink-700">Create & Earn</span>
-              </button>
-
-              {/* Library */}
-              <button
-                onClick={() => setActiveSection('library')}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-colors"
-              >
-                <BookOpen className="w-4 h-4 text-amber-600" />
-                <span className="text-xs font-semibold text-amber-700">Library</span>
-              </button>
-            </div>
-          )}
-
           {/* Right Side Actions */}
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-            {/* Mobile Menu Button - Show when logged in */}
-            {isLoggedIn && (
-              <button
-                onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className="lg:hidden p-2 rounded-lg bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition-colors"
-                aria-label="Toggle menu"
-              >
-                {showMobileMenu ? (
-                  <X className="w-6 h-6 text-indigo-600" />
-                ) : (
-                  <Menu className="w-6 h-6 text-indigo-600" />
-                )}
-              </button>
-            )}
-
             {isLoggedIn ? (
               <>
                 {/* Profile Button with Dropdown */}
@@ -182,7 +101,6 @@ const Header: React.FC<HeaderProps> = ({
                     <div className="hidden md:block text-left">
                       <div className="text-xs font-medium leading-tight">
                         {user.name}
-                        {/* Debug indicator */}
                         {user.name === 'Guest User' && (
                           <span className="ml-1 text-red-500" title="Not logged in or profile not loaded">⚠️</span>
                         )}
@@ -218,7 +136,7 @@ const Header: React.FC<HeaderProps> = ({
               </>
             ) : (
               <>
-                {/* Prominent Sign In Button with Animation */}
+                {/* Prominent Sign In Button */}
                 <button
                   onClick={() => setShowAuthModal(true)}
                   className="px-4 sm:px-6 py-2 sm:py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-sm sm:text-base rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl animate-pulse"
@@ -233,161 +151,73 @@ const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Mobile Navigation Menu - Full Screen Overlay */}
-      {isLoggedIn && showMobileMenu && (
-        <div className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setShowMobileMenu(false)}>
-          <div 
-            className="absolute right-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Mobile Menu Header */}
-            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold font-bangla">মেনু (Menu)</h2>
+      {/* Navigation Bar - Horizontal Scroll on Mobile */}
+      {isLoggedIn && (
+        <div className="border-t border-gray-200 bg-white/95">
+          <div className="container mx-auto">
+            {/* Scrollable container for mobile */}
+            <div className="overflow-x-auto scrollbar-hide">
+              <div className="flex items-center gap-2 px-2 sm:px-4 lg:px-8 py-2 min-w-max lg:justify-center">
+                {/* AI Chat */}
                 <button
-                  onClick={() => setShowMobileMenu(false)}
-                  className="p-2 rounded-lg bg-white/20 hover:bg-white/30 transition-colors"
+                  onClick={() => {
+                    if (setSelectedChatbot) setSelectedChatbot('general');
+                    setTimeout(() => setIsChatOpen(true), 100);
+                  }}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-colors whitespace-nowrap flex-shrink-0"
                 >
-                  <X className="w-6 h-6" />
+                  <MessageCircle className="w-4 h-4 text-blue-600" />
+                  <span className="text-xs font-semibold text-blue-700">AI Chat</span>
+                </button>
+
+                {/* Report & SOS */}
+                <button
+                  onClick={() => setActiveSection('report')}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 hover:bg-red-100 border border-red-200 transition-colors whitespace-nowrap flex-shrink-0"
+                >
+                  <Shield className="w-4 h-4 text-red-600" />
+                  <span className="text-xs font-semibold text-red-700">Report</span>
+                </button>
+
+                {/* Fact Check */}
+                <button
+                  onClick={() => setActiveSection('factcheck')}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-50 hover:bg-green-100 border border-green-200 transition-colors whitespace-nowrap flex-shrink-0"
+                >
+                  <Search className="w-4 h-4 text-green-600" />
+                  <span className="text-xs font-semibold text-green-700">Fact Check</span>
+                </button>
+
+                {/* AI Lab */}
+                <button
+                  disabled
+                  className="relative flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-50 border border-purple-200 opacity-60 cursor-not-allowed whitespace-nowrap flex-shrink-0"
+                >
+                  <div className="absolute -top-1 -right-1 bg-orange-400 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                    🚀
+                  </div>
+                  <Code className="w-4 h-4 text-purple-600" />
+                  <span className="text-xs font-semibold text-purple-700">AI Lab</span>
+                </button>
+
+                {/* Create & Earn */}
+                <button
+                  onClick={() => setActiveSection('createandearn')}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-pink-50 hover:bg-pink-100 border border-pink-200 transition-colors whitespace-nowrap flex-shrink-0"
+                >
+                  <Video className="w-4 h-4 text-pink-600" />
+                  <span className="text-xs font-semibold text-pink-700">Create</span>
+                </button>
+
+                {/* Library */}
+                <button
+                  onClick={() => setActiveSection('library')}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-colors whitespace-nowrap flex-shrink-0"
+                >
+                  <BookOpen className="w-4 h-4 text-amber-600" />
+                  <span className="text-xs font-semibold text-amber-700">Library</span>
                 </button>
               </div>
-              
-              {/* User Info in Mobile Menu */}
-              <div className="bg-white/10 rounded-lg p-3">
-                <div className="flex items-center gap-3">
-                  <div className="bg-white/20 p-2 rounded-full">
-                    <User className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <div className="font-semibold">{user.name}</div>
-                    <div className="text-sm opacity-90">⭐ {user.contributionRating}/5 • {user.points} points</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile Menu Items */}
-            <div className="p-4 space-y-2">
-              {/* AI Chat */}
-              <button
-                onClick={() => {
-                  if (setSelectedChatbot) setSelectedChatbot('general');
-                  setTimeout(() => setIsChatOpen(true), 100);
-                  setShowMobileMenu(false);
-                }}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-colors"
-              >
-                <MessageCircle className="w-5 h-5 text-blue-600" />
-                <div className="text-left">
-                  <div className="font-semibold text-blue-700">AI Chat & Learn</div>
-                  <div className="text-xs text-blue-600 font-bangla">এআই চ্যাট ও শিখুন</div>
-                </div>
-              </button>
-
-              {/* Report & SOS */}
-              <button
-                onClick={() => {
-                  setActiveSection('report');
-                  setShowMobileMenu(false);
-                }}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 transition-colors"
-              >
-                <Shield className="w-5 h-5 text-red-600" />
-                <div className="text-left">
-                  <div className="font-semibold text-red-700">Report & SOS</div>
-                  <div className="text-xs text-red-600 font-bangla">রিপোর্ট ও জরুরি সাহায্য</div>
-                </div>
-              </button>
-
-              {/* Fact Check */}
-              <button
-                onClick={() => {
-                  setActiveSection('factcheck');
-                  setShowMobileMenu(false);
-                }}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-green-50 hover:bg-green-100 border border-green-200 transition-colors"
-              >
-                <Search className="w-5 h-5 text-green-600" />
-                <div className="text-left">
-                  <div className="font-semibold text-green-700">Fact Check</div>
-                  <div className="text-xs text-green-600 font-bangla">তথ্য যাচাই</div>
-                </div>
-              </button>
-
-              {/* AI Lab - Coming Soon */}
-              <button
-                disabled
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-purple-50 border border-purple-200 opacity-60 cursor-not-allowed relative"
-              >
-                <Code className="w-5 h-5 text-purple-600" />
-                <div className="text-left">
-                  <div className="font-semibold text-purple-700">AI Lab 🚀</div>
-                  <div className="text-xs text-purple-600 font-bangla">শীঘ্রই আসছে (Coming Soon)</div>
-                </div>
-              </button>
-
-              {/* Create & Earn */}
-              <button
-                onClick={() => {
-                  setActiveSection('createandearn');
-                  setShowMobileMenu(false);
-                }}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-pink-50 hover:bg-pink-100 border border-pink-200 transition-colors"
-              >
-                <Video className="w-5 h-5 text-pink-600" />
-                <div className="text-left">
-                  <div className="font-semibold text-pink-700">Create & Earn</div>
-                  <div className="text-xs text-pink-600 font-bangla">তৈরি করুন ও আয় করুন</div>
-                </div>
-              </button>
-
-              {/* Library */}
-              <button
-                onClick={() => {
-                  setActiveSection('library');
-                  setShowMobileMenu(false);
-                }}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-colors"
-              >
-                <BookOpen className="w-5 h-5 text-amber-600" />
-                <div className="text-left">
-                  <div className="font-semibold text-amber-700">Library</div>
-                  <div className="text-xs text-amber-600 font-bangla">লাইব্রেরি</div>
-                </div>
-              </button>
-
-              {/* Divider */}
-              <div className="border-t border-gray-200 my-4"></div>
-
-              {/* Profile */}
-              <button
-                onClick={() => {
-                  setActiveSection('profile');
-                  setShowMobileMenu(false);
-                }}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors"
-              >
-                <User className="w-5 h-5 text-gray-600" />
-                <div className="text-left">
-                  <div className="font-semibold text-gray-700">Profile</div>
-                  <div className="text-xs text-gray-600 font-bangla">প্রোফাইল</div>
-                </div>
-              </button>
-
-              {/* Logout */}
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setShowMobileMenu(false);
-                }}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 transition-colors"
-              >
-                <LogOut className="w-5 h-5 text-red-600" />
-                <div className="text-left">
-                  <div className="font-semibold text-red-700">Logout</div>
-                  <div className="text-xs text-red-600 font-bangla">লগ আউট</div>
-                </div>
-              </button>
             </div>
           </div>
         </div>
