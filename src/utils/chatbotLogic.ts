@@ -245,6 +245,45 @@ const getSafetyResponse = (input: string, user?: any): string => {
 };
 
 const getSkillsResponse = (input: string, user?: any): string => {
+  // Check if talking about economic crisis or earning
+  if (input.includes('economic') || input.includes('crisis') || input.includes('earn') || input.includes('income') || 
+      input.includes('আয়') || input.includes('অর্থনৈতিক') || input.includes('সংকট') || input.includes('টাকা')) {
+    return `<p class="font-bangla">অর্থনৈতিক সংকট? আপনি নিজেই সমাধান হতে পারেন! 💪</p>
+            <div class="mt-3 bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg border-2 border-green-300">
+              <h5 class="font-bangla font-bold text-green-800 mb-2">💰 আয়ের নতুন সুযোগ তৈরি করুন:</h5>
+              
+              <div class="bg-white p-3 rounded-lg border-l-4 border-yellow-500 mb-3">
+                <h6 class="font-bangla font-bold text-yellow-800">📹 ভিডিও কোর্স তৈরি করুন</h6>
+                <p class="font-bangla text-sm mt-1">আপনার দক্ষতা শেয়ার করুন এবং আয় করুন! শত শত মানুষ আপনার শেখানো দক্ষতা শিখতে চায়।</p>
+                <ul class="font-bangla text-xs mt-2 space-y-1 text-gray-700">
+                  <li>• প্রোগ্রামিং, ডিজাইন, ভাষা শেখান</li>
+                  <li>• Udemy, Skillshare, বা নিজের প্ল্যাটফর্মে বিক্রি করুন</li>
+                  <li>• একবার তৈরি করুন, বারবার আয় করুন 💵</li>
+                </ul>
+              </div>
+
+              <div class="bg-white p-3 rounded-lg border-l-4 border-purple-500 mb-3">
+                <h6 class="font-bangla font-bold text-purple-800">📚 ই-বুক লিখুন</h6>
+                <p class="font-bangla text-sm mt-1">আপনার জ্ঞান একটি বইয়ে রূপান্তরিত করুন!</p>
+                <ul class="font-bangla text-xs mt-2 space-y-1 text-gray-700">
+                  <li>• পরামর্শ বই, গাইডবুক, স্টোরি লিখুন</li>
+                  <li>• Amazon Kindle, Gumroad-এ প্রকাশ করুন</li>
+                  <li>• প্যাসিভ ইনকাম তৈরি করুন 📖</li>
+                </ul>
+              </div>
+
+              <div class="bg-gradient-to-r from-pink-100 to-orange-100 p-3 rounded-lg mb-2">
+                <p class="font-bangla text-sm font-bold text-pink-900">🚀 আমাদের "Create & Earn" সেকশন ব্যবহার করুন!</p>
+                <p class="font-bangla text-xs text-pink-800 mt-1">ভিডিও কোর্স ও বই তৈরির সম্পূর্ণ গাইড পাবেন</p>
+              </div>
+
+              <div class="mt-3 grid grid-cols-2 gap-2">
+                <button class="chat-option bg-green-600 text-white px-3 py-1 rounded text-sm font-bangla" data-message="ভিডিও কোর্স তৈরির গাইড চাই">📹 কোর্স তৈরি</button>
+                <button class="chat-option bg-purple-600 text-white px-3 py-1 rounded text-sm font-bangla" data-message="ই-বুক লেখার গাইড চাই">📚 বই লিখুন</button>
+              </div>
+            </div>`;
+  }
+
   if (input.includes('programming') || input.includes('coding') || input.includes('প্রোগ্রামিং') || input.includes('টেকনিক্যাল')) {
     return `<p class="font-bangla">প্রোগ্রামিং শিখতে চান? চমৎকার সিদ্ধান্ত!</p>
             <div class="mt-3 bg-yellow-50 p-4 rounded-lg">
@@ -263,9 +302,32 @@ const getSkillsResponse = (input: string, user?: any): string => {
                   <strong>Mobile App</strong> - অ্যাপ ডেভেলপমেন্ট
                 </div>
               </div>
-              <p class="font-bangla text-sm mt-3 text-gray-600">বিনামূল্যে রিসোর্স এবং কোর্স উপলব্ধ!</p>
+
+              <!-- YouTube Video Suggestions -->
+              <div class="mt-4 bg-red-50 p-3 rounded-lg border border-red-200">
+                <h6 class="font-bangla font-bold text-red-700 mb-2">📺 প্রস্তাবিত YouTube ভিডিও:</h6>
+                <div class="space-y-2 text-sm">
+                  <a href="https://www.youtube.com/results?search_query=python+bangla+tutorial+for+beginners" target="_blank" class="block bg-white p-2 rounded hover:bg-red-100 border-l-4 border-red-500">
+                    <span class="font-bangla">🐍 Python Bangla Tutorial (Beginners)</span>
+                  </a>
+                  <a href="https://www.youtube.com/results?search_query=web+development+bangla+tutorial" target="_blank" class="block bg-white p-2 rounded hover:bg-red-100 border-l-4 border-blue-500">
+                    <span class="font-bangla">🌐 Web Development Bangla</span>
+                  </a>
+                  <a href="https://www.youtube.com/results?search_query=javascript+bangla+tutorial" target="_blank" class="block bg-white p-2 rounded hover:bg-red-100 border-l-4 border-yellow-500">
+                    <span class="font-bangla">⚡ JavaScript Bangla Tutorial</span>
+                  </a>
+                </div>
+                <p class="font-bangla text-xs mt-2 text-gray-600">💡 আমাদের কাছে এখনো কোর্স নেই, তাই YouTube থেকে শিখুন!</p>
+              </div>
+
+              <div class="mt-4 bg-gradient-to-r from-green-100 to-blue-100 p-3 rounded-lg border-2 border-green-400">
+                <p class="font-bangla text-sm font-bold text-green-900">💡 প্রোগ্রামিং শিখে কোর্স তৈরি করুন!</p>
+                <p class="font-bangla text-xs mt-1 text-green-800">আপনার শেখা দক্ষতা দিয়ে ভিডিও কোর্স ও বই তৈরি করে আয় করুন 💰</p>
+                <button class="chat-option mt-2 bg-green-600 text-white px-3 py-1 rounded text-sm font-bangla" data-message="কোর্স তৈরি করে আয় করতে চাই">📹 কোর্স তৈরি শুরু করুন</button>
+              </div>
+
               <div class="mt-3">
-                <button class="chat-option bg-yellow-600 text-white px-3 py-1 rounded text-sm font-bangla mr-2" data-message="প্রোগ্রামিং কোর্স শুরু করতে চাই">কোর্স শুরু করুন</button>
+                <button class="chat-option bg-yellow-600 text-white px-3 py-1 rounded text-sm font-bangla mr-2" data-message="প্রোগ্রামিং রোডম্যাপ চাই">রোডম্যাপ</button>
                 <button class="chat-option bg-blue-600 text-white px-3 py-1 rounded text-sm font-bangla" data-message="ফ্রি রিসোর্স চাই">ফ্রি রিসোর্স</button>
               </div>
             </div>`;
@@ -289,8 +351,31 @@ const getSkillsResponse = (input: string, user?: any): string => {
                   <strong class="font-bangla">সমস্যা সমাধান</strong> - সৃজনশীল চিন্তাভাবনা
                 </div>
               </div>
+
+              <!-- YouTube Video Suggestions -->
+              <div class="mt-4 bg-red-50 p-3 rounded-lg border border-red-200">
+                <h6 class="font-bangla font-bold text-red-700 mb-2">📺 শিখুন YouTube থেকে:</h6>
+                <div class="space-y-2 text-sm">
+                  <a href="https://www.youtube.com/results?search_query=soft+skills+bangla" target="_blank" class="block bg-white p-2 rounded hover:bg-red-100 border-l-4 border-green-500">
+                    <span class="font-bangla">💬 Soft Skills Bangla Tutorial</span>
+                  </a>
+                  <a href="https://www.youtube.com/results?search_query=communication+skills+bangla" target="_blank" class="block bg-white p-2 rounded hover:bg-red-100 border-l-4 border-blue-500">
+                    <span class="font-bangla">🗣️ Communication Skills Bangla</span>
+                  </a>
+                  <a href="https://www.youtube.com/results?search_query=leadership+skills+bangla" target="_blank" class="block bg-white p-2 rounded hover:bg-red-100 border-l-4 border-purple-500">
+                    <span class="font-bangla">👔 Leadership Skills Bangla</span>
+                  </a>
+                </div>
+              </div>
+
+              <div class="mt-4 bg-gradient-to-r from-pink-100 to-orange-100 p-3 rounded-lg border-2 border-pink-400">
+                <p class="font-bangla text-sm font-bold text-pink-900">🎯 সফট স্কিল নিয়ে কোর্স বানান!</p>
+                <p class="font-bangla text-xs mt-1 text-pink-800">যোগাযোগ দক্ষতা, নেতৃত্ব নিয়ে কোর্স/বই তৈরি করে আয় করুন!</p>
+                <button class="chat-option mt-2 bg-pink-600 text-white px-3 py-1 rounded text-sm font-bangla" data-message="সফট স্কিল কোর্স তৈরি করতে চাই">🚀 Create & Earn</button>
+              </div>
+
               <div class="mt-3">
-                <button class="chat-option bg-green-600 text-white px-3 py-1 rounded text-sm font-bangla mr-2" data-message="সফট স্কিল কোর্স চাই">কোর্স দেখুন</button>
+                <button class="chat-option bg-green-600 text-white px-3 py-1 rounded text-sm font-bangla mr-2" data-message="যোগাযোগ দক্ষতা উন্নত করতে চাই">যোগাযোগ দক্ষতা</button>
                 <button class="chat-option bg-blue-600 text-white px-3 py-1 rounded text-sm font-bangla" data-message="ক্যারিয়ার পরামর্শ চাই">ক্যারিয়ার গাইড</button>
               </div>
             </div>`;
@@ -300,6 +385,12 @@ const getSkillsResponse = (input: string, user?: any): string => {
           <div class="mt-3 grid grid-cols-2 gap-2">
             <button class="chat-option bg-blue-100 p-3 rounded-lg text-sm font-bangla hover:bg-blue-200" data-message="টেকনিক্যাল দক্ষতা শিখতে চাই">💻 টেকনিক্যাল</button>
             <button class="chat-option bg-green-100 p-3 rounded-lg text-sm font-bangla hover:bg-green-200" data-message="সফট স্কিল শিখতে চাই">🎯 সফট স্কিল</button>
+          </div>
+          
+          <div class="mt-3 bg-gradient-to-r from-green-50 to-blue-50 p-3 rounded-lg border border-green-200">
+            <p class="font-bangla text-sm font-bold text-green-900">💡 শিখে আয় করুন!</p>
+            <p class="font-bangla text-xs mt-1 text-gray-700">দক্ষতা শিখে ভিডিও কোর্স বা বই তৈরি করে আয় করতে পারেন</p>
+            <button class="chat-option mt-2 bg-green-600 text-white px-3 py-1 rounded text-sm font-bangla" data-message="কোর্স তৈরি করে আয় করতে চাই">🎥 Create & Earn দেখুন</button>
           </div>`;
 };
 
@@ -411,6 +502,30 @@ const getAcademicResponse = (input: string, user?: any): string => {
                   <p class="font-bangla text-sm">নিয়মিত বিরতি ও ব্যায়াম</p>
                 </div>
               </div>
+
+              <!-- YouTube Video Suggestions -->
+              <div class="mt-4 bg-red-50 p-3 rounded-lg border border-red-200">
+                <h6 class="font-bangla font-bold text-red-700 mb-2">📺 YouTube থেকে শিখুন:</h6>
+                <div class="space-y-2 text-sm">
+                  <a href="https://www.youtube.com/results?search_query=study+tips+bangla" target="_blank" class="block bg-white p-2 rounded hover:bg-red-100 border-l-4 border-indigo-500">
+                    <span class="font-bangla">📚 Study Tips Bangla</span>
+                  </a>
+                  <a href="https://www.youtube.com/results?search_query=exam+preparation+bangla" target="_blank" class="block bg-white p-2 rounded hover:bg-red-100 border-l-4 border-green-500">
+                    <span class="font-bangla">📝 Exam Preparation Bangla</span>
+                  </a>
+                  <a href="https://www.youtube.com/results?search_query=memory+techniques+bangla" target="_blank" class="block bg-white p-2 rounded hover:bg-red-100 border-l-4 border-purple-500">
+                    <span class="font-bangla">🧠 Memory Techniques Bangla</span>
+                  </a>
+                </div>
+                <p class="font-bangla text-xs mt-2 text-gray-600">💡 আমাদের কোর্স এখনো তৈরি হয়নি, YouTube এ ভালো রিসোর্স আছে!</p>
+              </div>
+
+              <div class="mt-4 bg-gradient-to-r from-purple-100 to-pink-100 p-3 rounded-lg border-2 border-purple-400">
+                <p class="font-bangla text-sm font-bold text-purple-900">🎓 আপনি পরীক্ষা বিশেষজ্ঞ?</p>
+                <p class="font-bangla text-xs mt-1 text-purple-800">পরীক্ষার কৌশল নিয়ে ভিডিও কোর্স বা বই লিখে আয় করুন!</p>
+                <button class="chat-option mt-2 bg-purple-600 text-white px-3 py-1 rounded text-sm font-bangla" data-message="পরীক্ষার টিপস নিয়ে কোর্স বানাতে চাই">🚀 Create & Earn</button>
+              </div>
+
               <div class="mt-3">
                 <button class="chat-option bg-indigo-600 text-white px-3 py-1 rounded text-sm font-bangla mr-2" data-message="পড়ার রুটিন তৈরি করতে চাই">রুটিন তৈরি</button>
                 <button class="chat-option bg-green-600 text-white px-3 py-1 rounded text-sm font-bangla" data-message="আরো পড়ার টিপস চাই">আরো টিপস</button>
@@ -435,6 +550,29 @@ const getAcademicResponse = (input: string, user?: any): string => {
                   <p class="font-bangla text-sm">রঙিন কলম ও মাইন্ড ম্যাপ ব্যবহার করুন</p>
                 </div>
               </div>
+
+              <!-- YouTube Video Suggestions -->
+              <div class="mt-4 bg-red-50 p-3 rounded-lg border border-red-200">
+                <h6 class="font-bangla font-bold text-red-700 mb-2">📺 প্রস্তাবিত ভিডিও:</h6>
+                <div class="space-y-2 text-sm">
+                  <a href="https://www.youtube.com/results?search_query=pomodoro+technique+bangla" target="_blank" class="block bg-white p-2 rounded hover:bg-red-100 border-l-4 border-green-500">
+                    <span class="font-bangla">🍅 Pomodoro Technique Bangla</span>
+                  </a>
+                  <a href="https://www.youtube.com/results?search_query=note+taking+methods+bangla" target="_blank" class="block bg-white p-2 rounded hover:bg-red-100 border-l-4 border-purple-500">
+                    <span class="font-bangla">📓 Note Taking Bangla</span>
+                  </a>
+                  <a href="https://www.youtube.com/results?search_query=study+motivation+bangla" target="_blank" class="block bg-white p-2 rounded hover:bg-red-100 border-l-4 border-yellow-500">
+                    <span class="font-bangla">💪 Study Motivation Bangla</span>
+                  </a>
+                </div>
+              </div>
+
+              <div class="mt-4 bg-gradient-to-r from-green-100 to-blue-100 p-3 rounded-lg border-2 border-green-400">
+                <p class="font-bangla text-sm font-bold text-green-900">💡 শিক্ষক হতে চান?</p>
+                <p class="font-bangla text-xs mt-1 text-green-800">আপনার পড়াশোনার কৌশল শেয়ার করে কোর্স/বই বানিয়ে আয় করুন!</p>
+                <button class="chat-option mt-2 bg-green-600 text-white px-3 py-1 rounded text-sm font-bangla" data-message="পড়ার কৌশল নিয়ে কোর্স বানাতে চাই">📚 কন্টেন্ট তৈরি করুন</button>
+              </div>
+
               <div class="mt-3">
                 <button class="chat-option bg-blue-600 text-white px-3 py-1 rounded text-sm font-bangla mr-2" data-message="পোমোডোরো টেকনিক শিখতে চাই">পোমোডোরো শিখুন</button>
                 <button class="chat-option bg-purple-600 text-white px-3 py-1 rounded text-sm font-bangla" data-message="নোট নেওয়ার কৌশল জানতে চাই">নোট কৌশল</button>
@@ -446,6 +584,12 @@ const getAcademicResponse = (input: string, user?: any): string => {
           <div class="mt-3 grid grid-cols-2 gap-2">
             <button class="chat-option bg-indigo-100 p-3 rounded-lg text-sm font-bangla hover:bg-indigo-200" data-message="পড়ার কৌশল জানতে চাই">📚 পড়ার কৌশল</button>
             <button class="chat-option bg-blue-100 p-3 rounded-lg text-sm font-bangla hover:bg-blue-200" data-message="পরীক্ষার প্রস্তুতি নিতে চাই">📝 পরীক্ষার টিপস</button>
+          </div>
+          
+          <div class="mt-3 bg-gradient-to-r from-indigo-50 to-purple-50 p-3 rounded-lg border border-indigo-200">
+            <p class="font-bangla text-sm font-bold text-indigo-900">🎓 জ্ঞান শেয়ার করুন!</p>
+            <p class="font-bangla text-xs mt-1 text-gray-700">আপনার একাডেমিক দক্ষতা দিয়ে কোর্স বানিয়ে আয় করতে পারেন</p>
+            <button class="chat-option mt-2 bg-indigo-600 text-white px-3 py-1 rounded text-sm font-bangla" data-message="একাডেমিক কোর্স বানিয়ে আয় করতে চাই">🎥 Create & Earn</button>
           </div>`;
 };
 
