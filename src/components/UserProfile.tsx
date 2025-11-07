@@ -111,8 +111,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, setUser, authUser, user
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
-        {/* Floating Login Button - Only shows for guests */}
-        {user.name === 'Guest User' && (
+        {/* Floating Login Button - Only shows for guests who are NOT logged in */}
+        {user.name === 'Guest User' && !authUser && (
           <div className="fixed bottom-8 right-8 z-50">
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -128,8 +128,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, setUser, authUser, user
           </div>
         )}
 
-        {/* Debug Info Panel with Login Button */}
-        {user.name === 'Guest User' && (
+        {/* Debug Info Panel with Login Button - Only for ACTUALLY not logged in users */}
+        {user.name === 'Guest User' && !authUser && (
           <>
             {/* BIG BANNER - IMPOSSIBLE TO MISS */}
             <div className="bg-gradient-to-r from-red-500 via-pink-500 to-purple-500 text-white p-8 rounded-2xl mb-6 shadow-2xl animate-pulse">
@@ -178,8 +178,19 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, setUser, authUser, user
           </>
         )}
 
-        {/* Profile Header (only show for logged in users) */}
-        {user.name !== 'Guest User' && (
+        {/* Loading state during auth check */}
+        {authUser && user.name === 'Guest User' && (
+          <div className="bg-blue-50 border-2 border-blue-300 rounded-xl p-6 mb-6 text-center">
+            <div className="text-blue-600 text-xl font-semibold mb-2">⏳ Loading your profile...</div>
+            <div className="text-blue-500">Please wait while we fetch your information</div>
+            <div className="mt-4">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          </div>
+        )}
+
+        {/* Profile Header (only show for logged in users with loaded profile) */}
+        {(user.name !== 'Guest User' || authUser) && (
         <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl p-8 text-white mb-8">
           <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
             {/* Profile Picture */}

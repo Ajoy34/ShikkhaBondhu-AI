@@ -164,9 +164,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, onLog
       console.log('✅ Login successful:', result);
       setSuccess('সফলভাবে লগইন হয়েছে! (Successfully logged in!)');
       
-      // Close modal immediately and trigger callback
+      // Wait a moment for session to be stored in Supabase client
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Close modal and trigger callback
       onClose();
       if (onLoginSuccess) {
+        console.log('🔄 Calling onLoginSuccess callback');
         onLoginSuccess();
       }
 

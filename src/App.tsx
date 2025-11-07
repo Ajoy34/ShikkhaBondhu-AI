@@ -90,6 +90,10 @@ function App() {
         // Load full profile with email as fallback
         await loadUserProfile(user.id, user.email || undefined);
         setIsLoading(false);
+        
+        // IMPORTANT: Don't change activeSection here!
+        // Let the Header component handle navigation after login
+        console.log('✅ Auth state updated, staying on current page');
       } else {
         console.log('🔔 Auth state changed - User logged out');
         setAuthUser(null);
@@ -107,6 +111,7 @@ function App() {
           contributionRating: 0,
           joinedDate: new Date().toISOString()
         });
+        // Only go to home on logout
         setActiveSection('home');
       }
     });
