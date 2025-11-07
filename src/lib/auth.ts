@@ -117,10 +117,17 @@ export async function signUp(data: SignUpData) {
     // mimicking the JS library's response.
     // We also need to update the local session for the user to be logged in.
     if (result.access_token) {
-      await supabase.auth.setSession({
+      console.log('🔄 Setting session after signup...');
+      const { error: sessionError } = await supabase.auth.setSession({
         access_token: result.access_token,
         refresh_token: result.refresh_token,
       });
+      
+      if (sessionError) {
+        console.error('❌ Session set error:', sessionError);
+      } else {
+        console.log('✅ Session set successfully after signup');
+      }
     }
     
     return { user: result.user, session: result };
@@ -175,10 +182,22 @@ export async function signIn(data: SignInData) {
     console.log('✅ Direct API Login Success:', result);
 
     // Manually set the session to log the user in
-    await supabase.auth.setSession({
+    console.log('🔄 Setting session in Supabase client...');
+    const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
       access_token: result.access_token,
       refresh_token: result.refresh_token,
     });
+
+    if (sessionError) {
+      console.error('❌ Session set error:', sessionError);
+      throw new Error(`Failed to set session: ${sessionError.message}`);
+    }
+
+    console.log('✅ Session set successfully:', sessionData);
+    
+    // Verify session was saved
+    const { data: { session: verifySession } } = await supabase.auth.getSession();
+    console.log('🔍 Verifying session after set:', verifySession ? '✅ Session exists' : '❌ No session');
 
     return { user: result.user, session: result };
 
