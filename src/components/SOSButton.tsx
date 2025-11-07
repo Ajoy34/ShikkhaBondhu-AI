@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   AlertTriangle, Phone, Heart, Shield, X, MapPin, 
-  MessageCircle, Ambulance,
+  Ambulance,
   Home, Stethoscope, UserCheck, Map, Navigation
 } from 'lucide-react';
 import ElderEmergencyReport from './ElderEmergencyReport';
@@ -21,30 +21,6 @@ const SOSButton: React.FC<SOSButtonProps> = ({ user }) => {
     { name: 'পুলিশ হেল্পলাইন', number: '১০০', type: 'নিরাপত্তা', icon: Shield, color: 'bg-blue-500' },
     { name: 'ফায়ার সার্ভিস', number: '১০১', type: 'দুর্যোগ', icon: Ambulance, color: 'bg-orange-500' },
     { name: 'অ্যাম্বুলেন্স সেবা', number: '১০২', type: 'চিকিৎসা', icon: Ambulance, color: 'bg-pink-500' }
-  ];
-
-  const elderServices = [
-    {
-      id: 1,
-      title: 'ডিজিটাল সাক্ষরতা প্রশিক্ষণ',
-      description: 'বয়স্ক নাগরিকদের জন্য সহজ ভাষায় মোবাইল ও কম্পিউটার ব্যবহার',
-      icon: UserCheck,
-      color: 'bg-blue-500'
-    },
-    {
-      id: 2,
-      title: 'স্বাস্থ্য পরামর্শ সেবা',
-      description: 'অভিজ্ঞ ডাক্তারদের সাথে ভিডিও কল বা ফোনে পরামর্শ',
-      icon: Stethoscope,
-      color: 'bg-green-500'
-    },
-    {
-      id: 3,
-      title: 'ঘরোয়া সেবা সহায়তা',
-      description: 'দৈনন্দিন কাজকর্মে সহায়তা ও পরিচর্যা সেবা',
-      icon: Home,
-      color: 'bg-orange-500'
-    }
   ];
 
   const handleEmergencyCall = (number: string) => {
@@ -309,7 +285,6 @@ const SOSButton: React.FC<SOSButtonProps> = ({ user }) => {
           {[
             { id: 'nearby', label: 'Find Help Nearby', icon: MapPin },
             { id: 'emergency', label: 'Emergency Contacts', icon: Phone },
-            { id: 'services', label: 'Elder Services', icon: Heart },
             { id: 'report', label: 'Make Report', icon: AlertTriangle }
           ].map((tab) => {
             const IconComponent = tab.icon;
@@ -378,62 +353,6 @@ const SOSButton: React.FC<SOSButtonProps> = ({ user }) => {
                     <p className="text-sm text-blue-700 font-bangla">
                       জরুরি সেবা দ্রুত পৌঁছাতে আপনার বর্তমান অবস্থান শেয়ার করা গুরুত্বপূর্ণ
                     </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Elder Services Tab */}
-          {activeTab === 'services' && (
-            <div>
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2 font-bangla">বয়স্ক নাগরিক সেবা</h3>
-                <p className="text-gray-600 font-bangla">
-                  আমাদের সম্মানিত বয়স্ক নাগরিকদের জন্য বিশেষ সেবা ও সহায়তা
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 mb-6">
-                {elderServices.map((service) => {
-                  const IconComponent = service.icon;
-                  return (
-                    <div
-                      key={service.id}
-                      className="bg-gradient-to-r from-gray-50 to-white border-2 border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all"
-                    >
-                      <div className="flex items-start space-x-4">
-                        <div className={`${service.color} p-3 rounded-full text-white`}>
-                          <IconComponent className="w-6 h-6" />
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="font-bold text-gray-900 mb-2 font-bangla">{service.title}</h4>
-                          <p className="text-gray-600 text-sm font-bangla">{service.description}</p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-6">
-                <div className="flex items-start space-x-3">
-                  <Heart className="w-6 h-6 text-purple-600 mt-1" />
-                  <div>
-                    <h4 className="font-bold text-purple-900 font-bangla mb-2">সেবা নিতে যোগাযোগ করুন</h4>
-                    <p className="text-sm text-purple-700 font-bangla mb-3">
-                      বয়স্ক সেবা হটলাইন: <span className="font-bold text-lg">১০৯</span>
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2">
-                        <Phone className="w-4 h-4" />
-                        <span className="font-bangla">কল করুন</span>
-                      </button>
-                      <button className="bg-white text-purple-600 border-2 border-purple-600 px-4 py-2 rounded-lg hover:bg-purple-50 transition-colors flex items-center space-x-2">
-                        <MessageCircle className="w-4 h-4" />
-                        <span className="font-bangla">চ্যাট করুন</span>
-                      </button>
-                    </div>
                   </div>
                 </div>
               </div>
