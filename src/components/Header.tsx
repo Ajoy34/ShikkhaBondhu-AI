@@ -55,9 +55,13 @@ const Header: React.FC<HeaderProps> = ({
     setIsLoggedIn(true);
     setActiveSection('dashboard');
     // Trigger auth state refresh to load user name
+    // Use longer delay to ensure Supabase session is fully persisted
     if (onAuthChange) {
-      console.log('🔄 Triggering auth state refresh after login');
-      setTimeout(() => onAuthChange(), 500); // Small delay to ensure session is set
+      console.log('🔄 Scheduling auth state refresh after login');
+      setTimeout(() => {
+        console.log('🔄 Now triggering auth state refresh');
+        onAuthChange();
+      }, 1000); // 1 second delay to ensure session is fully set
     }
   };
 

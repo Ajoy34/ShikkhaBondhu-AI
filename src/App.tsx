@@ -123,15 +123,19 @@ function App() {
   }, []);
 
   // Check current authentication status
-  const checkAuth = async () => {
+  const checkAuth = async (showLoadingSpinner = true) => {
     try {
-      setIsLoading(true);
+      if (showLoadingSpinner) {
+        setIsLoading(true);
+      }
       
       // Add timeout to prevent infinite loading
       const timeoutId = setTimeout(() => {
         console.warn('⚠️ Auth check timed out, proceeding without authentication');
         setIsLoggedIn(false);
-        setIsLoading(false);
+        if (showLoadingSpinner) {
+          setIsLoading(false);
+        }
       }, 10000); // 10 second timeout
       
       const user = await getCurrentUser();
@@ -159,7 +163,9 @@ function App() {
       console.error('Auth check error:', error);
       setIsLoggedIn(false);
     } finally {
-      setIsLoading(false);
+      if (showLoadingSpinner) {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -300,7 +306,7 @@ function App() {
             setIsChatOpen={setIsChatOpen} 
             setIsLoggedIn={setIsLoggedIn}
             setActiveSection={setActiveSection}
-            onAuthSuccess={checkAuth}
+            onAuthSuccess={() => checkAuth(true)}
           />
         )}
 
@@ -364,7 +370,7 @@ function App() {
         user={user}
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
-        onAuthChange={checkAuth}
+        onAuthChange={() => checkAuth(false)}
       />
       
       <main className="flex-grow">
