@@ -6,9 +6,7 @@ import ChatSystem from './components/ChatSystem';
 import PointsToast from './components/PointsToast';
 import UserProfile from './components/UserProfile';
 import VoiceAssistant from './components/VoiceAssistant';
-import VolunteerSection from './components/VolunteerSection';
 import SOSButton from './components/SOSButton';
-import ReportSystem from './components/ReportSystem';
 import Library from './components/Library';
 import FactCheck from './components/FactCheck';
 import CreateAndEarn from './components/CreateAndEarn';
@@ -273,8 +271,6 @@ function App() {
         return <UserProfile user={user} setUser={setUser} authUser={authUser} userProfile={userProfile} />;
       case 'library':
         return <Library user={user} onBackToDashboard={() => setActiveSection('dashboard')} />;
-      case 'report':
-        return <ReportSystem user={user} updateUserPoints={updateUserPoints} onBackToDashboard={() => setActiveSection('dashboard')} />;
       case 'factcheck':
         return <FactCheck onBackToDashboard={() => setActiveSection('dashboard')} />;
       case 'createandearn':
@@ -335,7 +331,7 @@ function App() {
           />
         ) : null}
         
-        <SOSButton user={user} />
+        <SOSButton />
         <VoiceAssistant />
 
         {/* Diagnostics Modal - Auto-shows on mount for debugging */}

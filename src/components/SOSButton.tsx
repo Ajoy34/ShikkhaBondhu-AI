@@ -2,15 +2,10 @@ import React, { useState } from 'react';
 import {
   AlertTriangle, Phone, Heart, Shield, X, MapPin, 
   Ambulance,
-  Home, Stethoscope, UserCheck, Map, Navigation
+  Home, Stethoscope, UserCheck, Map, Navigation, ExternalLink
 } from 'lucide-react';
-// ElderEmergencyReport removed — replaced with official resource links per request
 
-interface SOSButtonProps {
-  user?: any;
-}
-
-const SOSButton: React.FC<SOSButtonProps> = ({ user }) => {
+const SOSButton: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('nearby'); // Changed default to 'nearby'
 
@@ -359,33 +354,151 @@ const SOSButton: React.FC<SOSButtonProps> = ({ user }) => {
             </div>
           )}
 
-          {/* Report Tab - simplified: show official links only */}
+          {/* Report Tab */}
           {activeTab === 'report' && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-bold text-gray-900 mb-2 font-bangla">জরুরি ও সহায়তা লিঙ্ক</h3>
-              <p className="text-sm text-gray-700 mb-2 font-bangla">দ্রুত সহায়তার জন্য নিচের অফিসিয়াল লিঙ্কগুলো দেখুন:</p>
-              <ul className="list-disc pl-5 space-y-2">
-                <li>
-                  <a href="https://gd.police.gov.bd/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                    https://gd.police.gov.bd/
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.cid.gov.bd/hot-line-number-for-cyber-complain" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                    https://www.cid.gov.bd/hot-line-number-for-cyber-complain
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.police.gov.bd/en/police_cyber_support_for_women" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                    https://www.police.gov.bd/en/police_cyber_support_for_women
-                  </a>
-                </li>
-                <li>
-                  <a href="https://digitalliteracy.gov.bd/literacy-for/ze-kon-prkar-saibar-kraim-zthazth-krtrripkshke-jananor-pddhti-zogazoger-thikana-mobail-nmbr-2" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                    https://digitalliteracy.gov.bd/literacy-for/ze-kon-prkar-saibar-kraim-zthazth-krtrripkshke-jananor-pddhti-zogazoger-thikana-mobail-nmbr-2
-                  </a>
-                </li>
-              </ul>
+            <div className="space-y-6">
+              <div className="bg-gradient-to-r from-red-50 to-orange-50 p-6 rounded-xl border-2 border-red-200">
+                <h3 className="text-2xl font-bold text-gray-800 mb-3 flex items-center">
+                  <AlertTriangle className="w-7 h-7 mr-2 text-red-600" />
+                  সাইবার ক্রাইম রিপোর্ট করুন
+                </h3>
+                <p className="text-gray-700 mb-4 font-bangla">
+                  যেকোনো ধরনের সাইবার অপরাধ, হয়রানি, বা সমস্যার জন্য নিচের অফিশিয়াল সরকারি ওয়েবসাইটগুলিতে রিপোর্ট করুন:
+                </p>
+              </div>
+
+              {/* Official Reporting Links */}
+              <div className="space-y-4">
+                <a
+                  href="https://gd.police.gov.bd/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block bg-white border-2 border-blue-200 hover:border-blue-500 rounded-xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:scale-105 group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-500 transition-colors">
+                        <Shield className="w-6 h-6 text-blue-600 group-hover:text-white transition-colors" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-gray-800 text-lg mb-1 font-bangla">
+                          পুলিশ জেনারেল ডায়েরি (GD)
+                        </h4>
+                        <p className="text-sm text-gray-600">অনলাইনে জেনারেল ডায়েরি করুন</p>
+                      </div>
+                    </div>
+                    <ExternalLink className="w-5 h-5 text-blue-500 group-hover:text-blue-600" />
+                  </div>
+                </a>
+
+                <a
+                  href="https://www.cid.gov.bd/hot-line-number-for-cyber-complain"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block bg-white border-2 border-purple-200 hover:border-purple-500 rounded-xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:scale-105 group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="p-3 bg-purple-100 rounded-lg group-hover:bg-purple-500 transition-colors">
+                        <Phone className="w-6 h-6 text-purple-600 group-hover:text-white transition-colors" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-gray-800 text-lg mb-1 font-bangla">
+                          CID সাইবার ক্রাইম হটলাইন
+                        </h4>
+                        <p className="text-sm text-gray-600">সাইবার অপরাধ হটলাইন নম্বর</p>
+                      </div>
+                    </div>
+                    <ExternalLink className="w-5 h-5 text-purple-500 group-hover:text-purple-600" />
+                  </div>
+                </a>
+
+                <a
+                  href="https://www.police.gov.bd/en/police_cyber_support_for_women"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block bg-white border-2 border-pink-200 hover:border-pink-500 rounded-xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:scale-105 group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="p-3 bg-pink-100 rounded-lg group-hover:bg-pink-500 transition-colors">
+                        <Heart className="w-6 h-6 text-pink-600 group-hover:text-white transition-colors" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-gray-800 text-lg mb-1 font-bangla">
+                          নারীদের জন্য পুলিশ সাইবার সাপোর্ট
+                        </h4>
+                        <p className="text-sm text-gray-600">মহিলাদের বিশেষ সাইবার সহায়তা</p>
+                      </div>
+                    </div>
+                    <ExternalLink className="w-5 h-5 text-pink-500 group-hover:text-pink-600" />
+                  </div>
+                </a>
+
+                <a
+                  href="https://digitalliteracy.gov.bd/literacy-for/ze-kon-prkar-saibar-kraim-zthazth-krtrripkshke-jananor-pddhti-zogazoger-thikana-mobail-nmbr-2"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block bg-white border-2 border-green-200 hover:border-green-500 rounded-xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:scale-105 group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="p-3 bg-green-100 rounded-lg group-hover:bg-green-500 transition-colors">
+                        <Stethoscope className="w-6 h-6 text-green-600 group-hover:text-white transition-colors" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-gray-800 text-lg mb-1 font-bangla">
+                          সাইবার ক্রাইম রিপোর্টিং গাইড
+                        </h4>
+                        <p className="text-sm text-gray-600">যোগাযোগের ঠিকানা ও মোবাইল নম্বর</p>
+                      </div>
+                    </div>
+                    <ExternalLink className="w-5 h-5 text-green-500 group-hover:text-green-600" />
+                  </div>
+                </a>
+              </div>
+
+              {/* Important Notice */}
+              <div className="bg-yellow-50 border-l-4 border-yellow-500 p-5 rounded-lg">
+                <div className="flex items-start">
+                  <AlertTriangle className="w-5 h-5 text-yellow-600 mr-3 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-bold text-yellow-800 mb-2 font-bangla">গুরুত্বপূর্ণ তথ্য</h4>
+                    <ul className="text-sm text-yellow-700 space-y-1 font-bangla">
+                      <li>• সকল রিপোর্ট গোপনীয় রাখা হয়</li>
+                      <li>• প্রমাণ সংরক্ষণ করুন (স্ক্রিনশট, মেসেজ, ইত্যাদি)</li>
+                      <li>• জরুরি অবস্থায় সরাসরি <strong>999</strong> নম্বরে কল করুন</li>
+                      <li>• সাইবার ক্রাইম হটলাইন: <strong>০১৩২০০০০৮৮৮</strong></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Help */}
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
+                <h4 className="font-bold text-blue-900 mb-3 flex items-center font-bangla">
+                  <Phone className="w-5 h-5 mr-2" />
+                  জরুরি হেল্পলাইন নম্বর
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="bg-white p-3 rounded-lg">
+                    <p className="text-sm text-gray-600">জাতীয় জরুরি সেবা</p>
+                    <p className="text-xl font-bold text-blue-600">999</p>
+                  </div>
+                  <div className="bg-white p-3 rounded-lg">
+                    <p className="text-sm text-gray-600">সাইবার ক্রাইম হটলাইন</p>
+                    <p className="text-xl font-bold text-blue-600">01320000888</p>
+                  </div>
+                  <div className="bg-white p-3 rounded-lg">
+                    <p className="text-sm text-gray-600">নারী ও শিশু নির্যাতন প্রতিরোধ</p>
+                    <p className="text-xl font-bold text-blue-600">109</p>
+                  </div>
+                  <div className="bg-white p-3 rounded-lg">
+                    <p className="text-sm text-gray-600">পুলিশ হেল্পলাইন</p>
+                    <p className="text-xl font-bold text-blue-600">100</p>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
