@@ -24,11 +24,18 @@ const BookChat: React.FC<BookChatProps> = ({ onBackToDashboard }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingBooks, setIsLoadingBooks] = useState(true);
   const [error, setError] = useState('');
+  const [hasCriticalError, setHasCriticalError] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Load books on mount
   useEffect(() => {
-    loadBooksData();
+    try {
+      loadBooksData();
+    } catch (err) {
+      console.error('Critical error in BookChat:', err);
+      setHasCriticalError(true);
+      setError('একটি গুরুতর ত্রুটি ঘটেছে। (Critical error occurred)');
+    }
   }, []);
 
   // Auto-scroll to bottom when new messages
@@ -116,6 +123,27 @@ const BookChat: React.FC<BookChatProps> = ({ onBackToDashboard }) => {
     'সমাস কাকে বলে?',
     'সন্ধি কী?'
   ];
+
+  // Show critical error
+  if (hasCriticalError) {
+    return (
+      <div className="container mx-auto px-4 py-20">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-red-50 border-2 border-red-200 rounded-xl p-8 text-center">
+            <AlertCircle className="w-16 h-16 text-red-600 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-red-800 mb-2">Critical Error</h2>
+            <p className="text-red-700 mb-4">{error}</p>
+            <button
+              onClick={onBackToDashboard}
+              className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700"
+            >
+              Go Back to Dashboard
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoadingBooks) {
     return (

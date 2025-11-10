@@ -79,6 +79,10 @@ function keywordSimilarity(query: string, text: string): number {
  */
 async function generateQueryEmbedding(query: string): Promise<number[] | null> {
   try {
+    // Create abort controller for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    
     const response = await fetch('http://localhost:11434/api/embeddings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -86,8 +90,10 @@ async function generateQueryEmbedding(query: string): Promise<number[] | null> {
         model: 'nomic-embed-text',
         prompt: query
       }),
-      signal: AbortSignal.timeout(5000) // 5 second timeout
+      signal: controller.signal
     });
+    
+    clearTimeout(timeoutId);
     
     if (!response.ok) {
       console.warn('Ollama embedding failed, will use keyword search:', response.status);

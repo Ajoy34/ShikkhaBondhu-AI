@@ -277,7 +277,28 @@ function App() {
       case 'createandearn':
         return <CreateAndEarn onBackToDashboard={() => setActiveSection('dashboard')} />;
       case 'bookchat':
-        return <BookChat onBackToDashboard={() => setActiveSection('dashboard')} />;
+        try {
+          return <BookChat onBackToDashboard={() => setActiveSection('dashboard')} />;
+        } catch (error) {
+          console.error('BookChat render error:', error);
+          return (
+            <div className="container mx-auto px-4 py-20 text-center">
+              <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8">
+                <div className="text-6xl mb-4">⚠️</div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">Component Error</h2>
+                <p className="text-gray-600 mb-6 font-bangla">
+                  বুক চ্যাট লোড হতে ব্যর্থ
+                </p>
+                <button
+                  onClick={() => setActiveSection('dashboard')}
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all"
+                >
+                  Go to Dashboard
+                </button>
+              </div>
+            </div>
+          );
+        }
       default:
         return null;
     }
