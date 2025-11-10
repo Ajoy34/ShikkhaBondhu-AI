@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, User, MessageCircle, Search, Code, Video, BookOpen, LogOut } from 'lucide-react';
+import { Shield, User, MessageCircle, Search, Code, Video, BookOpen, LogOut, Book } from 'lucide-react';
 import { signOut } from '../lib/auth';
 import AuthModal from './AuthModal';
 

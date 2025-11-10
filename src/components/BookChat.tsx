@@ -8,7 +8,6 @@ import {
 let loadAllBooks: any;
 let answerQuestion: any;
 let getBookStats: any;
-let BookData: any;
 
 // Safe dynamic import
 const initializeRAG = async () => {
@@ -17,7 +16,6 @@ const initializeRAG = async () => {
     loadAllBooks = module.loadAllBooks;
     answerQuestion = module.answerQuestion;
     getBookStats = module.getBookStats;
-    BookData = module.BookData;
     return true;
   } catch (error) {
     console.error('Failed to load bookRAG:', error);
