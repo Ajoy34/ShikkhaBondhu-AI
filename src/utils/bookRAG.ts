@@ -58,7 +58,24 @@ function cosineSimilarity(vecA: number[], vecB: number[]): number {
 }
 
 /**
- * Generate embedding for query using Ollama
+ * Simple keyword-based similarity (fallback when Ollama is not available)
+ */
+function keywordSimilarity(query: string, text: string): number {
+  const queryWords = query.toLowerCase().split(/\s+/);
+  const textWords = text.toLowerCase().split(/\s+/);
+  
+  let matches = 0;
+  for (const word of queryWords) {
+    if (textWords.some(tw => tw.includes(word) || word.includes(tw))) {
+      matches++;
+    }
+  }
+  
+  return matches / queryWords.length;
+}
+
+/**
+ * Generate embedding for query using Ollama (with fallback)
  */
 async function generateQueryEmbedding(query: string): Promise<number[] | null> {
   try {
@@ -68,18 +85,19 @@ async function generateQueryEmbedding(query: string): Promise<number[] | null> {
       body: JSON.stringify({
         model: 'nomic-embed-text',
         prompt: query
-      })
+      }),
+      signal: AbortSignal.timeout(5000) // 5 second timeout
     });
     
     if (!response.ok) {
-      console.error('Ollama embedding failed:', response.status);
+      console.warn('Ollama embedding failed, will use keyword search:', response.status);
       return null;
     }
     
     const data = await response.json();
     return data.embedding;
   } catch (error) {
-    console.error('Failed to generate query embedding:', error);
+    console.warn('Ollama not available, using keyword-based search:', error);
     return null;
   }
 }
@@ -123,20 +141,24 @@ export async function searchBooks(
   topK: number = 5
 ): Promise<{ chunk: BookChunk; similarity: number; bookTitle: string }[]> {
   
-  // Generate embedding for the query
+  // Try to generate embedding for the query
   const queryEmbedding = await generateQueryEmbedding(query);
-  
-  if (!queryEmbedding) {
-    console.error('Failed to generate query embedding');
-    return [];
-  }
   
   // Calculate similarity for all chunks
   const results: { chunk: BookChunk; similarity: number; bookTitle: string }[] = [];
   
   for (const book of books) {
     for (const chunk of book.chunks) {
-      const similarity = cosineSimilarity(queryEmbedding, chunk.embedding);
+      let similarity: number;
+      
+      if (queryEmbedding && chunk.embedding) {
+        // Use embedding-based similarity (more accurate)
+        similarity = cosineSimilarity(queryEmbedding, chunk.embedding);
+      } else {
+        // Fallback to keyword-based similarity
+        similarity = keywordSimilarity(query, chunk.text);
+      }
+      
       results.push({
         chunk,
         similarity,

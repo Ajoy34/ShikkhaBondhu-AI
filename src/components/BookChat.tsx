@@ -38,8 +38,11 @@ const BookChat: React.FC<BookChatProps> = ({ onBackToDashboard }) => {
 
   const loadBooksData = async () => {
     setIsLoadingBooks(true);
+    setError('');
     try {
+      console.log('📚 Loading books from /book-data/...');
       const loadedBooks = await loadAllBooks();
+      console.log(`✅ Loaded ${loadedBooks.length} books`, loadedBooks);
       setBooks(loadedBooks);
       
       if (loadedBooks.length > 0) {
@@ -47,15 +50,16 @@ const BookChat: React.FC<BookChatProps> = ({ onBackToDashboard }) => {
         setMessages([{
           id: 'welcome',
           type: 'assistant',
-          content: `📚 **বইয়ের সাথে চ্যাট করুন!**\n\n✅ ${stats.totalBooks}টি বই লোড হয়েছে\n📖 বিষয়: ${stats.subjects.join(', ')}\n📝 মোট ${stats.totalChunks}টি অধ্যায়/বিষয়\n\nআপনার পাঠ্যবই সম্পর্কে যেকোনো প্রশ্ন করুন! যেমন:\n- "ক্রিয়া কাকে বলে?"\n- "সকর্মক ও অকর্মক ক্রিয়ার পার্থক্য কী?"\n- "সমাসের প্রকারভেদ বলো"`,
+          content: `📚 **বইয়ের সাথে চ্যাট করুন!**\n\n✅ ${stats.totalBooks}টি বই লোড হয়েছে\n📖 বিষয়: ${stats.subjects.join(', ')}\n📝 মোট ${stats.totalChunks}টি অধ্যায়/বিষয়\n\nআপনার পাঠ্যবই সম্পর্কে যেকোনো প্রশ্ন করুন! যেমন:\n- "ক্রিয়া কাকে বলে?"\n- "সকর্মক ও অকর্মক ক্রিয়ার পার্থক্য কী?"\n- "সমাসের প্রকারভেদ বলো"\n\n💡 **টিপ:** Ollama চালু না থাকলেও keyword-based search দিয়ে কাজ করবে!`,
           timestamp: new Date()
         }]);
       } else {
-        setError('কোন বই পাওয়া যায়নি। দয়া করে PDF প্রসেস করুন। (No books found)');
+        console.warn('⚠️ No books loaded');
+        setError('কোন বই পাওয়া যায়নি। দয়া করে PDF প্রসেস করুন। (No books found. Please check if sample_bangla_grammar.json exists in /public/book-data/)');
       }
     } catch (err) {
-      console.error('Failed to load books:', err);
-      setError('বই লোড করতে ব্যর্থ। (Failed to load books)');
+      console.error('❌ Failed to load books:', err);
+      setError('বই লোড করতে ব্যর্থ। (Failed to load books. Check console for details.)');
     } finally {
       setIsLoadingBooks(false);
     }
@@ -159,6 +163,9 @@ const BookChat: React.FC<BookChatProps> = ({ onBackToDashboard }) => {
                 <div className="text-xs text-green-600 flex items-center gap-1 mt-1">
                   <CheckCircle className="w-3 h-3" />
                   <span>Ready to answer</span>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  Powered by Gemini AI
                 </div>
               </div>
             )}
