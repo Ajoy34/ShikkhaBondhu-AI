@@ -228,7 +228,7 @@ ${context}
 
     // Step 4: Get answer from Gemini Flash (cheap!)
     console.log('💬 Generating answer with Gemini...');
-    const result = await callGeminiAPI(prompt, 'academic', userId);
+    const result = await callGeminiAPI(prompt, 'academic', userId, { skipLengthCheck: true });
     
     if (result.error) {
       return {

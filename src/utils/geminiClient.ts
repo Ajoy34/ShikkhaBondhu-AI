@@ -25,7 +25,8 @@ function checkRateLimit(userId: string): boolean {
 export async function callGeminiAPI(
   message: string,
   botType: string,
-  userId: string
+  userId: string,
+  options?: { skipLengthCheck?: boolean }
 ): Promise<{ response: string; error?: string }> {
   try {
     // Check rate limit
@@ -44,7 +45,8 @@ export async function callGeminiAPI(
       };
     }
 
-    if (message.length > 2000) {
+    // Skip length check for RAG queries (they include context)
+    if (!options?.skipLengthCheck && message.length > 2000) {
       return {
         response: '',
         error: 'বার্তাটি খুব দীর্ঘ। দয়া করে ছোট করুন। (Message too long. Please shorten it.)'
