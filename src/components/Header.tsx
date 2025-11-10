@@ -170,6 +170,15 @@ const Header: React.FC<HeaderProps> = ({
                   <span className="text-xs font-semibold text-blue-700">AI Chat</span>
                 </button>
 
+                {/* Book Chat */}
+                <button
+                  onClick={() => setActiveSection('bookchat')}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-colors whitespace-nowrap flex-shrink-0"
+                >
+                  <Book className="w-4 h-4 text-purple-600" />
+                  <span className="text-xs font-semibold text-purple-700">Book Chat</span>
+                </button>
+
                 {/* Fact Check */}
                 <button
                   onClick={() => setActiveSection('factcheck')}
