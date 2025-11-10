@@ -115,7 +115,12 @@ export async function loadAllBooks(): Promise<BookData[]> {
   try {
     // In production, these files are in /book-data/
     // List of available books (update this when adding new books)
-    const bookFiles = ['sample_bangla_grammar.json'];
+    const bookFiles = [
+      'sample_bangla_grammar.json',
+      'Secondary - 2018 - Class - 9&10 - Bangla sohopat class-9  PDF Web .json',
+      'Secondary - 2018 - Class - 9&10 - Higher Math 9 BV  PDF Web .json',
+      'Secondary - 2018 - Class - 9&10 - Physics Class 9-10 BV  PDF Web .json'
+    ];
     
     const books: BookData[] = [];
     

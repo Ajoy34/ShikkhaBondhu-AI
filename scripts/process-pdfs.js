@@ -8,7 +8,9 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { createRequire } from 'module';
 
+const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -97,13 +99,14 @@ async function processFile(filePath, metadata) {
       extractedText = fs.readFileSync(filePath, 'utf8');
       console.log(`   📄 Extracted text file, ${extractedText.length} characters`);
     } else if (fileExt === 'pdf') {
-      // Dynamic import for pdf-parse (ESM compatibility)
-      const pdfParse = (await import('pdf-parse/lib/pdf-parse.js')).default;
+      // Use require for pdf-parse (CommonJS module)
+      const { PDFParse } = require('pdf-parse');
       
       const dataBuffer = fs.readFileSync(filePath);
-      const data = await pdfParse(dataBuffer);
+      const parser = new PDFParse({ data: dataBuffer });
+      const data = await parser.getText();
       extractedText = data.text;
-      pageCount = data.numpages;
+      pageCount = data.total;
       
       console.log(`   📄 Extracted ${pageCount} pages, ${extractedText.length} characters`);
     } else {
