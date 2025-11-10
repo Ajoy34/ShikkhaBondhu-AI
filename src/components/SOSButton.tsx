@@ -4,7 +4,7 @@ import {
   Ambulance,
   Home, Stethoscope, UserCheck, Map, Navigation
 } from 'lucide-react';
-import ElderEmergencyReport from './ElderEmergencyReport';
+// ElderEmergencyReport removed — replaced with official resource links per request
 
 interface SOSButtonProps {
   user?: any;
@@ -359,10 +359,33 @@ const SOSButton: React.FC<SOSButtonProps> = ({ user }) => {
             </div>
           )}
 
-          {/* Report Tab */}
+          {/* Report Tab - simplified: show official links only */}
           {activeTab === 'report' && (
-            <div>
-              <ElderEmergencyReport />
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold text-gray-900 mb-2 font-bangla">জরুরি ও সহায়তা লিঙ্ক</h3>
+              <p className="text-sm text-gray-700 mb-2 font-bangla">দ্রুত সহায়তার জন্য নিচের অফিসিয়াল লিঙ্কগুলো দেখুন:</p>
+              <ul className="list-disc pl-5 space-y-2">
+                <li>
+                  <a href="https://gd.police.gov.bd/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    https://gd.police.gov.bd/
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.cid.gov.bd/hot-line-number-for-cyber-complain" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    https://www.cid.gov.bd/hot-line-number-for-cyber-complain
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.police.gov.bd/en/police_cyber_support_for_women" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    https://www.police.gov.bd/en/police_cyber_support_for_women
+                  </a>
+                </li>
+                <li>
+                  <a href="https://digitalliteracy.gov.bd/literacy-for/ze-kon-prkar-saibar-kraim-zthazth-krtrripkshke-jananor-pddhti-zogazoger-thikana-mobail-nmbr-2" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    https://digitalliteracy.gov.bd/literacy-for/ze-kon-prkar-saibar-kraim-zthazth-krtrripkshke-jananor-pddhti-zogazoger-thikana-mobail-nmbr-2
+                  </a>
+                </li>
+              </ul>
             </div>
           )}
 
