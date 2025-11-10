@@ -10,7 +10,6 @@ import SOSButton from './components/SOSButton';
 import Library from './components/Library';
 import FactCheck from './components/FactCheck';
 import CreateAndEarn from './components/CreateAndEarn';
-import BookChat from './components/BookChat';
 import SignupDiagnostics from './components/SignupDiagnostics';
 import SimpleSignupTest from './components/SimpleSignupTest';
 import ReviewBar from './components/ReviewBar';
@@ -276,8 +275,6 @@ function App() {
         return <FactCheck onBackToDashboard={() => setActiveSection('dashboard')} />;
       case 'createandearn':
         return <CreateAndEarn onBackToDashboard={() => setActiveSection('dashboard')} />;
-      case 'bookchat':
-        return <BookChat onBackToDashboard={() => setActiveSection('dashboard')} />;
       default:
         return null;
     }
