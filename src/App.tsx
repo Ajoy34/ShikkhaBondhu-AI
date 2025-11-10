@@ -277,28 +277,23 @@ function App() {
       case 'createandearn':
         return <CreateAndEarn onBackToDashboard={() => setActiveSection('dashboard')} />;
       case 'bookchat':
-        try {
-          return <BookChat onBackToDashboard={() => setActiveSection('dashboard')} />;
-        } catch (error) {
-          console.error('BookChat render error:', error);
-          return (
-            <div className="container mx-auto px-4 py-20 text-center">
-              <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8">
-                <div className="text-6xl mb-4">⚠️</div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">Component Error</h2>
-                <p className="text-gray-600 mb-6 font-bangla">
-                  বুক চ্যাট লোড হতে ব্যর্থ
-                </p>
-                <button
-                  onClick={() => setActiveSection('dashboard')}
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all"
-                >
-                  Go to Dashboard
-                </button>
-              </div>
+        // Temporarily return a simple placeholder to test if this is causing the blank page
+        return (
+          <div className="container mx-auto px-4 py-20">
+            <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8">
+              <button
+                onClick={onBackToDashboard}
+                className="flex items-center text-gray-600 hover:text-indigo-600 mb-4"
+              >
+                ← Back to Dashboard
+              </button>
+              <h1 className="text-3xl font-bold mb-4">Book Chat (Coming Soon)</h1>
+              <p className="text-gray-600">
+                This feature is temporarily disabled while we fix an issue.
+              </p>
             </div>
-          );
-        }
+          </div>
+        );
       default:
         return null;
     }
