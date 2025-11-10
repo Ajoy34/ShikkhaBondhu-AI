@@ -95,7 +95,23 @@ const getWelcomeMessage = (botType: string, user?: any): string => {
                  <button class="chat-option w-full text-left p-2 bg-indigo-100 rounded-lg text-sm hover:bg-indigo-200" data-message="পড়ার কৌশল জানতে চাই">📖 পড়ার কৌশল</button>
                  <button class="chat-option w-full text-left p-2 bg-indigo-100 rounded-lg text-sm hover:bg-indigo-200" data-message="পরীক্ষার প্রস্তুতি নিতে চাই">📝 পরীক্ষার প্রস্তুতি</button>
                  <button class="chat-option w-full text-left p-2 bg-indigo-100 rounded-lg text-sm hover:bg-indigo-200" data-message="লক্ষ্য নির্ধারণে সাহায্য চাই">🎯 লক্ষ্য নির্ধারণ</button>
-               </div>`
+               </div>`,
+    
+    nctb: `<p class="font-bangla">হ্যালো ${userName}! আমি NCTB বই সহায়ক। 📚</p>
+           <p class="font-bangla text-sm mt-2 text-gray-600">আমি আপনার NCTB পাঠ্যবই থেকে সরাসরি উত্তর দিতে পারি। বইয়ের পৃষ্ঠা ও অধ্যায়ের রেফারেন্স সহ!</p>
+           <div class="mt-3 space-y-2">
+             <div class="bg-orange-50 p-2 rounded text-xs font-bangla">
+               <p class="font-bold text-orange-700">📖 উপলব্ধ বই:</p>
+               <ul class="list-disc ml-4 mt-1 text-gray-700">
+                 <li>বাংলা সহপাঠ (নবম শ্রেণি)</li>
+                 <li>উচ্চতর গণিত (নবম-দশম শ্রেণি)</li>
+                 <li>পদার্থবিজ্ঞান (নবম-দশম শ্রেণি)</li>
+               </ul>
+             </div>
+             <button class="chat-option w-full text-left p-2 bg-orange-100 rounded-lg text-sm hover:bg-orange-200" data-message="নবম শ্রেণির উচ্চতর গণিত একাদশ অধ্যায়ের সমাধান দাও">📐 গণিত অধ্যায় ১১ সমাধান</button>
+             <button class="chat-option w-full text-left p-2 bg-orange-100 rounded-lg text-sm hover:bg-orange-200" data-message="পদার্থবিজ্ঞান বইয়ের ভৌত রাশি এবং পরিমাপ কোন অধ্যায়ে">🔬 পদার্থবিজ্ঞান অধ্যায় খুঁজুন</button>
+             <button class="chat-option w-full text-left p-2 bg-orange-100 rounded-lg text-sm hover:bg-orange-200" data-message="সমাস কাকে বলে">📝 বাংলা ব্যাকরণ</button>
+           </div>`
   };
 
   return welcomeMessages[botType as keyof typeof welcomeMessages] || welcomeMessages.general;

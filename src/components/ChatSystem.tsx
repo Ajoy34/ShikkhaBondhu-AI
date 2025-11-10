@@ -154,6 +154,62 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
 
       // If Vercel API failed, try direct Gemini API
       if (useDirectAPI) {
+        // Handle NCTB Books bot specially
+        if (selectedBot === 'nctb') {
+          try {
+            const { askNCTBQuestion } = await import('../utils/nctbBooks');
+            const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+            
+            if (!apiKey) {
+              throw new Error('API key not configured');
+            }
+            
+            const result = await askNCTBQuestion(message, apiKey);
+            
+            setMessages(prev => prev.filter(msg => msg.id !== 'typing'));
+            
+            const botMessage: Message = {
+              id: (Date.now() + 1).toString(),
+              content: result.error 
+                ? `দুঃখিত, একটি সমস্যা হয়েছে: ${result.error}` 
+                : `**${result.bookUsed}**\n\n${result.answer}`,
+              sender: 'bot',
+              timestamp: new Date()
+            };
+            setMessages(prev => [...prev, botMessage]);
+            setIsLoading(false);
+
+            // Award points
+            awardPoints(user.email || 'user', 'CHAT_MESSAGE', (points, action) => {
+              setPointsToast({ points, action });
+              setUser((prev: any) => ({
+                ...prev,
+                points: prev.points + points,
+                impactScore: Math.min(prev.impactScore + 1, 100)
+              }));
+            });
+
+            if (isSpeaking && !result.error) {
+              speakText(result.answer);
+            }
+            return;
+          } catch (error) {
+            console.error('NCTB Books error:', error);
+            setMessages(prev => prev.filter(msg => msg.id !== 'typing'));
+            
+            const errorMessage: Message = {
+              id: (Date.now() + 1).toString(),
+              content: 'দুঃখিত, NCTB বই থেকে উত্তর পেতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।',
+              sender: 'bot',
+              timestamp: new Date(),
+              error: true
+            };
+            setMessages(prev => [...prev, errorMessage]);
+            setIsLoading(false);
+            return;
+          }
+        }
+
         const directResult = await callGeminiAPI(
           message,
           selectedBot,

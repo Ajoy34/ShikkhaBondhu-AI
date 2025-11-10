@@ -70,6 +70,13 @@ const ChatbotSelector: React.FC<ChatbotSelectorProps> = ({ selectedBot, onBotCha
       bangla: 'একাডেমিক সহায়তা',
       icon: BookOpen, 
       color: 'bg-indigo-500' 
+    },
+    { 
+      id: 'nctb', 
+      name: 'Talk to NCTB Books', 
+      bangla: 'NCTB বই',
+      icon: BookOpen, 
+      color: 'bg-orange-500' 
     }
   ];
 
