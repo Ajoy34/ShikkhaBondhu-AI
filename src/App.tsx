@@ -10,7 +10,7 @@ import SOSButton from './components/SOSButton';
 import Library from './components/Library';
 import FactCheck from './components/FactCheck';
 import CreateAndEarn from './components/CreateAndEarn';
-// import BookChat from './components/BookChat'; // Temporarily disabled
+import BookChat from './components/BookChat';
 import SignupDiagnostics from './components/SignupDiagnostics';
 import SimpleSignupTest from './components/SimpleSignupTest';
 import ReviewBar from './components/ReviewBar';
@@ -277,23 +277,7 @@ function App() {
       case 'createandearn':
         return <CreateAndEarn onBackToDashboard={() => setActiveSection('dashboard')} />;
       case 'bookchat':
-        // Temporarily return a simple placeholder to test if this is causing the blank page
-        return (
-          <div className="container mx-auto px-4 py-20">
-            <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8">
-              <button
-                onClick={onBackToDashboard}
-                className="flex items-center text-gray-600 hover:text-indigo-600 mb-4"
-              >
-                ← Back to Dashboard
-              </button>
-              <h1 className="text-3xl font-bold mb-4">Book Chat (Coming Soon)</h1>
-              <p className="text-gray-600">
-                This feature is temporarily disabled while we fix an issue.
-              </p>
-            </div>
-          </div>
-        );
+        return <BookChat onBackToDashboard={() => setActiveSection('dashboard')} />;
       default:
         return null;
     }

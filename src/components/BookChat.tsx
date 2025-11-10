@@ -3,7 +3,27 @@ import {
   Book, Send, Loader, AlertCircle, BookOpen, 
   MessageSquare, ArrowLeft, Sparkles, CheckCircle 
 } from 'lucide-react';
-import { loadAllBooks, answerQuestion, getBookStats, BookData } from '../utils/bookRAG';
+
+// Lazy import to prevent initialization errors
+let loadAllBooks: any;
+let answerQuestion: any;
+let getBookStats: any;
+let BookData: any;
+
+// Safe dynamic import
+const initializeRAG = async () => {
+  try {
+    const module = await import('../utils/bookRAG');
+    loadAllBooks = module.loadAllBooks;
+    answerQuestion = module.answerQuestion;
+    getBookStats = module.getBookStats;
+    BookData = module.BookData;
+    return true;
+  } catch (error) {
+    console.error('Failed to load bookRAG:', error);
+    return false;
+  }
+};
 
 interface BookChatProps {
   onBackToDashboard: () => void;
@@ -18,24 +38,33 @@ interface Message {
 }
 
 const BookChat: React.FC<BookChatProps> = ({ onBackToDashboard }) => {
-  const [books, setBooks] = useState<BookData[]>([]);
+  const [books, setBooks] = useState<any[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingBooks, setIsLoadingBooks] = useState(true);
   const [error, setError] = useState('');
   const [hasCriticalError, setHasCriticalError] = useState(false);
+  const [ragInitialized, setRagInitialized] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Load books on mount
+  // Initialize RAG on mount
   useEffect(() => {
-    try {
-      loadBooksData();
-    } catch (err) {
-      console.error('Critical error in BookChat:', err);
-      setHasCriticalError(true);
-      setError('একটি গুরুতর ত্রুটি ঘটেছে। (Critical error occurred)');
-    }
+    initializeRAG()
+      .then((success) => {
+        if (success) {
+          setRagInitialized(true);
+          loadBooksData();
+        } else {
+          setHasCriticalError(true);
+          setError('Failed to initialize Book Chat system');
+        }
+      })
+      .catch((err) => {
+        console.error('Critical error initializing RAG:', err);
+        setHasCriticalError(true);
+        setError('একটি গুরুতর ত্রুটি ঘটেছে। (Critical error occurred)');
+      });
   }, []);
 
   // Auto-scroll to bottom when new messages
@@ -75,7 +104,7 @@ const BookChat: React.FC<BookChatProps> = ({ onBackToDashboard }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || !ragInitialized) return;
     
     const userMessage: Message = {
       id: Date.now().toString(),
