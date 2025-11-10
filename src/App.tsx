@@ -10,7 +10,7 @@ import SOSButton from './components/SOSButton';
 import Library from './components/Library';
 import FactCheck from './components/FactCheck';
 import CreateAndEarn from './components/CreateAndEarn';
-import BookChat from './components/BookChat';
+// import BookChat from './components/BookChat'; // Temporarily disabled
 import SignupDiagnostics from './components/SignupDiagnostics';
 import SimpleSignupTest from './components/SimpleSignupTest';
 import ReviewBar from './components/ReviewBar';
