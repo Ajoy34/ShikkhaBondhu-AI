@@ -9,6 +9,8 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createRequire } from 'module';
+import tesseract from 'node-tesseract-ocr';
+import { fromPath } from 'pdf2pic';
 
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
@@ -99,16 +101,83 @@ async function processFile(filePath, metadata) {
       extractedText = fs.readFileSync(filePath, 'utf8');
       console.log(`   📄 Extracted text file, ${extractedText.length} characters`);
     } else if (fileExt === 'pdf') {
-      // Use require for pdf-parse (CommonJS module)
-      const { PDFParse } = require('pdf-parse');
+      console.log(`   🖼️  Converting PDF to images for OCR...`);
       
-      const dataBuffer = fs.readFileSync(filePath);
-      const parser = new PDFParse({ data: dataBuffer });
-      const data = await parser.getText();
-      extractedText = data.text;
-      pageCount = data.total;
-      
-      console.log(`   📄 Extracted ${pageCount} pages, ${extractedText.length} characters`);
+      // Try regular PDF text extraction first
+      try {
+        const { PDFParse } = require('pdf-parse');
+        const dataBuffer = fs.readFileSync(filePath);
+        const parser = new PDFParse({ data: dataBuffer });
+        const data = await parser.getText();
+        
+        // If we got meaningful text (more than just page markers), use it
+        if (data.text && data.text.length > 500 && !data.text.includes('-- 1 of')) {
+          extractedText = data.text;
+          pageCount = data.total;
+          console.log(`   ✅ Extracted text directly (${pageCount} pages, ${extractedText.length} characters)`);
+        } else {
+          throw new Error('Scanned PDF detected, using OCR');
+        }
+      } catch (textError) {
+        console.log(`   🔍 Using OCR for scanned PDF...`);
+        
+        // Convert PDF to images and use OCR
+        const options = {
+          density: 100,
+          saveFilename: path.basename(filePath, '.pdf'),
+          savePath: path.join(__dirname, '../temp-images'),
+          format: 'png',
+          width: 2000,
+          height: 2000
+        };
+        
+        // Create temp directory
+        if (!fs.existsSync(options.savePath)) {
+          fs.mkdirSync(options.savePath, { recursive: true });
+        }
+        
+        const convert = fromPath(filePath, options);
+        
+        // Process first 10 pages only (to avoid very long processing)
+        const maxPages = 10;
+        const texts = [];
+        
+        for (let i = 1; i <= maxPages; i++) {
+          try {
+            const pageResult = await convert(i, { responseType: 'image' });
+            
+            if (pageResult && pageResult.path) {
+              console.log(`   📄 Processing page ${i}...`);
+              
+              // OCR configuration for Bangla + English
+              const config = {
+                lang: 'ben+eng',  // Bengali + English
+                oem: 1,
+                psm: 3,
+              };
+              
+              const text = await tesseract.recognize(pageResult.path, config);
+              texts.push(text);
+              
+              // Delete temp image
+              fs.unlinkSync(pageResult.path);
+            }
+          } catch (pageError) {
+            console.log(`   ⚠️  Could not process page ${i}`);
+            break; // Stop if we hit an error (likely means no more pages)
+          }
+        }
+        
+        extractedText = texts.join('\n\n');
+        pageCount = texts.length;
+        
+        // Cleanup temp directory
+        try {
+          fs.rmdirSync(options.savePath, { recursive: true });
+        } catch {}
+        
+        console.log(`   ✅ OCR complete (${pageCount} pages, ${extractedText.length} characters)`);
+      }
     } else {
       throw new Error(`Unsupported file type: ${fileExt}`);
     }
