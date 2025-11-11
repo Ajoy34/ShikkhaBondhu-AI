@@ -54,8 +54,9 @@ export async function askNCTBQuestion(question: string, apiKey: string): Promise
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
+    // Use gemini-1.5-pro for PDF/image support
     const model = genAI.getGenerativeModel({ 
-      model: 'gemini-1.5-flash' 
+      model: 'gemini-1.5-pro' 
     });
 
     // Check which book might be relevant based on keywords
