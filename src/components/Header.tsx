@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Shield, User, MessageCircle, Search, Code, Video, BookOpen, LogOut } from 'lucide-react';
+import { Shield, User, MessageCircle, Search, Code, Video, BookOpen, LogOut, Brain } from 'lucide-react';
 import { signOut } from '../lib/auth';
 import AuthModal from './AuthModal';
+import MindMapGenerator from './MindMapGenerator';
 
 interface HeaderProps {
   activeSection: string;
@@ -26,6 +27,7 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showMindMapGenerator, setShowMindMapGenerator] = useState(false);
 
   // Debug: Log user name changes
   React.useEffect(() => {
@@ -179,6 +181,18 @@ const Header: React.FC<HeaderProps> = ({
                   <span className="text-xs font-semibold text-green-700">Fact Check</span>
                 </button>
 
+                {/* Mind Map Generator */}
+                <button
+                  onClick={() => setShowMindMapGenerator(true)}
+                  className="relative flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-colors whitespace-nowrap flex-shrink-0"
+                >
+                  <div className="absolute -top-1 -right-1 bg-green-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
+                    NEW
+                  </div>
+                  <Brain className="w-4 h-4 text-purple-600" />
+                  <span className="text-xs font-semibold text-purple-700">Mind Map</span>
+                </button>
+
                 {/* AI Lab */}
                 <button
                   disabled
@@ -213,6 +227,12 @@ const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
       )}
+
+      {/* Mind Map Generator */}
+      <MindMapGenerator
+        isOpen={showMindMapGenerator}
+        onClose={() => setShowMindMapGenerator(false)}
+      />
 
       {/* Auth Modal */}
       <AuthModal

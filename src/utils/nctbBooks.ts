@@ -53,12 +53,6 @@ export async function askNCTBQuestion(question: string, apiKey: string): Promise
       };
     }
 
-    const genAI = new GoogleGenerativeAI(apiKey);
-    // Use gemini-1.5-pro for PDF/image support
-    const model = genAI.getGenerativeModel({ 
-      model: 'gemini-1.5-pro' 
-    });
-
     // Check which book might be relevant based on keywords
     const bookToUse = detectRelevantBook(question);
     
@@ -88,6 +82,19 @@ export async function askNCTBQuestion(question: string, apiKey: string): Promise
     // Try to find specific chapter info from knowledge base
     const chapterInfo = findChapterInfo(bookToUse.id, question);
     console.log('Chapter detection:', chapterInfo);
+
+    // Cost-effective approach: Use Flash for small PDFs, Pro for large ones
+    // Flash is ~10x cheaper ($0.0001/query) but Pro is better for complex PDFs
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const useProModel = bookToUse.sizeMB > 10; // Use Pro if > 10MB
+    const modelName = useProModel ? 'gemini-1.5-pro' : 'gemini-1.5-flash-latest';
+    
+    console.log(`💰 Using ${modelName} for ${bookToUse.title} (${bookToUse.sizeMB}MB)`);
+    console.log(`   Cost estimate: ~$${useProModel ? '0.003' : '0.0001'} per query`);
+    
+    const model = genAI.getGenerativeModel({ 
+      model: modelName
+    });
 
     // Fetch PDF from public folder
     const bookUrl = `/nctb-books/${bookToUse.filename}`;
