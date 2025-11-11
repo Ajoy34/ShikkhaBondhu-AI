@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, Bot, User, Mic, Square, Volume2, Trash2, Copy, CheckCheck } from 'lucide-react';
+import { X, Send, Bot, User, Mic, Square, Volume2, Trash2, Copy, CheckCheck, Paperclip, FileText, Brain, XCircle } from 'lucide-react';
 import ChatbotSelector from './ChatbotSelector';
+import MessageContent from './MessageContent';
 import { getChatbotResponse } from '../utils/chatbotLogic';
 import { callGeminiAPI } from '../utils/geminiClient';
 import { awardPoints, PointAction } from '../utils/pointsSystem';
@@ -32,8 +33,11 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [pointsToast, setPointsToast] = useState<{ points: number; action: PointAction } | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [fileContent, setFileContent] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize chat when bot changes
   useEffect(() => {
@@ -157,13 +161,48 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
         // Handle NCTB Books bot specially
         if (selectedBot === 'nctb') {
           try {
-            const { askNCTBQuestion } = await import('../utils/nctbBooks');
             const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
             
             if (!apiKey) {
               throw new Error('API key not configured - Please add VITE_GOOGLE_API_KEY to .env file');
             }
             
+            // Check if user wants a mind map
+            const { isMindMapQuery } = await import('../utils/nctbMindMap');
+            const wantsMindMap = isMindMapQuery(message);
+            
+            if (wantsMindMap) {
+              // Generate mind map
+              const { generateNCTBMindMap } = await import('../utils/nctbMindMap');
+              const mindMapResult = await generateNCTBMindMap(message, apiKey);
+              
+              setMessages(prev => prev.filter(msg => msg.id !== 'typing'));
+              
+              if (mindMapResult.error) {
+                const errorMsg: Message = {
+                  id: (Date.now() + 1).toString(),
+                  content: `❌ ${mindMapResult.error}`,
+                  sender: 'bot',
+                  timestamp: new Date(),
+                  error: true
+                };
+                setMessages(prev => [...prev, errorMsg]);
+              } else {
+                const botMessage: Message = {
+                  id: (Date.now() + 1).toString(),
+                  content: `🗺️ **${mindMapResult.bookUsed}**\n**${mindMapResult.chapterInfo?.title}** এর মাইন্ড ম্যাপ\n\n\`\`\`mermaid\n${mindMapResult.mindMap}\n\`\`\`\n\n💡 _এই মাইন্ড ম্যাপটি স্ক্রিনশট নিয়ে সেভ করতে পারেন!_`,
+                  sender: 'bot',
+                  timestamp: new Date()
+                };
+                setMessages(prev => [...prev, botMessage]);
+              }
+              
+              setIsLoading(false);
+              return;
+            }
+            
+            // Normal NCTB question
+            const { askNCTBQuestion } = await import('../utils/nctbBooks');
             const result = await askNCTBQuestion(message, apiKey);
             
             setMessages(prev => prev.filter(msg => msg.id !== 'typing'));
@@ -216,6 +255,98 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
           }
         }
 
+        // Check if user uploaded a file and wants to chat with it
+        if (uploadedFile && fileContent) {
+          try {
+            const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+            if (!apiKey) {
+              throw new Error('API key not configured');
+            }
+
+            // Check if user wants a mind map
+            const wantsMindMap = message.toLowerCase().includes('mind map') || 
+                                message.includes('মাইন্ড ম্যাপ') || 
+                                message.toLowerCase().includes('mindmap');
+
+            if (wantsMindMap) {
+              // Trigger mind map generation
+              await generateFileMindMap();
+              return;
+            }
+
+            // Chat with the file using Gemini
+            const { GoogleGenerativeAI } = await import('@google/generative-ai');
+            const genAI = new GoogleGenerativeAI(apiKey);
+            const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
+
+            let parts: any[] = [];
+
+            if (uploadedFile.type === 'text/plain' || uploadedFile.name.endsWith('.txt')) {
+              parts.push({
+                text: `You are a helpful assistant. Answer the user's question based on this file content.
+
+File: ${uploadedFile.name}
+Content:
+${fileContent}
+
+User Question: ${message}
+
+Provide a clear and helpful answer in Bangla if the question is in Bangla, otherwise in English.`
+              });
+            } else {
+              // For PDF/images
+              const mimeType = uploadedFile.type || 'application/pdf';
+              parts.push({
+                inlineData: {
+                  mimeType,
+                  data: fileContent
+                }
+              });
+              parts.push({
+                text: `Answer the user's question about this document: ${message}
+
+Provide a clear and helpful answer in Bangla if the question is in Bangla, otherwise in English.`
+              });
+            }
+
+            const result = await model.generateContent(parts);
+            const response = await result.response;
+            const answer = response.text();
+
+            setMessages(prev => prev.filter(msg => msg.id !== 'typing'));
+
+            const botMessage: Message = {
+              id: (Date.now() + 1).toString(),
+              content: `📄 **${uploadedFile.name}** থেকে:\n\n${answer}`,
+              sender: 'bot',
+              timestamp: new Date()
+            };
+            setMessages(prev => [...prev, botMessage]);
+            setIsLoading(false);
+
+            if (isSpeaking) {
+              speakText(answer);
+            }
+            return;
+
+          } catch (error: any) {
+            console.error('File chat error:', error);
+            setMessages(prev => prev.filter(msg => msg.id !== 'typing'));
+            
+            const errorMsg: Message = {
+              id: (Date.now() + 1).toString(),
+              content: `❌ ফাইলের সাথে চ্যাট করতে সমস্যা হয়েছে: ${error.message}`,
+              sender: 'bot',
+              timestamp: new Date(),
+              error: true
+            };
+            setMessages(prev => [...prev, errorMsg]);
+            setIsLoading(false);
+            return;
+          }
+        }
+
+        // No file uploaded, use regular API
         const directResult = await callGeminiAPI(
           message,
           selectedBot,
@@ -408,7 +539,214 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
         sender: 'bot',
         timestamp: new Date()
       }]);
+      // Clear uploaded file
+      setUploadedFile(null);
+      setFileContent('');
     }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file size (20MB limit)
+    if (file.size > 20 * 1024 * 1024) {
+      alert('ফাইল খুব বড়! সর্বোচ্চ 20MB। (File too large! Maximum 20MB.)');
+      return;
+    }
+
+    // Check file type
+    const validTypes = [
+      'application/pdf',
+      'text/plain',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'image/png',
+      'image/jpeg',
+      'image/jpg'
+    ];
+
+    if (!validTypes.includes(file.type) && !file.name.endsWith('.txt')) {
+      alert('অসমর্থিত ফাইল ফরম্যাট। PDF, TXT, DOC, DOCX, বা ছবি ব্যবহার করুন।\n(Unsupported file format. Use PDF, TXT, DOC, DOCX, or images.)');
+      return;
+    }
+
+    setUploadedFile(file);
+
+    // Read file content
+    try {
+      if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+        const text = await file.text();
+        setFileContent(text);
+      } else if (file.type.startsWith('image/') || file.type === 'application/pdf') {
+        // Convert to base64 for PDF/images
+        const arrayBuffer = await file.arrayBuffer();
+        const bytes = new Uint8Array(arrayBuffer);
+        let binary = '';
+        const chunkSize = 8192;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+          const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+          binary += String.fromCharCode(...chunk);
+        }
+        const base64 = btoa(binary);
+        setFileContent(base64);
+      }
+
+      // Add system message about file upload
+      const fileMsg: Message = {
+        id: Date.now().toString(),
+        content: `📎 <strong>ফাইল আপলোড হয়েছে:</strong> ${file.name}<br/>
+                  <span class="text-sm text-gray-600">আকার: ${(file.size / 1024).toFixed(2)} KB</span><br/><br/>
+                  <div class="bg-purple-50 p-3 rounded-lg mt-2">
+                    <p class="font-bold text-purple-700">এখন আপনি করতে পারেন:</p>
+                    <ul class="list-disc ml-4 text-sm mt-1">
+                      <li>ফাইল সম্পর্কে প্রশ্ন করুন</li>
+                      <li>"mind map বানাও" টাইপ করে মাইন্ড ম্যাপ তৈরি করুন</li>
+                      <li>"summarize this" বলে সারসংক্ষেপ পান</li>
+                    </ul>
+                  </div>`,
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, fileMsg]);
+
+    } catch (error) {
+      console.error('File upload error:', error);
+      alert('ফাইল পড়তে সমস্যা হয়েছে। (Error reading file.)');
+      setUploadedFile(null);
+      setFileContent('');
+    }
+  };
+
+  const removeFile = () => {
+    setUploadedFile(null);
+    setFileContent('');
+    
+    const removeMsg: Message = {
+      id: Date.now().toString(),
+      content: `🗑️ ফাইল সরানো হয়েছে। নতুন ফাইল আপলোড করতে পারেন।`,
+      sender: 'bot',
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, removeMsg]);
+  };
+
+  const generateFileMindMap = async () => {
+    if (!uploadedFile || !fileContent) {
+      alert('প্রথমে একটি ফাইল আপলোড করুন! (Please upload a file first!)');
+      return;
+    }
+
+    setIsLoading(true);
+
+    // Add user message
+    const userMsg: Message = {
+      id: Date.now().toString(),
+      content: '🗺️ মাইন্ড ম্যাপ তৈরি করো',
+      sender: 'user',
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, userMsg]);
+
+    // Add typing indicator
+    setMessages(prev => [...prev, {
+      id: 'typing',
+      content: '',
+      sender: 'bot',
+      timestamp: new Date(),
+      isTyping: true
+    }]);
+
+    try {
+      const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+      if (!apiKey) {
+        throw new Error('API key not configured');
+      }
+
+      const { GoogleGenerativeAI } = await import('@google/generative-ai');
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
+
+      let prompt = '';
+      const parts: any[] = [];
+
+      if (uploadedFile.type === 'text/plain' || uploadedFile.name.endsWith('.txt')) {
+        prompt = `Create a comprehensive mind map from this content in Mermaid format.
+
+Content:
+${fileContent}
+
+Generate ONLY the mermaid code (no explanations). Use this format:
+\`\`\`mermaid
+mindmap
+  root((Main Topic))
+    Subtopic 1
+      Detail 1
+      Detail 2
+    Subtopic 2
+      Detail 3
+      Detail 4
+\`\`\`
+
+Use Bangla language for the content. Be comprehensive and include all major points.`;
+        parts.push({ text: prompt });
+      } else {
+        // For PDF/images
+        const mimeType = uploadedFile.type || 'application/pdf';
+        parts.push({
+          inlineData: {
+            mimeType,
+            data: fileContent
+          }
+        });
+        parts.push({
+          text: `Analyze this document and create a comprehensive mind map in Mermaid format.
+
+Generate ONLY the mermaid code (no explanations). Use this format:
+\`\`\`mermaid
+mindmap
+  root((Main Topic))
+    Subtopic 1
+      Detail 1
+      Detail 2
+    Subtopic 2
+      Detail 3
+      Detail 4
+\`\`\`
+
+Use Bangla language if the content is in Bangla, otherwise use English. Be comprehensive.`
+        });
+      }
+
+      const result = await model.generateContent(parts);
+      const response = await result.response;
+      let mindMapText = response.text();
+
+      setMessages(prev => prev.filter(msg => msg.id !== 'typing'));
+
+      const botMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: `🗺️ **${uploadedFile.name}** এর মাইন্ড ম্যাপ\n\n${mindMapText}\n\n💡 _এই মাইন্ড ম্যাপটি স্ক্রিনশট নিয়ে সেভ করতে পারেন!_`,
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, botMessage]);
+
+    } catch (error: any) {
+      console.error('Mind map generation error:', error);
+      setMessages(prev => prev.filter(msg => msg.id !== 'typing'));
+      
+      const errorMsg: Message = {
+        id: (Date.now() + 1).toString(),
+        content: `❌ মাইন্ড ম্যাপ তৈরিতে সমস্যা হয়েছে: ${error.message}`,
+        sender: 'bot',
+        timestamp: new Date(),
+        error: true
+      };
+      setMessages(prev => [...prev, errorMsg]);
+    }
+
+    setIsLoading(false);
   };
 
   if (!isOpen) return null;
@@ -495,9 +833,9 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
                       </div>
                     ) : (
                       <>
-                        <div 
-                          className={`${message.sender === 'bot' ? 'font-bangla' : ''} leading-relaxed`}
-                          dangerouslySetInnerHTML={{ __html: message.content }}
+                        <MessageContent 
+                          content={message.content}
+                          isBotMessage={message.sender === 'bot'}
                         />
                         <div className="flex items-center justify-between mt-2 pt-2 border-t border-opacity-20 border-current">
                           <div className={`text-xs ${message.sender === 'user' ? 'text-indigo-200' : 'text-gray-400'}`}>
@@ -532,15 +870,67 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
           <div ref={messagesEndRef} />
         </div>
 
+        {/* File Upload Section */}
+        {uploadedFile && (
+          <div className="px-4 py-2 bg-purple-50 border-t border-purple-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <FileText className="w-5 h-5 text-purple-600" />
+                <div>
+                  <p className="text-sm font-semibold text-purple-800">{uploadedFile.name}</p>
+                  <p className="text-xs text-purple-600">{(uploadedFile.size / 1024).toFixed(2)} KB</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={generateFileMindMap}
+                  disabled={isLoading}
+                  className="flex items-center space-x-1 px-3 py-1.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 text-sm transition-all"
+                  title="Generate Mind Map"
+                >
+                  <Brain className="w-4 h-4" />
+                  <span className="font-bangla">মাইন্ড ম্যাপ</span>
+                </button>
+                <button
+                  onClick={removeFile}
+                  disabled={isLoading}
+                  className="p-1.5 text-purple-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                  title="Remove File"
+                >
+                  <XCircle className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Input Form */}
         <div className="p-4 border-t border-gray-200 bg-white">
           <form onSubmit={handleSubmit} className="flex items-center space-x-3">
+            {/* File Upload Button */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.txt,.doc,.docx,.png,.jpg,.jpeg"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isLoading}
+              className="p-3 text-purple-600 hover:bg-purple-50 rounded-full transition-all disabled:opacity-50"
+              title="Upload File (PDF, TXT, DOC, Image)"
+            >
+              <Paperclip className="w-5 h-5" />
+            </button>
+
             <div className="flex-1 relative">
               <input
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="আপনার প্রশ্ন টাইপ করুন... (Type your question...)"
+                placeholder={uploadedFile ? "ফাইল সম্পর্কে প্রশ্ন করুন..." : "আপনার প্রশ্ন টাইপ করুন..."}
                 className="w-full px-4 py-3 rounded-full border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent pr-12 transition-all"
                 disabled={isLoading}
               />

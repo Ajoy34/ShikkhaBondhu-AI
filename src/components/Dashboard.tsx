@@ -15,6 +15,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
   const [filterType, setFilterType] = useState<'all' | 'local' | 'global'>('all');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [pointsToast, setPointsToast] = useState<{ points: number; action: PointAction } | null>(null);
+  const [newCampaigns, setNewCampaigns] = useState<any[]>([]);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
 
   // Helper function to award points and show toast
   const handlePointsAward = (action: PointAction) => {
@@ -28,11 +31,43 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
   };
 
   // Handle campaign creation
-  const handleCreateCampaign = () => {
+  const handleCreateCampaign = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Get form data
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
+    
+    const newCampaign = {
+      title: formData.get('title') as string,
+      titleBn: formData.get('titleBn') as string,
+      organizer: user.name || 'Anonymous',
+      organizerImage: '👤',
+      participants: 1,
+      raised: 0,
+      goal: parseInt(formData.get('goal') as string) || 50000,
+      daysLeft: parseInt(formData.get('duration') as string) || 30,
+      duration: `${formData.get('duration')} days campaign`,
+      image: formData.get('image') as string || 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800&q=80',
+      type: formData.get('category') as string || 'Community',
+      scope: formData.get('scope') as 'local' | 'global' || 'local',
+      location: formData.get('location') as string || 'Bangladesh',
+      isCrowdfunding: formData.get('type') === 'crowdfunding',
+      likes: 0,
+      comments: 0,
+      shares: 0,
+      postedTime: 'Just now'
+    };
+    
+    // Add to new campaigns
+    setNewCampaigns([newCampaign, ...newCampaigns]);
+    
     // Award points for creating campaign
     handlePointsAward('CREATE_CAMPAIGN');
     setShowCreateModal(false);
-    // In real app, would save campaign to backend
+    
+    // Show success message
+    alert('Campaign created successfully! 🎉');
   };
 
   // Handle like action
@@ -52,10 +87,47 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
   };
 
   // Handle share action
-  const handleShare = () => {
+  const handleShare = (campaign: any) => {
     const success = handlePointsAward('SHARE_CAMPAIGN');
     if (!success) {
       alert('You\'ve reached your daily limit for shares!');
+      return;
+    }
+    
+    // Create shareable URL
+    const campaignUrl = `${window.location.origin}/campaign/${encodeURIComponent(campaign.title)}`;
+    setShareUrl(campaignUrl);
+    setShowShareModal(true);
+  };
+
+  // Copy share link
+  const copyShareLink = () => {
+    navigator.clipboard.writeText(shareUrl);
+    alert('Link copied to clipboard! You can now share it anywhere.');
+  };
+
+  // Share to social media
+  const shareToSocial = (platform: string) => {
+    const text = encodeURIComponent(`Check out this campaign: ${shareUrl}`);
+    let url = '';
+    
+    switch(platform) {
+      case 'facebook':
+        url = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`;
+        break;
+      case 'twitter':
+        url = `https://twitter.com/intent/tweet?url=${shareUrl}&text=${text}`;
+        break;
+      case 'whatsapp':
+        url = `https://wa.me/?text=${text}`;
+        break;
+      case 'messenger':
+        url = `https://www.facebook.com/dialog/send?link=${shareUrl}&app_id=YOUR_APP_ID`;
+        break;
+    }
+    
+    if (url) {
+      window.open(url, '_blank', 'width=600,height=400');
     }
   };
 
@@ -147,7 +219,10 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
     }
   ];
 
-  const filteredPrograms = communityPrograms.filter(program => {
+  // Combine new campaigns with existing ones
+  const allPrograms = [...newCampaigns, ...communityPrograms];
+  
+  const filteredPrograms = allPrograms.filter(program => {
     if (filterType === 'all') return true;
     return program.scope === filterType;
   });
@@ -346,7 +421,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                         <span className="text-gray-700 font-semibold">Comment</span>
                       </button>
                       <button 
-                        onClick={handleShare}
+                        onClick={() => handleShare(program)}
                         className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors flex-1 justify-center"
                       >
                         <Share2 className="w-5 h-5 text-gray-600" />
@@ -647,19 +722,20 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
               <p className="text-green-100 mt-2 font-bangla">নতুন ক্যাম্পেইন তৈরি করুন</p>
             </div>
 
-            <div className="p-6 space-y-6">
+            <form onSubmit={handleCreateCampaign} className="p-6 space-y-6">
               {/* Campaign Type */}
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-3">Campaign Type *</label>
+                <input type="hidden" name="type" value="crowdfunding" />
                 <div className="grid grid-cols-2 gap-4">
-                  <button className="flex items-center space-x-3 p-4 border-2 border-yellow-300 bg-yellow-50 rounded-xl hover:bg-yellow-100 transition-all">
+                  <button type="button" className="flex items-center space-x-3 p-4 border-2 border-yellow-300 bg-yellow-50 rounded-xl hover:bg-yellow-100 transition-all">
                     <DollarSign className="w-6 h-6 text-yellow-600" />
                     <div className="text-left">
                       <div className="font-bold text-gray-900">Crowdfunding</div>
                       <div className="text-xs text-gray-600">Raise money</div>
                     </div>
                   </button>
-                  <button className="flex items-center space-x-3 p-4 border-2 border-blue-300 bg-blue-50 rounded-xl hover:bg-blue-100 transition-all">
+                  <button type="button" className="flex items-center space-x-3 p-4 border-2 border-blue-300 bg-blue-50 rounded-xl hover:bg-blue-100 transition-all">
                     <Users className="w-6 h-6 text-blue-600" />
                     <div className="text-left">
                       <div className="font-bold text-gray-900">Volunteer</div>
@@ -672,15 +748,16 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
               {/* Campaign Scope */}
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-3">Campaign Scope *</label>
+                <input type="hidden" name="scope" value="local" />
                 <div className="grid grid-cols-2 gap-4">
-                  <button className="flex items-center space-x-3 p-4 border-2 border-blue-300 bg-blue-50 rounded-xl hover:bg-blue-100 transition-all">
+                  <button type="button" className="flex items-center space-x-3 p-4 border-2 border-blue-300 bg-blue-50 rounded-xl hover:bg-blue-100 transition-all">
                     <MapPin className="w-6 h-6 text-blue-600" />
                     <div className="text-left">
                       <div className="font-bold text-gray-900">Local</div>
                       <div className="text-xs text-gray-600">Your area only</div>
                     </div>
                   </button>
-                  <button className="flex items-center space-x-3 p-4 border-2 border-green-300 bg-green-50 rounded-xl hover:bg-green-100 transition-all">
+                  <button type="button" className="flex items-center space-x-3 p-4 border-2 border-green-300 bg-green-50 rounded-xl hover:bg-green-100 transition-all">
                     <Globe className="w-6 h-6 text-green-600" />
                     <div className="text-left">
                       <div className="font-bold text-gray-900">Global</div>
@@ -695,8 +772,10 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                 <label className="block text-sm font-bold text-gray-700 mb-2">Campaign Title *</label>
                 <input
                   type="text"
+                  name="title"
                   placeholder="e.g., Clean Water Initiative"
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-500 transition-all"
+                  required
                 />
               </div>
 
@@ -705,15 +784,17 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                 <label className="block text-sm font-bold text-gray-700 mb-2">Bengali Title (বাংলা শিরোনাম) *</label>
                 <input
                   type="text"
+                  name="titleBn"
                   placeholder="বাংলায় শিরোনাম"
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-500 transition-all font-bangla"
+                  required
                 />
               </div>
 
               {/* Category */}
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">Category *</label>
-                <select className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-500 transition-all">
+                <select name="category" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-500 transition-all" required>
                   <option value="">Select category</option>
                   <option value="education">Education</option>
                   <option value="healthcare">Healthcare</option>
@@ -729,8 +810,10 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                 <label className="block text-sm font-bold text-gray-700 mb-2">Location *</label>
                 <input
                   type="text"
+                  name="location"
                   placeholder="e.g., Dhaka, Bangladesh"
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-500 transition-all"
+                  required
                 />
               </div>
 
@@ -740,10 +823,12 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                 <div className="grid grid-cols-2 gap-4">
                   <input
                     type="number"
+                    name="duration"
                     placeholder="Number of days"
                     className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-500 transition-all"
+                    required
                   />
-                  <select className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-500 transition-all">
+                  <select name="durationUnit" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-500 transition-all">
                     <option>Days</option>
                     <option>Weeks</option>
                     <option>Months</option>
@@ -756,8 +841,10 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                 <label className="block text-sm font-bold text-gray-700 mb-2">Funding Goal (৳) *</label>
                 <input
                   type="number"
+                  name="goal"
                   placeholder="e.g., 100000"
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-500 transition-all"
+                  required
                 />
               </div>
 
@@ -777,25 +864,99 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">Description *</label>
                 <textarea
+                  name="description"
                   rows={6}
                   placeholder="Describe your campaign in detail..."
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-500 transition-all"
+                  required
                 />
               </div>
 
               {/* Action Buttons */}
               <div className="flex items-center space-x-4 pt-4">
                 <button
+                  type="button"
                   onClick={() => setShowCreateModal(false)}
                   className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all"
                 >
                   Cancel
                 </button>
                 <button 
-                  onClick={handleCreateCampaign}
+                  type="submit"
                   className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all"
                 >
                   Create Campaign
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-black text-gray-900">Share Campaign</h2>
+              <button
+                onClick={() => setShowShareModal(false)}
+                className="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Share URL */}
+            <div className="mb-6">
+              <label className="block text-sm font-bold text-gray-700 mb-2">Campaign Link</label>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="text"
+                  value={shareUrl}
+                  readOnly
+                  className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl bg-gray-50 text-gray-700 font-mono text-sm"
+                />
+                <button
+                  onClick={copyShareLink}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            {/* Social Media Share Buttons */}
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-3">Share on Social Media</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => shareToSocial('facebook')}
+                  className="flex items-center justify-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors"
+                >
+                  <span>📘</span>
+                  <span>Facebook</span>
+                </button>
+                <button
+                  onClick={() => shareToSocial('twitter')}
+                  className="flex items-center justify-center space-x-2 px-4 py-3 bg-sky-500 text-white rounded-xl font-bold hover:bg-sky-600 transition-colors"
+                >
+                  <span>🐦</span>
+                  <span>Twitter</span>
+                </button>
+                <button
+                  onClick={() => shareToSocial('whatsapp')}
+                  className="flex items-center justify-center space-x-2 px-4 py-3 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600 transition-colors"
+                >
+                  <span>💬</span>
+                  <span>WhatsApp</span>
+                </button>
+                <button
+                  onClick={() => shareToSocial('messenger')}
+                  className="flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl font-bold hover:from-blue-600 hover:to-purple-600 transition-colors"
+                >
+                  <span>💬</span>
+                  <span>Messenger</span>
                 </button>
               </div>
             </div>

@@ -109,9 +109,14 @@ const getWelcomeMessage = (botType: string, user?: any): string => {
                </ul>
                <p class="text-xs text-gray-500 mt-1">* পদার্থবিজ্ঞান বইটি বড় হওয়ায় প্রসেসিং চলছে</p>
              </div>
+             <div class="bg-purple-50 p-2 rounded text-xs font-bangla mt-2">
+               <p class="font-bold text-purple-700">🎯 নতুন: মাইন্ড ম্যাপ তৈরি করুন!</p>
+               <p class="text-gray-600 mt-1">যেকোনো অধ্যায়ের মাইন্ড ম্যাপ তৈরি করতে বলুন</p>
+             </div>
              <button class="chat-option w-full text-left p-2 bg-orange-100 rounded-lg text-sm hover:bg-orange-200" data-message="নবম শ্রেণির উচ্চতর গণিত একাদশ অধ্যায়ের সমাধান দাও">📐 গণিত অধ্যায় ১১ সমাধান</button>
-             <button class="chat-option w-full text-left p-2 bg-orange-100 rounded-lg text-sm hover:bg-orange-200" data-message="সমাস কাকে বলে">� বাংলা ব্যাকরণ</button>
-             <button class="chat-option w-full text-left p-2 bg-orange-100 rounded-lg text-sm hover:bg-orange-200" data-message="ত্রিকোণমিতিক অনুপাত কি">� গণিত ত্রিকোণমিতি</button>
+             <button class="chat-option w-full text-left p-2 bg-purple-100 rounded-lg text-sm hover:bg-purple-200" data-message="chapter 11 এর mind map বানাও">🗺️ অধ্যায় ১১ মাইন্ড ম্যাপ</button>
+             <button class="chat-option w-full text-left p-2 bg-orange-100 rounded-lg text-sm hover:bg-orange-200" data-message="সমাস কাকে বলে">📝 বাংলা ব্যাকরণ</button>
+             <button class="chat-option w-full text-left p-2 bg-orange-100 rounded-lg text-sm hover:bg-orange-200" data-message="ত্রিকোণমিতিক অনুপাত কি">🔢 গণিত ত্রিকোণমিতি</button>
            </div>`
   };
 
