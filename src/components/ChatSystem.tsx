@@ -193,13 +193,19 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
               speakText(result.answer);
             }
             return;
-          } catch (error) {
+          } catch (error: any) {
             console.error('NCTB Books error:', error);
+            console.error('Error details:', {
+              message: error?.message,
+              stack: error?.stack,
+              error: error
+            });
+            
             setMessages(prev => prev.filter(msg => msg.id !== 'typing'));
             
             const errorMessage: Message = {
               id: (Date.now() + 1).toString(),
-              content: 'দুঃখিত, NCTB বই থেকে উত্তর পেতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।',
+              content: `দুঃখিত, NCTB বই থেকে উত্তর পেতে সমস্যা হয়েছে।\n\nত্রুটি: ${error?.message || 'Unknown error'}\n\nদয়া করে আবার চেষ্টা করুন।`,
               sender: 'bot',
               timestamp: new Date(),
               error: true

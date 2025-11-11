@@ -13,21 +13,27 @@ export const NCTB_BOOKS = [
     title: 'বাংলা সহপাঠ (Class 9)',
     filename: 'Secondary - 2018 - Class - 9&10 - Bangla sohopat class-9  PDF Web .pdf',
     class: '9-10',
-    subject: 'Bangla'
+    subject: 'Bangla',
+    sizeMB: 5.9,
+    tooLarge: false
   },
   {
     id: 'higher-math-9-10',
     title: 'উচ্চতর গণিত (Higher Math - Class 9-10)',
     filename: 'Secondary - 2018 - Class - 9&10 - Higher Math 9 BV  PDF Web .pdf',
     class: '9-10',
-    subject: 'Mathematics'
+    subject: 'Mathematics',
+    sizeMB: 12.32,
+    tooLarge: false
   },
   {
     id: 'physics-9-10',
     title: 'পদার্থবিজ্ঞান (Physics - Class 9-10)',
     filename: 'Secondary - 2018 - Class - 9&10 - Physics Class 9-10 BV  PDF Web .pdf',
     class: '9-10',
-    subject: 'Physics'
+    subject: 'Physics',
+    sizeMB: 25.26,
+    tooLarge: true // Too large for Gemini (>20MB limit)
   }
 ];
 
@@ -62,6 +68,22 @@ export async function askNCTBQuestion(question: string, apiKey: string): Promise
       };
     }
 
+    // Check if PDF is too large
+    if (bookToUse.tooLarge) {
+      return {
+        answer: '',
+        error: `দুঃখিত! ${bookToUse.title} বইটি খুব বড় (${bookToUse.sizeMB}MB)। 
+
+📚 এই বইটি এখনও সম্পূর্ণভাবে প্রসেস করা হয়নি। 
+
+💡 সমাধান: আমরা শীঘ্রই এই বইটির একটি ছোট সংস্করণ যুক্ত করব।
+
+🔄 এই মুহূর্তে অন্য বই ব্যবহার করুন:
+   • বাংলা সহপাঠ (${NCTB_BOOKS[0].sizeMB}MB) ✅
+   • উচ্চতর গণিত (${NCTB_BOOKS[1].sizeMB}MB) ✅`
+      };
+    }
+
     // Try to find specific chapter info from knowledge base
     const chapterInfo = findChapterInfo(bookToUse.id, question);
     console.log('Chapter detection:', chapterInfo);
@@ -71,21 +93,36 @@ export async function askNCTBQuestion(question: string, apiKey: string): Promise
     
     let pdfBase64: string;
     try {
+      console.log('Fetching PDF:', bookUrl);
       const response = await fetch(bookUrl);
       if (!response.ok) {
+        console.error('PDF fetch failed:', response.status, response.statusText);
         return {
           answer: '',
-          error: `বইটি লোড করতে সমস্যা হয়েছে: ${bookToUse.title}`
+          error: `বইটি লোড করতে সমস্যা হয়েছে: ${bookToUse.title} (HTTP ${response.status})`
         };
       }
+      
+      console.log('PDF fetched, converting to base64...');
       const arrayBuffer = await response.arrayBuffer();
       const bytes = new Uint8Array(arrayBuffer);
-      // Convert to base64
-      pdfBase64 = btoa(String.fromCharCode(...bytes));
-    } catch (fetchError) {
+      console.log('PDF size:', bytes.length, 'bytes');
+      
+      // Convert to base64 in chunks to avoid stack overflow
+      let binary = '';
+      const chunkSize = 8192;
+      for (let i = 0; i < bytes.length; i += chunkSize) {
+        const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+        binary += String.fromCharCode(...chunk);
+      }
+      pdfBase64 = btoa(binary);
+      console.log('Base64 conversion complete, length:', pdfBase64.length);
+      
+    } catch (fetchError: any) {
+      console.error('PDF fetch/conversion error:', fetchError);
       return {
         answer: '',
-        error: `নেটওয়ার্ক সমস্যা। অনুগ্রহ করে আবার চেষ্টা করুন।`
+        error: `PDF লোড করতে সমস্যা: ${fetchError?.message || 'Unknown error'}`
       };
     }
 
@@ -119,29 +156,49 @@ export async function askNCTBQuestion(question: string, apiKey: string): Promise
 উত্তর:`;
 
     // Send to Gemini with PDF
-    const result = await model.generateContent([
-      {
-        inlineData: {
-          mimeType: 'application/pdf',
-          data: pdfBase64
-        }
-      },
-      { text: prompt }
-    ]);
+    try {
+      console.log('Sending to Gemini API...');
+      console.log('Prompt length:', prompt.length);
+      console.log('PDF base64 length:', pdfBase64.length);
+      
+      const result = await model.generateContent([
+        {
+          inlineData: {
+            mimeType: 'application/pdf',
+            data: pdfBase64
+          }
+        },
+        { text: prompt }
+      ]);
 
-    const response = result.response;
-    const answer = response.text();
+      console.log('Gemini response received');
+      const response = result.response;
+      const answer = response.text();
+      console.log('Answer extracted, length:', answer.length);
 
-    return {
-      answer,
-      bookUsed: bookToUse.title
-    };
+      return {
+        answer,
+        bookUsed: bookToUse.title
+      };
+    } catch (geminiError: any) {
+      console.error('Gemini API Error:', geminiError);
+      console.error('Error details:', {
+        message: geminiError?.message,
+        status: geminiError?.status,
+        statusText: geminiError?.statusText
+      });
+      
+      return {
+        answer: '',
+        error: `Gemini API সমস্যা: ${geminiError?.message || 'Unknown error'}. PDF আকার হতে পারে খুব বড়।`
+      };
+    }
 
   } catch (error: any) {
     console.error('NCTB Question Error:', error);
     return {
       answer: '',
-      error: error.message || 'একটি ত্রুটি ঘটেছে। (An error occurred)'
+      error: `ত্রুটি: ${error?.message || 'Unknown error'}`
     };
   }
 }
