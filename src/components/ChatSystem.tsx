@@ -158,10 +158,10 @@ const ChatSystem: React.FC<ChatSystemProps> = ({ isOpen, onClose, selectedBot, o
         if (selectedBot === 'nctb') {
           try {
             const { askNCTBQuestion } = await import('../utils/nctbBooks');
-            const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+            const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
             
             if (!apiKey) {
-              throw new Error('API key not configured');
+              throw new Error('API key not configured - Please add VITE_GOOGLE_API_KEY to .env file');
             }
             
             const result = await askNCTBQuestion(message, apiKey);
