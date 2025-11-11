@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Shield, User, MessageCircle, Search, Code, Video, BookOpen, LogOut, Brain } from 'lucide-react';
+import { Shield, User, MessageCircle, Search, Code, Video, BookOpen, LogOut, Brain, FileText } from 'lucide-react';
 import { signOut } from '../lib/auth';
 import AuthModal from './AuthModal';
 import MindMapGenerator from './MindMapGenerator';
+import PDFChat from './PDFChat';
 
 interface HeaderProps {
   activeSection: string;
@@ -28,6 +29,7 @@ const Header: React.FC<HeaderProps> = ({
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMindMapGenerator, setShowMindMapGenerator] = useState(false);
+  const [showPDFChat, setShowPDFChat] = useState(false);
 
   // Debug: Log user name changes
   React.useEffect(() => {
@@ -181,14 +183,23 @@ const Header: React.FC<HeaderProps> = ({
                   <span className="text-xs font-semibold text-green-700">Fact Check</span>
                 </button>
 
-                {/* Mind Map Generator */}
+                {/* PDF Chat */}
                 <button
-                  onClick={() => setShowMindMapGenerator(true)}
-                  className="relative flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-colors whitespace-nowrap flex-shrink-0"
+                  onClick={() => setShowPDFChat(true)}
+                  className="relative flex items-center gap-2 px-3 py-2 rounded-lg bg-orange-50 hover:bg-orange-100 border border-orange-200 transition-colors whitespace-nowrap flex-shrink-0"
                 >
                   <div className="absolute -top-1 -right-1 bg-green-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
                     NEW
                   </div>
+                  <FileText className="w-4 h-4 text-orange-600" />
+                  <span className="text-xs font-semibold text-orange-700">PDF Chat</span>
+                </button>
+
+                {/* Mind Map Generator */}
+                <button
+                  onClick={() => setShowMindMapGenerator(true)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-colors whitespace-nowrap flex-shrink-0"
+                >
                   <Brain className="w-4 h-4 text-purple-600" />
                   <span className="text-xs font-semibold text-purple-700">Mind Map</span>
                 </button>
@@ -227,6 +238,12 @@ const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
       )}
+
+      {/* PDF Chat */}
+      <PDFChat
+        isOpen={showPDFChat}
+        onClose={() => setShowPDFChat(false)}
+      />
 
       {/* Mind Map Generator */}
       <MindMapGenerator
