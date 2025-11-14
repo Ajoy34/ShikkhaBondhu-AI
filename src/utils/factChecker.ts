@@ -431,11 +431,11 @@ export async function factCheckWithGemini(url: string): Promise<FactCheckResult>
     // Fetch content from URL
     const urlContent = await fetchURLContent(url);
 
-    // Initialize Gemini with stable model
+    // Initialize Gemini with pro model (most stable)
     const genAI = new GoogleGenerativeAI(apiKey);
-    // Use the most stable model with highest rate limits
+    // Use gemini-pro which is the stable v1 model
     const model = genAI.getGenerativeModel({ 
-      model: 'gemini-1.5-flash',
+      model: 'gemini-pro',
       generationConfig: {
         temperature: 0.7,
         maxOutputTokens: 2000,
