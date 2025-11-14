@@ -157,56 +157,62 @@ const Header: React.FC<HeaderProps> = ({
           <div className="container mx-auto">
             {/* Scrollable container for mobile */}
             <div className="overflow-x-auto scrollbar-hide">
-              <div className="flex items-center gap-2 px-2 sm:px-4 lg:px-8 py-2 min-w-max lg:justify-center">
+              <div className="flex items-center gap-3 px-2 sm:px-4 lg:px-8 py-2 min-w-max lg:justify-center">
                 {/* AI Chat */}
                 <button
                   onClick={() => {
                     if (setSelectedChatbot) setSelectedChatbot('general');
                     setTimeout(() => setIsChatOpen(true), 100);
                   }}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-colors whitespace-nowrap flex-shrink-0"
+                  className="flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 hover:border-blue-400 transition-all whitespace-nowrap flex-shrink-0 shadow-sm hover:shadow-md"
                 >
-                  <MessageCircle className="w-4 h-4 text-blue-600" />
-                  <span className="text-xs font-semibold text-blue-700">AI Chat</span>
+                  <MessageCircle className="w-5 h-5 text-blue-600" />
+                  <span className="text-sm font-bold text-blue-700">AI Chat</span>
                 </button>
 
                 {/* Fact Check */}
                 <button
                   onClick={() => setActiveSection('factcheck')}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-50 hover:bg-green-100 border border-green-200 transition-colors whitespace-nowrap flex-shrink-0"
+                  className="flex items-center gap-2 px-5 py-3 rounded-xl bg-green-50 hover:bg-green-100 border-2 border-green-300 hover:border-green-400 transition-all whitespace-nowrap flex-shrink-0 shadow-sm hover:shadow-md"
                 >
-                  <Search className="w-4 h-4 text-green-600" />
-                  <span className="text-xs font-semibold text-green-700">Fact Check</span>
+                  <Search className="w-5 h-5 text-green-600" />
+                  <span className="text-sm font-bold text-green-700">Fact Check</span>
                 </button>
 
                 {/* AI Lab */}
                 <button
                   disabled
-                  className="relative flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-50 border border-purple-200 opacity-60 cursor-not-allowed whitespace-nowrap flex-shrink-0"
+                  className="relative flex items-center gap-2 px-5 py-3 rounded-xl bg-purple-50 border-2 border-purple-300 opacity-60 cursor-not-allowed whitespace-nowrap flex-shrink-0 shadow-sm"
                 >
-                  <div className="absolute -top-1 -right-1 bg-orange-400 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                  <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">
                     🚀
                   </div>
-                  <Code className="w-4 h-4 text-purple-600" />
-                  <span className="text-xs font-semibold text-purple-700">AI Lab</span>
+                  <Code className="w-5 h-5 text-purple-600" />
+                  <span className="text-sm font-bold text-purple-700">AI Lab</span>
                 </button>
 
                 {/* Create & Earn */}
                 <button
                   onClick={() => setActiveSection('createandearn')}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-pink-50 hover:bg-pink-100 border border-pink-200 transition-colors whitespace-nowrap flex-shrink-0"
+                  className="relative flex items-center gap-2 px-5 py-3 rounded-xl bg-pink-50 hover:bg-pink-100 border-2 border-pink-300 hover:border-pink-400 transition-all whitespace-nowrap flex-shrink-0 shadow-sm hover:shadow-md"
                 >
-                  <Video className="w-4 h-4 text-pink-600" />
-                  <span className="text-xs font-semibold text-pink-700">Create</span>
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md">
+                    UPCOMING
+                  </div>
+                  <Video className="w-5 h-5 text-pink-600" />
+                  <span className="text-sm font-bold text-pink-700">Create</span>
                 </button>
 
                 {/* Library */}
                 <button
                   onClick={() => setActiveSection('library')}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-colors whitespace-nowrap flex-shrink-0"
+                  className="relative flex items-center gap-2 px-5 py-3 rounded-xl bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 hover:border-amber-400 transition-all whitespace-nowrap flex-shrink-0 shadow-sm hover:shadow-md"
                 >
-                  <BookOpen className="w-4 h-4 text-amber-600" />
-                  <span className="text-xs font-semibold text-amber-700">Library</span>
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md">
+                    UPCOMING
+                  </div>
+                  <BookOpen className="w-5 h-5 text-amber-600" />
+                  <span className="text-sm font-bold text-amber-700">Library</span>
                 </button>
               </div>
             </div>

@@ -23,6 +23,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
   const [likedCampaigns, setLikedCampaigns] = useState<Set<number>>(new Set());
   const [campaignLikes, setCampaignLikes] = useState<{[key: number]: number}>({});
   const [campaignComments, setCampaignComments] = useState<{[key: number]: number}>({});
+  const [showDonateModal, setShowDonateModal] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState<any>(null);
+  const [donationAmount, setDonationAmount] = useState<number>(500);
 
   // Helper function to award points and show toast
   const handlePointsAward = (action: PointAction) => {
@@ -85,10 +88,11 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
         newSet.delete(campaignIndex);
         return newSet;
       });
-      setCampaignLikes(prev => ({
-        ...prev,
-        [campaignIndex]: (prev[campaignIndex] || 0) - 1
-      }));
+      setCampaignLikes(prev => {
+        const newLikes = { ...prev };
+        newLikes[campaignIndex] = (prev[campaignIndex] || 0) - 1;
+        return newLikes;
+      });
     } else {
       // Like
       const success = handlePointsAward('LIKE_CAMPAIGN');
@@ -96,11 +100,16 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
         alert('You\'ve reached your daily limit for likes!');
         return;
       }
-      setLikedCampaigns(prev => new Set(prev).add(campaignIndex));
-      setCampaignLikes(prev => ({
-        ...prev,
-        [campaignIndex]: (prev[campaignIndex] || 0) + 1
-      }));
+      setLikedCampaigns(prev => {
+        const newSet = new Set(prev);
+        newSet.add(campaignIndex);
+        return newSet;
+      });
+      setCampaignLikes(prev => {
+        const newLikes = { ...prev };
+        newLikes[campaignIndex] = (prev[campaignIndex] || 0) + 1;
+        return newLikes;
+      });
     }
   };
 
@@ -123,10 +132,11 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
     
     if (commentText.trim() && selectedCampaignIndex !== null) {
       // Update comment count
-      setCampaignComments(prev => ({
-        ...prev,
-        [selectedCampaignIndex]: (prev[selectedCampaignIndex] || 0) + 1
-      }));
+      setCampaignComments(prev => {
+        const newComments = { ...prev };
+        newComments[selectedCampaignIndex] = (prev[selectedCampaignIndex] || 0) + 1;
+        return newComments;
+      });
       
       // Show success message
       alert('Comment posted successfully! 💬');
@@ -181,8 +191,24 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
   };
 
   // Handle donate action
-  const handleDonate = () => {
-    handlePointsAward('DONATE_TO_CAMPAIGN');
+  const handleDonate = (campaign: any, campaignIndex: number) => {
+    setSelectedCampaign(campaign);
+    setSelectedCampaignIndex(campaignIndex);
+    setShowDonateModal(true);
+  };
+
+  // Submit donation
+  const submitDonation = (paymentMethod: string) => {
+    if (selectedCampaignIndex !== null) {
+      // Award points for donation
+      handlePointsAward('DONATE_TO_CAMPAIGN');
+      
+      // Show success message
+      alert(`🎉 Donation successful via ${paymentMethod}!\n\nAmount: ৳${donationAmount.toLocaleString()}\nThank you for your contribution!`);
+      
+      setShowDonateModal(false);
+      setDonationAmount(500);
+    }
   };
 
   const communityPrograms = [
@@ -482,7 +508,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                       </button>
                       {program.isCrowdfunding && (
                         <button 
-                          onClick={handleDonate}
+                          onClick={() => handleDonate(program, idx)}
                           className="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-2 rounded-lg font-bold hover:from-green-700 hover:to-emerald-700 transition-all shadow-md hover:shadow-lg ml-2"
                         >
                           <DollarSign className="w-5 h-5" />
@@ -942,6 +968,131 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Donate Modal */}
+      {showDonateModal && selectedCampaign && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white p-6 rounded-t-3xl">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-black">Support This Campaign</h2>
+                <button
+                  onClick={() => setShowDonateModal(false)}
+                  className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+              <p className="text-green-100 mt-2 font-bangla">এই ক্যাম্পেইনকে সমর্থন করুন</p>
+            </div>
+
+            <div className="p-6">
+              {/* Campaign Info */}
+              <div className="mb-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
+                <h3 className="font-bold text-gray-900 mb-2">{selectedCampaign.title}</h3>
+                <p className="text-sm text-gray-600 font-bangla mb-3">{selectedCampaign.titleBn}</p>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-700">
+                    <span className="font-bold text-green-600">৳{selectedCampaign.raised.toLocaleString()}</span> raised of ৳{selectedCampaign.goal.toLocaleString()}
+                  </span>
+                  <span className="text-gray-600">{selectedCampaign.daysLeft} days left</span>
+                </div>
+              </div>
+
+              {/* Donation Amount Selection */}
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-gray-700 mb-3">Select Donation Amount</label>
+                <div className="grid grid-cols-3 gap-3 mb-3">
+                  {[500, 1000, 2000, 5000, 10000, 20000].map((amount) => (
+                    <button
+                      key={amount}
+                      type="button"
+                      onClick={() => setDonationAmount(amount)}
+                      className={`py-3 rounded-xl font-bold transition-all ${
+                        donationAmount === amount
+                          ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      ৳{amount.toLocaleString()}
+                    </button>
+                  ))}
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-600 mb-2">Or enter custom amount:</label>
+                  <input
+                    type="number"
+                    value={donationAmount}
+                    onChange={(e) => setDonationAmount(parseInt(e.target.value) || 0)}
+                    placeholder="Custom amount"
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-500 transition-all"
+                    min="1"
+                  />
+                </div>
+              </div>
+
+              {/* Payment Method Selection */}
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-gray-700 mb-3">Choose Payment Method</label>
+                <div className="space-y-3">
+                  <button
+                    type="button"
+                    onClick={() => submitDonation('bKash')}
+                    className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl font-bold hover:from-pink-600 hover:to-pink-700 transition-all shadow-md hover:shadow-lg"
+                  >
+                    <span className="flex items-center space-x-3">
+                      <span className="text-2xl">📱</span>
+                      <span>bKash</span>
+                    </span>
+                    <span>→</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => submitDonation('Nagad')}
+                    className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-bold hover:from-orange-600 hover:to-orange-700 transition-all shadow-md hover:shadow-lg"
+                  >
+                    <span className="flex items-center space-x-3">
+                      <span className="text-2xl">💳</span>
+                      <span>Nagad</span>
+                    </span>
+                    <span>→</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => submitDonation('Rocket')}
+                    className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl font-bold hover:from-purple-600 hover:to-purple-700 transition-all shadow-md hover:shadow-lg"
+                  >
+                    <span className="flex items-center space-x-3">
+                      <span className="text-2xl">🚀</span>
+                      <span>Rocket</span>
+                    </span>
+                    <span>→</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => submitDonation('Credit/Debit Card')}
+                    className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-bold hover:from-blue-600 hover:to-blue-700 transition-all shadow-md hover:shadow-lg"
+                  >
+                    <span className="flex items-center space-x-3">
+                      <span className="text-2xl">💳</span>
+                      <span>Credit/Debit Card</span>
+                    </span>
+                    <span>→</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Info Note */}
+              <div className="p-3 bg-blue-50 rounded-xl border border-blue-200">
+                <p className="text-xs text-blue-800">
+                  <span className="font-bold">Note:</span> This is a demo donation flow. In production, actual payment gateways (bKash API, Nagad API, Stripe, etc.) will be integrated.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       )}
