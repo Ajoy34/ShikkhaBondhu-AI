@@ -18,6 +18,11 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
   const [newCampaigns, setNewCampaigns] = useState<any[]>([]);
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
+  const [showCommentModal, setShowCommentModal] = useState(false);
+  const [selectedCampaignIndex, setSelectedCampaignIndex] = useState<number | null>(null);
+  const [likedCampaigns, setLikedCampaigns] = useState<Set<number>>(new Set());
+  const [campaignLikes, setCampaignLikes] = useState<{[key: number]: number}>({});
+  const [campaignComments, setCampaignComments] = useState<{[key: number]: number}>({});
 
   // Helper function to award points and show toast
   const handlePointsAward = (action: PointAction) => {
@@ -71,18 +76,62 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
   };
 
   // Handle like action
-  const handleLike = () => {
-    const success = handlePointsAward('LIKE_CAMPAIGN');
-    if (!success) {
-      alert('You\'ve reached your daily limit for likes!');
+  const handleLike = (campaignIndex: number) => {
+    // Check if already liked
+    if (likedCampaigns.has(campaignIndex)) {
+      // Unlike
+      setLikedCampaigns(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(campaignIndex);
+        return newSet;
+      });
+      setCampaignLikes(prev => ({
+        ...prev,
+        [campaignIndex]: (prev[campaignIndex] || 0) - 1
+      }));
+    } else {
+      // Like
+      const success = handlePointsAward('LIKE_CAMPAIGN');
+      if (!success) {
+        alert('You\'ve reached your daily limit for likes!');
+        return;
+      }
+      setLikedCampaigns(prev => new Set(prev).add(campaignIndex));
+      setCampaignLikes(prev => ({
+        ...prev,
+        [campaignIndex]: (prev[campaignIndex] || 0) + 1
+      }));
     }
   };
 
   // Handle comment action
-  const handleComment = () => {
+  const handleComment = (campaignIndex: number) => {
     const success = handlePointsAward('COMMENT_ON_CAMPAIGN');
     if (!success) {
       alert('You\'ve reached your daily limit for comments!');
+      return;
+    }
+    setSelectedCampaignIndex(campaignIndex);
+    setShowCommentModal(true);
+  };
+
+  // Submit comment
+  const submitComment = (e: React.FormEvent) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const commentText = (form.elements.namedItem('comment') as HTMLTextAreaElement).value;
+    
+    if (commentText.trim() && selectedCampaignIndex !== null) {
+      // Update comment count
+      setCampaignComments(prev => ({
+        ...prev,
+        [selectedCampaignIndex]: (prev[selectedCampaignIndex] || 0) + 1
+      }));
+      
+      // Show success message
+      alert('Comment posted successfully! 💬');
+      setShowCommentModal(false);
+      form.reset();
     }
   };
 
@@ -395,10 +444,10 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                               ❤️
                             </div>
                           </div>
-                          <span className="ml-1">{program.likes.toLocaleString()}</span>
+                          <span className="ml-1">{(program.likes + (campaignLikes[idx] || 0)).toLocaleString()}</span>
                         </div>
                         <div className="flex items-center space-x-3">
-                          <span>{program.comments} comments</span>
+                          <span>{program.comments + (campaignComments[idx] || 0)} comments</span>
                           <span>{program.shares} shares</span>
                         </div>
                       </div>
@@ -407,14 +456,18 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                     {/* Action Buttons - Like Facebook */}
                     <div className="px-4 py-2 bg-white flex items-center justify-around">
                       <button 
-                        onClick={handleLike}
-                        className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors flex-1 justify-center"
+                        onClick={() => handleLike(idx)}
+                        className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all flex-1 justify-center ${
+                          likedCampaigns.has(idx) 
+                            ? 'bg-blue-50 text-blue-600 font-bold' 
+                            : 'hover:bg-gray-100 text-gray-700 font-semibold'
+                        }`}
                       >
-                        <ThumbsUp className="w-5 h-5 text-gray-600" />
-                        <span className="text-gray-700 font-semibold">Like</span>
+                        <ThumbsUp className={`w-5 h-5 ${likedCampaigns.has(idx) ? 'text-blue-600 fill-blue-600' : 'text-gray-600'}`} />
+                        <span>{likedCampaigns.has(idx) ? 'Liked' : 'Like'}</span>
                       </button>
                       <button 
-                        onClick={handleComment}
+                        onClick={() => handleComment(idx)}
                         className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors flex-1 justify-center"
                       >
                         <MessageCircle className="w-5 h-5 text-gray-600" />
@@ -886,6 +939,52 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                   className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all"
                 >
                   Create Campaign
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Comment Modal */}
+      {showCommentModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-black text-gray-900">Write a Comment</h2>
+              <button
+                onClick={() => setShowCommentModal(false)}
+                className="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={submitComment}>
+              <div className="mb-4">
+                <label className="block text-sm font-bold text-gray-700 mb-2">Your Comment</label>
+                <textarea
+                  name="comment"
+                  rows={5}
+                  placeholder="Share your thoughts about this campaign..."
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all resize-none"
+                  required
+                />
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setShowCommentModal(false)}
+                  className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all"
+                >
+                  Post Comment
                 </button>
               </div>
             </form>
