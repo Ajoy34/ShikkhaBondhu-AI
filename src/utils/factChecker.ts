@@ -431,9 +431,16 @@ export async function factCheckWithGemini(url: string): Promise<FactCheckResult>
     // Fetch content from URL
     const urlContent = await fetchURLContent(url);
 
-    // Initialize Gemini
+    // Initialize Gemini with stable model
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+    // Use the most stable model with highest rate limits
+    const model = genAI.getGenerativeModel({ 
+      model: 'gemini-1.5-flash',
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 2000,
+      }
+    });
 
     // Create comprehensive fact-checking prompt
     const prompt = `You are an expert fact-checker and misinformation analyst. Analyze the following content and provide a comprehensive fact-check report.
@@ -554,19 +561,62 @@ Return ONLY the JSON object, no markdown formatting, no explanation text.`;
   } catch (error: any) {
     console.error('❌ Fact-check error:', error);
 
+    // Check if it's a quota/rate limit error
+    const isQuotaError = error.message?.includes('quota') || error.message?.includes('429') || error.message?.includes('rate limit');
+    const isAPIError = error.message?.includes('API key');
+
+    let errorTitle = 'Error Analyzing Content';
+    let errorSummary = 'Unable to complete fact-check analysis. Please try again.';
+    let errorDetails = '';
+    let errorWarning = 'Analysis failed. Treat this content with caution and verify through official sources.';
+
+    if (isQuotaError) {
+      errorTitle = 'AI Analysis Temporarily Unavailable';
+      errorSummary = 'The AI fact-checker has reached its usage limit. Please wait 1-2 minutes and try again, or verify manually.';
+      errorDetails = `The fact-checking service uses Google Gemini AI which has rate limits on the free tier. The quota resets every minute.
+
+ALTERNATIVE WAYS TO VERIFY THIS CONTENT:
+
+1. 🔍 Google Search: Search for key claims + "fact check"
+2. 📰 Check trusted news sources: BBC, Reuters, AFP
+3. 🇧🇩 Bangladeshi fact-checkers: Check organizations like Rumor Scanner
+4. 🌐 International: Snopes.com, FactCheck.org, PolitiFact
+5. 🔬 For health claims: WHO, CDC, or local health authorities
+
+URL to verify: ${url}
+
+Try again in 60 seconds for AI analysis.`;
+      errorWarning = '⏳ Please wait 1 minute and try again, or use manual fact-checking methods listed below.';
+    } else if (isAPIError) {
+      errorTitle = 'API Configuration Error';
+      errorSummary = 'The fact-checker service needs to be configured. Please contact support.';
+      errorDetails = 'The Google Gemini API key is missing or invalid. Please add a valid API key to enable fact-checking features.';
+      errorWarning = '⚠️ Service configuration required. Please contact administrator.';
+    } else {
+      errorDetails = `Error: ${error.message || 'Unknown error occurred'}. The content could not be analyzed. Please ensure the URL is accessible and try again.`;
+    }
+
     // Return error result
     return {
       url: url,
       status: 'unverified',
       confidence: 0,
-      title: 'Error Analyzing Content',
-      summary: 'Unable to complete fact-check analysis. Please try again or check the URL.',
-      detailedAnalysis: `Error: ${error.message || 'Unknown error occurred'}. The content could not be analyzed. Please ensure the URL is accessible and try again.`,
-      sources: [],
+      title: errorTitle,
+      summary: errorSummary,
+      detailedAnalysis: errorDetails,
+      sources: ['Manual verification recommended', 'Check trusted news sources', 'Verify with fact-checking organizations'],
       sharedCount: 0,
       lastChecked: new Date().toLocaleString(),
-      warning: 'Analysis failed. Treat this content with caution and verify through official sources.',
-      claimBreakdown: [],
+      warning: errorWarning,
+      claimBreakdown: [
+        {
+          claim: 'Automatic analysis unavailable',
+          verdict: 'unverified',
+          explanation: isQuotaError 
+            ? 'Please wait 1-2 minutes for quota to reset, then try again.' 
+            : 'Manual verification recommended through trusted sources.'
+        }
+      ],
     };
   }
 }
