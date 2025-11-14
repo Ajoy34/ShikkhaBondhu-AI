@@ -184,8 +184,8 @@ const Header: React.FC<HeaderProps> = ({
                   disabled
                   className="relative flex items-center gap-2 px-5 py-3 rounded-xl bg-purple-50 border-2 border-purple-300 opacity-60 cursor-not-allowed whitespace-nowrap flex-shrink-0 shadow-sm"
                 >
-                  <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">
-                    🚀
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md">
+                    UPCOMING
                   </div>
                   <Code className="w-5 h-5 text-purple-600" />
                   <span className="text-sm font-bold text-purple-700">AI Lab</span>
