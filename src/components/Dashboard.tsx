@@ -704,23 +704,26 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                     members: "12.5K members",
                     posts: "245 posts today",
                     icon: "🚓",
-                    color: "from-red-400 to-red-600"
+                    color: "from-red-400 to-red-600",
+                    link: "https://www.facebook.com/BangladeshPoliceOfficialPage"
                   },
                   { 
-                    name: "UNDP Student Forum", 
-                    nameBn: "ইউএনডিপি শিক্ষার্থী ফোরাম",
+                    name: "UNDP Bangladesh", 
+                    nameBn: "ইউএনডিপি বাংলাদেশ",
                     members: "8.3K members",
                     posts: "189 posts today",
                     icon: "🎓",
-                    color: "from-blue-400 to-blue-600"
+                    color: "from-blue-400 to-blue-600",
+                    link: "https://www.facebook.com/UNDPBD"
                   },
                   { 
-                    name: "UNESCO Community Forum", 
-                    nameBn: "ইউনেস্কো কমিউনিটি ফোরাম",
+                    name: "CPCCIDB Police", 
+                    nameBn: "সিপিসিসিআইডিবি পুলিশ",
                     members: "15.7K members",
                     posts: "312 posts today",
                     icon: "🌍",
-                    color: "from-green-400 to-green-600"
+                    color: "from-green-400 to-green-600",
+                    link: "https://www.facebook.com/cpccidbdpolice"
                   }
                 ].map((forum, idx) => (
                   <div key={idx} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
@@ -733,12 +736,17 @@ const Dashboard: React.FC<DashboardProps> = ({ user, setIsChatOpen, setSelectedC
                       <div className="flex items-center gap-2 mt-1">
                         <p className="text-xs text-gray-500">👥 {forum.members}</p>
                         <span className="text-gray-300">•</span>
-                        <p className="text-xs text-green-600">� {forum.posts}</p>
+                        <p className="text-xs text-green-600">📱 {forum.posts}</p>
                       </div>
                     </div>
-                    <button className="bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-indigo-600 transition-colors">
+                    <a 
+                      href={forum.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-indigo-600 transition-colors"
+                    >
                       Join
-                    </button>
+                    </a>
                   </div>
                 ))}
               </div>
